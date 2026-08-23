@@ -2,6 +2,12 @@
 
 All notable changes to AS Local CSS are recorded here.
 
+## 0.4.0 - 2026-08-23
+
+- Mirrored stylesheets registered through WordPress's front-end enqueue hook into the block editor iframe.
+- Kept front-end JavaScript out of the editor while collecting its stylesheet dependencies.
+- Loaded mirrored front-end styles before Local CSS so custom properties and cascade dependencies resolve as they do on the front end.
+
 ## 0.3.2 - 2026-08-23
 
 - Restored raw Local CSS loading in the editor canvas so Gutenberg cannot rewrite `:root`, `html`, `body`, or front-end body-class selectors.

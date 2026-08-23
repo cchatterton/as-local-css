@@ -8,6 +8,43 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
+ * Mirror styles registered for the front end into the editor iframe.
+ *
+ * Some themes and plugins expose design tokens and supporting CSS only through
+ * wp_enqueue_scripts. WordPress does not automatically include those styles in
+ * the editor canvas, even when Local CSS depends on them.
+ *
+ * This runs only while WordPress is collecting assets for the iframe. Script
+ * queues are restored immediately because this plugin mirrors CSS, not
+ * front-end JavaScript.
+ */
+function aslc_enqueue_registered_frontend_styles_in_block_editor() {
+	if ( ! is_admin()
+		|| false === has_filter( 'should_load_block_editor_scripts_and_styles', '__return_false' )
+		|| doing_action( 'wp_enqueue_scripts' ) ) {
+		return;
+	}
+
+	$wp_scripts        = wp_scripts();
+	$script_queue      = $wp_scripts->queue;
+	$script_to_do      = $wp_scripts->to_do;
+	$script_done       = $wp_scripts->done;
+	$script_groups     = $wp_scripts->groups;
+	$script_in_footer = $wp_scripts->in_footer;
+
+	try {
+		do_action( 'wp_enqueue_scripts' );
+	} finally {
+		$wp_scripts->queue     = $script_queue;
+		$wp_scripts->to_do     = $script_to_do;
+		$wp_scripts->done      = $script_done;
+		$wp_scripts->groups    = $script_groups;
+		$wp_scripts->in_footer = $script_in_footer;
+	}
+}
+add_action( 'enqueue_block_assets', 'aslc_enqueue_registered_frontend_styles_in_block_editor', 1 );
+
+/**
  * Enqueue active front-end CSS inside the block editor content canvas.
  *
  * Raw stylesheet loading preserves front-end selectors such as :root, html,

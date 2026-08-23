@@ -3,7 +3,7 @@ Contributors: AlphaSys
 Tags: CSS, JS, javascript, custom CSS, custom JS, custom code, local css
 Requires at least: 6.0
 Tested up to: 7.0
-Stable tag: 0.3.2
+Stable tag: 0.4.0
 Requires PHP: 7.4
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -27,6 +27,10 @@ Original plugin: https://wordpress.org/plugins/custom-css-js/
 Thank you to the original author and maintainers for the plugin this AlphaSys-controlled release continues from.
 
 == Changelog ==
+
+= 0.4.0 =
+* Added front-end enqueued stylesheets to the block editor iframe before Local CSS.
+* Preserved front-end CSS variables and dependencies without translating them into theme.json.
 
 = 0.3.2 =
 * Preserved Local CSS selectors and custom properties unchanged inside the block editor canvas.
