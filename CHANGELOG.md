@@ -2,6 +2,12 @@
 
 All notable changes to AS Local CSS are recorded here.
 
+## 0.3.0 - 2026-08-23
+
+- Added the edited post's front-end WordPress body classes to the block editor iframe.
+- Preserved Gutenberg's existing editor body classes while adding singular, template, post, page, and active-theme selector context.
+- Reapplied front-end classes when the editor iframe reloads and supported the non-iframe editor fallback.
+
 ## 0.2.0 - 2026-08-23
 
 - Added active front-end CSS snippets to the block editor content iframe so editor content matches the site front end.
