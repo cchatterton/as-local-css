@@ -15,6 +15,7 @@ final class ASLC_GitHub_Updater {
 	private const RELEASE_TRANSIENT = 'aslc_github_latest_release';
 	private const ERROR_TRANSIENT   = 'aslc_github_latest_release_error';
 	private const API_URL           = 'https://api.github.com/repos/cchatterton/as-local-css/releases/latest';
+	private const MANIFEST_URL      = 'https://raw.githubusercontent.com/cchatterton/as-local-css/main/update.json';
 
 	private static $forced_cache_cleared = false;
 
@@ -193,6 +194,12 @@ final class ASLC_GitHub_Updater {
 			return $cached_release;
 		}
 
+		$manifest_release = self::get_release_from_manifest();
+		if ( ! empty( $manifest_release ) ) {
+			self::cache_release( $manifest_release );
+			return $manifest_release;
+		}
+
 		$response = wp_remote_get(
 			self::API_URL,
 			array(
@@ -223,6 +230,41 @@ final class ASLC_GitHub_Updater {
 		return array();
 	}
 
+	private static function get_release_from_manifest() {
+		$response = wp_remote_get(
+			self::MANIFEST_URL,
+			array(
+				'timeout' => 10,
+				'headers' => array(
+					'Accept'     => 'application/json',
+					'User-Agent' => 'AS-Local-CSS/' . ASLC_VERSION,
+				),
+			)
+		);
+		if ( is_wp_error( $response ) || 200 !== wp_remote_retrieve_response_code( $response ) ) {
+			return array();
+		}
+
+		$manifest = json_decode( wp_remote_retrieve_body( $response ), true );
+		$version  = is_array( $manifest ) && isset( $manifest['version'] ) ? (string) $manifest['version'] : '';
+		if ( ! self::is_valid_version( $version ) ) {
+			return array();
+		}
+
+		$tag = 'v' . $version;
+		return array(
+			'tag_name' => $tag,
+			'html_url' => self::repository_url() . '/releases/tag/' . rawurlencode( $tag ),
+			'body'     => isset( $manifest['body'] ) ? (string) $manifest['body'] : 'Release details are available on GitHub.',
+			'assets'   => array(
+				array(
+					'name'                 => self::ASSET_NAME,
+					'browser_download_url' => self::repository_url() . '/releases/download/' . rawurlencode( $tag ) . '/' . self::ASSET_NAME,
+				),
+			),
+		);
+	}
+
 	private static function get_release_from_redirect() {
 		$response = wp_remote_get(
 			self::repository_url() . '/releases/latest',
@@ -247,11 +289,7 @@ final class ASLC_GitHub_Updater {
 			return array();
 		}
 
-		$asset_url      = self::repository_url() . '/releases/download/' . rawurlencode( $tag ) . '/' . self::ASSET_NAME;
-		$asset_response = wp_remote_head( $asset_url, array( 'timeout' => 10, 'redirection' => 5 ) );
-		if ( is_wp_error( $asset_response ) || 200 !== wp_remote_retrieve_response_code( $asset_response ) ) {
-			return array();
-		}
+		$asset_url = self::repository_url() . '/releases/download/' . rawurlencode( $tag ) . '/' . self::ASSET_NAME;
 
 		return array(
 			'tag_name' => $tag,

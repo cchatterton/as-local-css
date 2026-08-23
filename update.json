@@ -1,0 +1,4 @@
+{
+  "version": "0.4.1",
+  "body": "Adds API-independent update discovery for hosted WordPress environments and removes the unreliable release-asset HEAD probe."
+}

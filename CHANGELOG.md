@@ -2,6 +2,11 @@
 
 All notable changes to AS Local CSS are recorded here.
 
+## 0.4.1 - 2026-08-23
+
+- Added a repository-controlled update manifest so WordPress can discover releases when the GitHub API returns a shared-host rate-limit or forbidden response.
+- Removed the release-asset `HEAD` request from the public redirect fallback because signed GitHub asset URLs can reject `HEAD` while accepting the updater's normal `GET` download.
+
 ## 0.4.0 - 2026-08-23
 
 - Mirrored stylesheets registered through WordPress's front-end enqueue hook into the block editor iframe.
