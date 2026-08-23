@@ -2,6 +2,13 @@
 
 All notable changes to AS Local CSS are recorded here.
 
+## 0.3.1 - 2026-08-23
+
+- Fixed the Local CSS/JS/HTML editing screen failing to initialise CodeMirror after the plugin folder was renamed to `as-local-css`.
+- Stopped unregistering unrelated plugins' admin scripts on Local CSS editing screens.
+- Declared CodeMirror and the tooltip library as explicit dependencies of the plugin's admin script.
+- Added Local CSS directly to WordPress's block editor settings for reliable iframe and non-iframe loading.
+
 ## 0.3.0 - 2026-08-23
 
 - Added the edited post's front-end WordPress body classes to the block editor iframe.

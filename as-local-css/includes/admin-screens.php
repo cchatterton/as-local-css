@@ -125,17 +125,22 @@ class CustomCSSandJS_Admin {
 		$a  = plugins_url( '/', CCJ_PLUGIN_FILE ) . 'assets';
 		$cm = $a . '/codemirror';
 		$v  = CCJ_VERSION;
+		$is_code_editor_screen = in_array( $hook, array( 'post-new.php', 'post.php' ), true );
+		$admin_dependencies    = array( 'jquery', 'jquery-ui-resizable', 'ccj-tipsy' );
+		if ( $is_code_editor_screen ) {
+			$admin_dependencies[] = 'ccj-codemirror';
+		}
 
 		wp_enqueue_script( 'ccj-tipsy', $a . '/jquery.tipsy.js', array( 'jquery' ), $v, false );
 		wp_enqueue_style( 'ccj-tipsy', $a . '/tipsy.css', array(), $v );
 		wp_enqueue_script( 'ccj-cookie', $a . '/js.cookie.js', array( 'jquery' ), $v, false );
-		wp_register_script( 'ccj-admin', $a . '/ccj_admin.js', array( 'jquery', 'jquery-ui-resizable' ), $v, false );
+		wp_register_script( 'ccj-admin', $a . '/ccj_admin.js', $admin_dependencies, $v, false );
 		wp_localize_script( 'ccj-admin', 'CCJ', $this->cm_localize() );
 		wp_enqueue_script( 'ccj-admin' );
 		wp_enqueue_style( 'ccj-admin', $a . '/ccj_admin.css', array(), $v );
 
 		// Only for the new/edit Code's page
-		if ( $hook == 'post-new.php' || $hook == 'post.php' ) {
+		if ( $is_code_editor_screen ) {
 			wp_deregister_script( 'wp-codemirror' );
 
 			wp_enqueue_style( 'jquery-ui', 'https://code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css', array(), $v );
@@ -183,27 +188,8 @@ class CustomCSSandJS_Admin {
 			wp_enqueue_script( 'ccj-fold-xml', $cma . 'fold/xml-fold.js', array( 'ccj-codemirror' ), $v, false );
 			wp_enqueue_style( 'ccj-fold-gutter', $cma . 'fold/foldgutter.css', array(), $v );
 
-			// remove the assets from other plugins so it doesn't interfere with CodeMirror
-			global $wp_scripts;
-			if ( is_array( $wp_scripts->registered ) && count( $wp_scripts->registered ) != 0 ) {
-				foreach ( $wp_scripts->registered as $_key => $_value ) {
-					if ( ! isset( $_value->src ) ) {
-						continue;
-					}
-
-					if ( strstr( $_value->src, 'wp-content/plugins' ) !== false
-					&& strstr( $_value->src, 'plugins/custom-css-js/assets' ) === false
-					&& strstr( $_value->src, 'plugins/advanced-custom-fields/' ) === false
-					&& strstr( $_value->src, 'plugins/wp-jquery-update-test/' ) === false
-					&& strstr( $_value->src, 'plugins/enable-jquery-migrate-helper/' ) === false
-					&& strstr( $_value->src, 'plugins/tablepress/' ) === false
-					&& strstr( $_value->src, 'plugins/advanced-custom-fields-pro/' ) === false ) {
-						unset( $wp_scripts->registered[ $_key ] );
-					}
-				}
-			}
 			// remove the CodeMirror library added by the Product Slider for WooCommerce plugin by ShapedPlugin
-			wp_enqueue_style( 'spwps-codemirror', $a . '/empty.css', '1.0' );
+			wp_enqueue_style( 'spwps-codemirror', $a . '/empty.css', array(), '1.0' );
 			wp_enqueue_script( 'spwps-codemirror', $a . '/empty.js', array(), '1.0', true );
 		}
 	}
