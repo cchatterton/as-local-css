@@ -2,6 +2,13 @@
 
 All notable changes to AS Local CSS are recorded here.
 
+## 0.3.2 - 2026-08-23
+
+- Restored raw Local CSS loading in the editor canvas so Gutenberg cannot rewrite `:root`, `html`, `body`, or front-end body-class selectors.
+- Persisted the plugin's GitHub update entry after WordPress rebuilds its native plugin update transient.
+- Recognised the plugin-row manual check as a forced release lookup.
+- Added explicit Plugins-screen feedback when an update is available, the plugin is current, or GitHub cannot be reached.
+
 ## 0.3.1 - 2026-08-23
 
 - Fixed the Local CSS/JS/HTML editing screen failing to initialise CodeMirror after the plugin folder was renamed to `as-local-css`.

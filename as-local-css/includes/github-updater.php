@@ -24,6 +24,8 @@ final class ASLC_GitHub_Updater {
 		add_filter( 'plugins_api', array( __CLASS__, 'plugin_information' ), 10, 3 );
 		add_filter( 'plugin_row_meta', array( __CLASS__, 'plugin_row_meta' ), 10, 2 );
 		add_action( 'admin_init', array( __CLASS__, 'handle_manual_update_check' ) );
+		add_action( 'admin_notices', array( __CLASS__, 'manual_update_check_notice' ) );
+		add_action( 'network_admin_notices', array( __CLASS__, 'manual_update_check_notice' ) );
 		add_action( 'upgrader_process_complete', array( __CLASS__, 'clear_release_cache' ), 10, 2 );
 	}
 
@@ -128,9 +130,41 @@ final class ASLC_GitHub_Updater {
 		delete_site_transient( 'update_plugins' );
 		wp_update_plugins();
 
+		$update_state = get_site_transient( 'update_plugins' );
+		if ( ! is_object( $update_state ) ) {
+			$update_state = (object) array();
+		}
+
+		// Persist our update entry after WordPress has finished rebuilding its own transient.
+		$update_state = self::inject_update( $update_state );
+		set_site_transient( 'update_plugins', $update_state );
+
+		$check_result = self::manual_update_check_result( $update_state );
 		$plugins_url = is_multisite() ? network_admin_url( 'plugins.php' ) : admin_url( 'plugins.php' );
-		wp_safe_redirect( $plugins_url );
+		wp_safe_redirect( add_query_arg( 'aslc_update_check_result', $check_result, $plugins_url ) );
 		exit;
+	}
+
+	public static function manual_update_check_notice() {
+		if ( ! current_user_can( 'update_plugins' ) || empty( $_GET['aslc_update_check_result'] ) ) {
+			return;
+		}
+
+		$result = sanitize_key( wp_unslash( $_GET['aslc_update_check_result'] ) );
+		if ( 'available' === $result ) {
+			$notice_class = 'notice notice-success is-dismissible';
+			$message      = __( 'AS Local CSS found an update. You can install it from the plugin row below.', 'custom-css-js' );
+		} elseif ( 'current' === $result ) {
+			$notice_class = 'notice notice-success is-dismissible';
+			$message      = __( 'AS Local CSS is up to date.', 'custom-css-js' );
+		} elseif ( 'failed' === $result ) {
+			$notice_class = 'notice notice-error is-dismissible';
+			$message      = __( 'AS Local CSS could not complete the GitHub update check. No plugin files were changed; please try again shortly.', 'custom-css-js' );
+		} else {
+			return;
+		}
+
+		printf( '<div class="%1$s"><p>%2$s</p></div>', esc_attr( $notice_class ), esc_html( $message ) );
 	}
 
 	public static function clear_release_cache( $upgrader, $options ) {
@@ -266,7 +300,7 @@ final class ASLC_GitHub_Updater {
 			return false;
 		}
 
-		if ( isset( $_REQUEST['force-check'] ) ) {
+		if ( isset( $_REQUEST['force-check'] ) || isset( $_REQUEST['aslc_check_updates'] ) ) {
 			return true;
 		}
 
@@ -306,6 +340,15 @@ final class ASLC_GitHub_Updater {
 
 	private static function repository_url() {
 		return 'https://github.com/' . self::OWNER . '/' . self::REPO;
+	}
+
+	private static function manual_update_check_result( $update_state ) {
+		$plugin_file = plugin_basename( ASLC_PLUGIN_FILE );
+		if ( is_object( $update_state ) && isset( $update_state->response ) && is_array( $update_state->response ) && isset( $update_state->response[ $plugin_file ] ) ) {
+			return 'available';
+		}
+
+		return is_array( get_site_transient( self::RELEASE_TRANSIENT ) ) ? 'current' : 'failed';
 	}
 
 	private static function delete_caches() {

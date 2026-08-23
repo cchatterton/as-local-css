@@ -2,8 +2,8 @@
 Contributors: AlphaSys
 Tags: CSS, JS, javascript, custom CSS, custom JS, custom code, local css
 Requires at least: 6.0
-Tested up to: 6.5
-Stable tag: 0.3.1
+Tested up to: 7.0
+Stable tag: 0.3.2
 Requires PHP: 7.4
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -27,6 +27,11 @@ Original plugin: https://wordpress.org/plugins/custom-css-js/
 Thank you to the original author and maintainers for the plugin this AlphaSys-controlled release continues from.
 
 == Changelog ==
+
+= 0.3.2 =
+* Preserved Local CSS selectors and custom properties unchanged inside the block editor canvas.
+* Fixed the manual GitHub update check so its refreshed result is persisted in WordPress.
+* Added clear update-available, up-to-date, and failed-check notices on the Plugins screen.
 
 = 0.3.1 =
 * Fixed CodeMirror initialisation on Local CSS, JavaScript, and HTML editing screens.

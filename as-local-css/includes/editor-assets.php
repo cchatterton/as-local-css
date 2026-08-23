@@ -8,50 +8,22 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Add active front-end CSS to the block editor settings.
+ * Enqueue active front-end CSS inside the block editor content canvas.
  *
- * Adding each generated stylesheet to the editor settings is reliable for
- * both iframe and non-iframe editor canvases. The base URL preserves relative
- * asset paths in the same way as the corresponding front-end stylesheet.
- *
- * @param array                   $settings             Block editor settings.
- * @param WP_Block_Editor_Context $block_editor_context Current editor context.
- * @return array
+ * Raw stylesheet loading preserves front-end selectors such as :root, html,
+ * body, and body classes. Passing this CSS through block editor settings would
+ * scope and rewrite those selectors, changing their meaning.
  */
-function aslc_add_frontend_css_to_block_editor( $settings, $block_editor_context ) {
-	if ( empty( $block_editor_context->post ) || 'custom-css-js' === $block_editor_context->post->post_type ) {
-		return $settings;
-	}
-
-	$styles = aslc_get_frontend_css_styles( $block_editor_context->post );
-	if ( empty( $styles ) ) {
-		return $settings;
-	}
-
-	$settings['styles'] = isset( $settings['styles'] ) && is_array( $settings['styles'] ) ? $settings['styles'] : array();
-	$settings['styles'] = array_merge( $settings['styles'], $styles );
-
-	return $settings;
-}
-add_filter( 'block_editor_settings_all', 'aslc_add_frontend_css_to_block_editor', 20, 2 );
-
-/**
- * Get ordered front-end CSS as block editor style entries.
- *
- * @param WP_Post $post Post being edited.
- * @return array[]
- */
-function aslc_get_frontend_css_styles( $post ) {
-	if ( ! defined( 'CCJ_UPLOAD_DIR' ) || ! defined( 'CCJ_UPLOAD_URL' ) ) {
-		return array();
+function aslc_enqueue_frontend_css_in_block_editor() {
+	if ( ! is_admin() || ! defined( 'CCJ_UPLOAD_DIR' ) || ! defined( 'CCJ_UPLOAD_URL' ) ) {
+		return;
 	}
 
 	$search_tree = get_option( 'custom-css-js-tree', array() );
 	if ( ! is_array( $search_tree ) || empty( $search_tree ) ) {
-		return array();
+		return;
 	}
 
-	$styles = array();
 	foreach ( array( 'header', 'footer' ) as $location ) {
 		foreach ( $search_tree as $branch => $priority_groups ) {
 			if ( ! aslc_is_frontend_css_branch( $branch, $location ) || ! is_array( $priority_groups ) ) {
@@ -65,17 +37,13 @@ function aslc_get_frontend_css_styles( $post ) {
 				}
 
 				foreach ( $filenames as $filename ) {
-					$style = aslc_get_editor_style_entry( $post, $branch, $filename );
-					if ( ! empty( $style ) ) {
-						$styles[] = $style;
-					}
+					aslc_enqueue_editor_css_file( $branch, $filename );
 				}
 			}
 		}
 	}
-
-	return $styles;
 }
+add_action( 'enqueue_block_assets', 'aslc_enqueue_frontend_css_in_block_editor' );
 
 /**
  * Add front-end body classes to the block editor content canvas.
@@ -231,39 +199,42 @@ function aslc_is_frontend_css_branch( $branch, $location ) {
 }
 
 /**
- * Build an editor style entry from one generated CSS file.
+ * Enqueue one generated CSS file for the editor content canvas.
  *
- * @param WP_Post $post     Post being edited.
  * @param string $branch   Search-tree branch name.
  * @param string $filename Generated file name, optionally with a query string.
- * @return array
  */
-function aslc_get_editor_style_entry( $post, $branch, $filename ) {
+function aslc_enqueue_editor_css_file( $branch, $filename ) {
 	if ( ! is_string( $filename ) || '' === $filename ) {
-		return array();
+		return;
 	}
 
 	$file_name_without_query = strtok( $filename, '?' );
 	$safe_filename           = basename( (string) $file_name_without_query );
 	if ( ! preg_match( '/^[A-Za-z0-9._-]+\.css$/', $safe_filename ) ) {
-		return array();
+		return;
+	}
+
+	$handle = 'aslc-editor-css-' . md5( $branch . '|' . $filename );
+	if ( '-external' === substr( $branch, -9 ) ) {
+		$css_url = trailingslashit( CCJ_UPLOAD_URL ) . $safe_filename;
+		$query   = wp_parse_url( $filename, PHP_URL_QUERY );
+		if ( is_string( $query ) && '' !== $query ) {
+			$css_url .= '?' . $query;
+		}
+
+		wp_enqueue_style( $handle, esc_url_raw( $css_url ), array(), null );
+		return;
 	}
 
 	$css = aslc_read_generated_css( $safe_filename );
 	if ( '' === $css ) {
-		return array();
+		return;
 	}
 
-	$base_url = '-external' === substr( $branch, -9 )
-		? trailingslashit( CCJ_UPLOAD_URL ) . $safe_filename
-		: get_permalink( $post );
-
-	return array(
-		'css'            => $css,
-		'baseURL'        => esc_url_raw( $base_url ),
-		'__unstableType' => 'user',
-		'isGlobalStyles' => false,
-	);
+	wp_register_style( $handle, false, array(), ASLC_VERSION );
+	wp_enqueue_style( $handle );
+	wp_add_inline_style( $handle, $css );
 }
 
 /**
