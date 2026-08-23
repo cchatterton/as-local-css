@@ -2,6 +2,14 @@
 
 All notable changes to AS Local CSS are recorded here.
 
+## 0.2.0 - 2026-08-23
+
+- Added active front-end CSS snippets to the block editor content iframe so editor content matches the site front end.
+- Preserved front-end header/footer and priority ordering for editor CSS, including internal and external snippets.
+- Excluded admin-only and login-only CSS from the editor content canvas.
+- Aligned the plugin header and GitHub updater with the current Codex WordPress plugin standards.
+- Added native Plugins-screen GitHub and "Check for updates" links, forced-check cache bypassing, short no-update caching, and a verified public-release fallback.
+
 ## 0.1.0 - 2026-06-15
 
 - Created the AlphaSys-controlled compatible release as `as-local-css`.
@@ -9,4 +17,3 @@ All notable changes to AS Local CSS are recorded here.
 - Added GitHub release updater support for `cchatterton/as-local-css`.
 - Removed bundled translations so the maintained interface is English only.
 - Added attribution to the original Simple Custom CSS and JS plugin, Diana Burduja, and SilkyPress.
-

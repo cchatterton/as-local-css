@@ -3,7 +3,7 @@ Contributors: AlphaSys
 Tags: CSS, JS, javascript, custom CSS, custom JS, custom code, local css
 Requires at least: 6.0
 Tested up to: 6.5
-Stable tag: 0.1.0
+Stable tag: 0.2.0
 Requires PHP: 7.4
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -27,6 +27,11 @@ Original plugin: https://wordpress.org/plugins/custom-css-js/
 Thank you to the original author and maintainers for the plugin this AlphaSys-controlled release continues from.
 
 == Changelog ==
+
+= 0.2.0 =
+* Added active front-end CSS to the block editor content iframe.
+* Preserved CSS location and priority ordering in the editor.
+* Aligned GitHub update delivery with the current Codex WordPress plugin standards.
 
 = 0.1.0 =
 * Created the AlphaSys-controlled compatible release.
