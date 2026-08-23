@@ -2,6 +2,12 @@
 
 All notable changes to AS Local CSS are recorded here.
 
+## 0.4.2 - 2026-08-23
+
+- Promoted Local CSS stylesheet nodes after Gutenberg's native block styles inside iframe and non-iframe editor canvases.
+- Preserved authored selectors and declarations unchanged instead of adding `!important` or rewriting CSS.
+- Reapplied final cascade order when Gutenberg dynamically adds further native styles.
+
 ## 0.4.1 - 2026-08-23
 
 - Added a repository-controlled update manifest so WordPress can discover releases when the GitHub API returns a shared-host rate-limit or forbidden response.

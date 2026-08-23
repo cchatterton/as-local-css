@@ -1,4 +1,4 @@
 {
-  "version": "0.4.1",
-  "body": "Adds API-independent update discovery for hosted WordPress environments and removes the unreliable release-asset HEAD probe."
+  "version": "0.4.2",
+  "body": "Promotes Local CSS after Gutenberg's native block styles inside the editor canvas so authored rules retain front-end cascade authority."
 }
