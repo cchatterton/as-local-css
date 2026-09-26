@@ -1,4 +1,6 @@
 {
-  "version": "0.4.2",
-  "body": "Promotes Local CSS after Gutenberg's native block styles inside the editor canvas so authored rules retain front-end cascade authority."
+  "version": "0.4.3",
+  "body": "## 0.4.3 - 2026-09-26\n\n- Replace the independent updater with AS Update Controller API 1 and guarded local Install/Activate/Check actions.\n- Standardise AlphaSys author metadata and declare WordPress 7.0 / PHP 7.4 compatibility.\n- Include the GPL-3.0 license while retaining upstream attribution and third-party notices.\n- Preserve existing snippets, options, upload paths, capabilities and front-end/block-editor behaviour.\n",
+  "requires": "7.0",
+  "requires_php": "7.4"
 }
