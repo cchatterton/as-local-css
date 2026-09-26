@@ -1,9 +1,9 @@
 === AS Local CSS ===
-Contributors: AlphaSys
+Contributors:
 Tags: CSS, JS, javascript, custom CSS, custom JS, custom code, local css
-Requires at least: 6.0
+Requires at least: 7.0
 Tested up to: 7.0
-Stable tag: 0.4.2
+Stable tag: 0.4.3
 Requires PHP: 7.4
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -27,6 +27,11 @@ Original plugin: https://wordpress.org/plugins/custom-css-js/
 Thank you to the original author and maintainers for the plugin this AlphaSys-controlled release continues from.
 
 == Changelog ==
+
+= 0.4.3 =
+* Move release discovery to AS Update Controller with local Install/Activate/Check actions.
+* Align AlphaSys author metadata, PHP 7.4 / WordPress 7.0 requirements and distribution licensing.
+* Preserve existing snippets, generated files, editor behaviour and settings.
 
 = 0.4.2 =
 * Promoted Local CSS after Gutenberg's native block styles inside the editor canvas.

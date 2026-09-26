@@ -2,6 +2,13 @@
 
 All notable changes to AS Local CSS are recorded here.
 
+## 0.4.3 - 2026-09-26
+
+- Replace the independent updater with AS Update Controller API 1 and guarded local Install/Activate/Check actions.
+- Standardise AlphaSys author metadata and declare WordPress 7.0 / PHP 7.4 compatibility.
+- Include the GPL-3.0 license while retaining upstream attribution and third-party notices.
+- Preserve existing snippets, options, upload paths, capabilities and front-end/block-editor behaviour.
+
 ## 0.4.2 - 2026-08-23
 
 - Promoted Local CSS stylesheet nodes after Gutenberg's native block styles inside iframe and non-iframe editor canvases.

@@ -2,13 +2,15 @@
 /**
  * Plugin Name: AS Local CSS
  * Description: Compatible AlphaSys-maintained release of Simple Custom CSS and JS for adding local CSS, JavaScript, and HTML snippets.
- * Version: 0.4.2
- * Requires at least: 6.0
+ * Version: 0.4.3
+ * Requires at least: 7.0
  * Requires PHP: 7.4
  * Update URI: https://github.com/cchatterton/as-local-css
  * Author: AlphaSys
- * Author URI: https://github.com/cchatterton
+ * Author URI: https://alphasys.com.au
  * License: GPL-3.0-or-later
+ * License URI: https://www.gnu.org/licenses/gpl-3.0.html
+ * AlphaSys Controller API: 1
  * Original Author: Diana Burduja / SilkyPress
  *
  * Text Domain: custom-css-js
@@ -21,12 +23,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-define( 'ASLC_VERSION', '0.4.2' );
+define( 'ASLC_VERSION', '0.4.3' );
 define( 'ASLC_PLUGIN_FILE', __FILE__ );
 define( 'ASLC_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'ASLC_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 
-require_once ASLC_PLUGIN_DIR . 'includes/github-updater.php';
+require_once ASLC_PLUGIN_DIR . 'includes/controller-client.php';
+asuc_client_register( __FILE__, 'as-local-css' );
 require_once ASLC_PLUGIN_DIR . 'includes/editor-assets.php';
 
 if ( ! class_exists( 'CustomCSSandJS' ) ) :

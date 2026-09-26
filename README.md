@@ -17,13 +17,13 @@ AS Local CSS is an AlphaSys-maintained, compatible replacement for the WordPress
 - Stylesheets registered through WordPress's front-end enqueue hook load in the editor iframe before Local CSS, preserving design-token dependencies.
 - Local CSS is promoted after Gutenberg's native block styles in the editor canvas so authored rules retain front-end cascade authority.
 - The block editor content canvas receives the edited post's front-end WordPress body classes so class-scoped CSS has the same selector context.
-- The plugin supports GitHub release updates from this repository.
+- AS Update Controller handles GitHub release discovery and installation; this plugin only registers its identity and local controller actions.
 - The interface is maintained in English only.
 
 ## Folder Structure
 
 - `as-local-css/` contains the installable WordPress plugin.
-- `as-local-css/includes/` contains focused admin, editor-asset, and updater modules.
+- `as-local-css/includes/` contains focused admin, editor-asset, and controller-client modules.
 - `scripts/` contains the release ZIP build script.
 - `dist/` is generated during packaging and is not committed.
 
@@ -69,5 +69,9 @@ The ZIP contains `as-local-css/` as its top-level directory.
 - Main plugin file: `as-local-css/as-local-css.php`
 - Release ZIP asset name: `as-local-css.zip`
 - Author: `AlphaSys`
-- Author URL: `https://github.com/cchatterton`
+- Author URL: `https://alphasys.com.au`
 - Update URI: `https://github.com/cchatterton/as-local-css`
+
+## Controller migration 0.4.3
+
+Requires WordPress 7.0 and PHP 7.4. AS Local CSS is the sole non-beta AlphaSys catalogue entry. The package preserves its original basename, snippet post type, options, generated upload files, capabilities and upstream attribution. Release metadata is managed by AS Update Controller; there is no independent updater.
