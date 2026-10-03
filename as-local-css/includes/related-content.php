@@ -10,21 +10,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 const ASLC_RELATED_CONTENT_META = '_aslc_related_content_ids';
 const ASLC_RELATED_CODE_META    = '_aslc_related_code_ids';
 
-add_action( 'add_meta_boxes', 'aslc_add_relationship_meta_boxes' );
+add_action( 'add_meta_boxes', 'aslc_add_relationship_meta_boxes', 20 );
+add_action( 'add_meta_boxes_custom-css-js', 'aslc_add_custom_code_relationship_meta_box', 20 );
 add_action( 'admin_enqueue_scripts', 'aslc_enqueue_relationship_assets' );
 add_action( 'save_post', 'aslc_save_relationship_meta_boxes', 20, 2 );
 add_action( 'wp_ajax_aslc_search_relationship_targets', 'aslc_ajax_search_relationship_targets' );
 add_action( 'admin_post_aslc_create_related_code', 'aslc_create_related_code' );
+add_filter( 'custom-css-js-meta-boxes', 'aslc_allow_relationship_meta_box' );
 
 function aslc_add_relationship_meta_boxes() {
-	add_meta_box(
-		'aslc-related-content',
-		__( 'Related Content', 'custom-css-js' ),
-		'aslc_render_related_content_meta_box',
-		'custom-css-js',
-		'side',
-		'default'
-	);
+	aslc_add_custom_code_relationship_meta_box();
 
 	foreach ( aslc_get_supported_content_post_types() as $post_type ) {
 		add_meta_box(
@@ -33,9 +28,26 @@ function aslc_add_relationship_meta_boxes() {
 			'aslc_render_related_code_meta_box',
 			$post_type,
 			'side',
-			'default'
+			'high'
 		);
 	}
+}
+
+function aslc_add_custom_code_relationship_meta_box() {
+	add_meta_box(
+		'aslc-related-content',
+		__( 'Related Content', 'custom-css-js' ),
+		'aslc_render_related_content_meta_box',
+		'custom-css-js',
+		'side',
+		'high'
+	);
+}
+
+function aslc_allow_relationship_meta_box( array $allowed ) {
+	$allowed[] = 'aslc-related-content';
+
+	return array_values( array_unique( $allowed ) );
 }
 
 function aslc_enqueue_relationship_assets( $hook ) {

@@ -1,6 +1,6 @@
 {
-  "version": "0.4.4",
-  "body": "## 0.4.4 - 2026-10-03\n\n- Added bidirectional related content and custom code meta boxes.\n- Added searchable repeaters for linking custom code to editable content from supported post types.\n- Added new-tab edit links for related content and related custom code.\n- Added content-side Create CSS and Create JS actions that create draft custom code and preconfigure the relationship.\n",
+  "version": "0.4.5",
+  "body": "## 0.4.5 - 2026-10-03\n\n- Load related-content metabox registration from the top-level admin bootstrap so it is not skipped by legacy class guards.\n- Register the custom code relationship metabox on the post-type-specific metabox hook and move relationship boxes higher in the sidebar.\n- Keep the Related Content metabox in the original custom code editor's allowed side metabox list.\n",
   "requires": "7.0",
   "requires_php": "7.4"
 }

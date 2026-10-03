@@ -2,6 +2,12 @@
 
 All notable changes to AS Local CSS are recorded here.
 
+## 0.4.5 - 2026-10-03
+
+- Load related-content metabox registration from the top-level admin bootstrap so it is not skipped by legacy class guards.
+- Register the custom code relationship metabox on the post-type-specific metabox hook and move relationship boxes higher in the sidebar.
+- Keep the Related Content metabox in the original custom code editor's allowed side metabox list.
+
 ## 0.4.4 - 2026-10-03
 
 - Added bidirectional related content and custom code meta boxes.
