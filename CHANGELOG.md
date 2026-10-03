@@ -2,6 +2,10 @@
 
 All notable changes to AS Local CSS are recorded here.
 
+## 0.4.6 - 2026-10-03
+
+- Added a Related Content column to the custom code list table with same-tab editor links to each related content item.
+
 ## 0.4.5 - 2026-10-03
 
 - Load related-content metabox registration from the top-level admin bootstrap so it is not skipped by legacy class guards.

@@ -17,6 +17,8 @@ add_action( 'save_post', 'aslc_save_relationship_meta_boxes', 20, 2 );
 add_action( 'wp_ajax_aslc_search_relationship_targets', 'aslc_ajax_search_relationship_targets' );
 add_action( 'admin_post_aslc_create_related_code', 'aslc_create_related_code' );
 add_filter( 'custom-css-js-meta-boxes', 'aslc_allow_relationship_meta_box' );
+add_filter( 'manage_custom-css-js_posts_columns', 'aslc_add_related_content_list_column', 20 );
+add_action( 'manage_custom-css-js_posts_custom_column', 'aslc_render_related_content_list_column', 20, 2 );
 
 function aslc_add_relationship_meta_boxes() {
 	aslc_add_custom_code_relationship_meta_box();
@@ -48,6 +50,56 @@ function aslc_allow_relationship_meta_box( array $allowed ) {
 	$allowed[] = 'aslc-related-content';
 
 	return array_values( array_unique( $allowed ) );
+}
+
+function aslc_add_related_content_list_column( array $columns ) {
+	$updated = array();
+
+	foreach ( $columns as $key => $label ) {
+		$updated[ $key ] = $label;
+
+		if ( 'title' === $key ) {
+			$updated['aslc-related-content'] = __( 'Related Content', 'custom-css-js' );
+		}
+	}
+
+	if ( ! isset( $updated['aslc-related-content'] ) ) {
+		$updated['aslc-related-content'] = __( 'Related Content', 'custom-css-js' );
+	}
+
+	return $updated;
+}
+
+function aslc_render_related_content_list_column( $column, $post_id ) {
+	if ( 'aslc-related-content' !== $column ) {
+		return;
+	}
+
+	$related_ids = aslc_get_related_content_ids_for_code( $post_id );
+	if ( empty( $related_ids ) ) {
+		echo '&mdash;';
+		return;
+	}
+
+	$links = array();
+	foreach ( $related_ids as $related_id ) {
+		$related_post = get_post( $related_id );
+		if ( ! $related_post || ! current_user_can( 'edit_post', $related_id ) ) {
+			continue;
+		}
+
+		$title = get_the_title( $related_post );
+		if ( '' === $title ) {
+			$title = sprintf( __( '(no title) #%d', 'custom-css-js' ), $related_id );
+		}
+
+		$edit_link = get_edit_post_link( $related_id, 'raw' );
+		if ( $edit_link ) {
+			$links[] = '<a href="' . esc_url( $edit_link ) . '">' . esc_html( $title ) . '</a>';
+		}
+	}
+
+	echo $links ? implode( '<br />', $links ) : '&mdash;';
 }
 
 function aslc_enqueue_relationship_assets( $hook ) {
