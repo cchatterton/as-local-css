@@ -2,6 +2,13 @@
 
 All notable changes to AS Local CSS are recorded here.
 
+## 0.4.4 - 2026-10-03
+
+- Added bidirectional related content and custom code meta boxes.
+- Added searchable repeaters for linking custom code to editable content from supported post types.
+- Added new-tab edit links for related content and related custom code.
+- Added content-side Create CSS and Create JS actions that create draft custom code and preconfigure the relationship.
+
 ## 0.4.3 - 2026-09-26
 
 - Replace the independent updater with AS Update Controller API 1 and guarded local Install/Activate/Check actions.

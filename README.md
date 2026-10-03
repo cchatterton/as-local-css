@@ -1,7 +1,7 @@
 # AS Local CSS
 
 Author: AlphaSys
-Version: 0.4.2
+Version: 0.4.4
 Status: Production
 
 ## Purpose
@@ -17,6 +17,8 @@ AS Local CSS is an AlphaSys-maintained, compatible replacement for the WordPress
 - Stylesheets registered through WordPress's front-end enqueue hook load in the editor iframe before Local CSS, preserving design-token dependencies.
 - Local CSS is promoted after Gutenberg's native block styles in the editor canvas so authored rules retain front-end cascade authority.
 - The block editor content canvas receives the edited post's front-end WordPress body classes so class-scoped CSS has the same selector context.
+- Custom code can be bidirectionally related to editable content items, with new-tab editor links on both sides.
+- Content editors can create related draft CSS or JS code directly from the content edit screen.
 - AS Update Controller handles GitHub release discovery and installation; this plugin only registers its identity and local controller actions.
 - The interface is maintained in English only.
 

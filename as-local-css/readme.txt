@@ -3,7 +3,7 @@ Contributors:
 Tags: CSS, JS, javascript, custom CSS, custom JS, custom code, local css
 Requires at least: 7.0
 Tested up to: 7.0
-Stable tag: 0.4.3
+Stable tag: 0.4.4
 Requires PHP: 7.4
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -27,6 +27,12 @@ Original plugin: https://wordpress.org/plugins/custom-css-js/
 Thank you to the original author and maintainers for the plugin this AlphaSys-controlled release continues from.
 
 == Changelog ==
+
+= 0.4.4 =
+* Added bidirectional related content and custom code meta boxes.
+* Added searchable repeaters for linking custom code to editable content from supported post types.
+* Added new-tab edit links for related content and related custom code.
+* Added content-side Create CSS and Create JS actions that create draft custom code and preconfigure the relationship.
 
 = 0.4.3 =
 * Move release discovery to AS Update Controller with local Install/Activate/Check actions.

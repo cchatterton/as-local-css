@@ -1,0 +1,54 @@
+.aslc-relationship-search {
+	margin-bottom: 10px;
+}
+
+.aslc-relationship-search-input {
+	margin-bottom: 8px;
+}
+
+.aslc-relationship-status {
+	margin: 6px 0 0;
+}
+
+.aslc-relationship-list {
+	margin: 0;
+}
+
+.aslc-relationship-item {
+	border: 1px solid #dcdcde;
+	background: #fff;
+	margin: 0 0 8px;
+	padding: 8px;
+}
+
+.aslc-relationship-title {
+	display: block;
+	font-weight: 600;
+	margin-bottom: 3px;
+}
+
+.aslc-relationship-type {
+	color: #646970;
+	display: block;
+	font-size: 12px;
+	margin-bottom: 6px;
+}
+
+.aslc-relationship-item a {
+	margin-right: 10px;
+}
+
+.aslc-relationship-empty {
+	color: #646970;
+	margin: 0;
+}
+
+.aslc-create-code-links {
+	border-top: 1px solid #dcdcde;
+	margin-top: 12px;
+	padding-top: 12px;
+}
+
+.aslc-create-code-links .button {
+	margin: 0 6px 6px 0;
+}
