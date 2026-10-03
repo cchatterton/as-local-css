@@ -16,6 +16,7 @@ add_action( 'admin_enqueue_scripts', 'aslc_enqueue_relationship_assets' );
 add_action( 'save_post', 'aslc_save_relationship_meta_boxes', 20, 2 );
 add_action( 'wp_ajax_aslc_search_relationship_targets', 'aslc_ajax_search_relationship_targets' );
 add_action( 'admin_post_aslc_create_related_code', 'aslc_create_related_code' );
+add_action( 'admin_footer-edit.php', 'aslc_render_related_content_list_column_fallback' );
 add_filter( 'custom-css-js-meta-boxes', 'aslc_allow_relationship_meta_box' );
 add_filter( 'manage_custom-css-js_posts_columns', 'aslc_ensure_related_content_list_column', PHP_INT_MAX );
 
@@ -102,6 +103,130 @@ function aslc_render_related_content_list_column( $column, $post_id ) {
 	}
 
 	echo $links ? implode( '<br />', $links ) : '&mdash;';
+}
+
+function aslc_render_related_content_list_column_fallback() {
+	$screen = get_current_screen();
+	if ( ! $screen || 'edit-custom-css-js' !== $screen->id ) {
+		return;
+	}
+
+	global $wp_query;
+	if ( ! $wp_query || empty( $wp_query->posts ) ) {
+		return;
+	}
+
+	$rows = array();
+	foreach ( $wp_query->posts as $post ) {
+		if ( ! $post instanceof WP_Post || 'custom-css-js' !== $post->post_type ) {
+			continue;
+		}
+
+		$rows[ $post->ID ] = aslc_get_related_content_list_column_items( $post->ID );
+	}
+
+	if ( empty( $rows ) ) {
+		return;
+	}
+	?>
+	<script type="text/javascript">
+		jQuery(function($) {
+			var relatedContent = <?php echo wp_json_encode( $rows ); ?>;
+			var columnHtml = '<?php echo esc_js( __( 'Related Content', 'custom-css-js' ) ); ?>';
+
+			function relatedCell(items) {
+				if (!items || !items.length) {
+					return $('<td class="aslc-related-content column-aslc-related-content">&mdash;</td>');
+				}
+
+				var $cell = $('<td class="aslc-related-content column-aslc-related-content"></td>');
+				items.forEach(function(item, index) {
+					if (index) {
+						$cell.append('<br>');
+					}
+					$cell.append(
+						$('<a></a>')
+							.attr('href', item.editUrl)
+							.text(item.title)
+					);
+				});
+
+				return $cell;
+			}
+
+			function insertHeader($table) {
+				var $titleHeader = $table.find('thead th#title, thead th.column-title').first();
+				var $header = $('<th scope="col" id="aslc-related-content" class="manage-column column-aslc-related-content"></th>').text(columnHtml);
+
+				if ($table.find('thead th.column-aslc-related-content').length) {
+					return;
+				}
+
+				if ($titleHeader.length) {
+					$titleHeader.after($header);
+				} else {
+					$table.find('thead tr').append($header);
+				}
+
+				var $footerTitle = $table.find('tfoot th#title, tfoot th.column-title').first();
+				var $footerHeader = $header.clone();
+				if ($footerTitle.length) {
+					$footerTitle.after($footerHeader);
+				} else {
+					$table.find('tfoot tr').append($footerHeader);
+				}
+			}
+
+			$('.wp-list-table.posts').each(function() {
+				var $table = $(this);
+				insertHeader($table);
+
+				$table.find('tbody tr[id^="post-"]').each(function() {
+					var $row = $(this);
+					var postId = $row.attr('id').replace('post-', '');
+
+					if ($row.children('.column-aslc-related-content').length) {
+						return;
+					}
+
+					var $titleCell = $row.children('.title, .column-title').first();
+					var $cell = relatedCell(relatedContent[postId] || []);
+					if ($titleCell.length) {
+						$titleCell.after($cell);
+					} else {
+						$row.append($cell);
+					}
+				});
+			});
+		});
+	</script>
+	<?php
+}
+
+function aslc_get_related_content_list_column_items( $code_id ) {
+	$items = array();
+
+	foreach ( aslc_get_related_content_ids_for_code( $code_id ) as $related_id ) {
+		$related_post = get_post( $related_id );
+		if ( ! $related_post || ! current_user_can( 'edit_post', $related_id ) ) {
+			continue;
+		}
+
+		$title = get_the_title( $related_post );
+		if ( '' === $title ) {
+			$title = sprintf( __( '(no title) #%d', 'custom-css-js' ), $related_id );
+		}
+
+		$edit_link = get_edit_post_link( $related_id, 'raw' );
+		if ( $edit_link ) {
+			$items[] = array(
+				'title'   => $title,
+				'editUrl' => $edit_link,
+			);
+		}
+	}
+
+	return $items;
 }
 
 function aslc_enqueue_relationship_assets( $hook ) {

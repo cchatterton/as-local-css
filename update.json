@@ -1,6 +1,6 @@
 {
-  "version": "0.4.7",
-  "body": "## 0.4.7 - 2026-10-03\n\n- Ensure the Related Content list-table column remains available when column-layout tools filter the custom code columns.\n",
+  "version": "0.4.8",
+  "body": "## 0.4.8 - 2026-10-03\n\n- Add a rendered-table fallback so the Related Content column appears on saved custom-code column layouts.\n",
   "requires": "7.0",
   "requires_php": "7.4"
 }

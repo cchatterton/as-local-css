@@ -2,6 +2,10 @@
 
 All notable changes to AS Local CSS are recorded here.
 
+## 0.4.8 - 2026-10-03
+
+- Add a rendered-table fallback so the Related Content column appears on saved custom-code column layouts.
+
 ## 0.4.7 - 2026-10-03
 
 - Ensure the Related Content list-table column remains available when column-layout tools filter the custom code columns.
