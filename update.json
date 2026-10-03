@@ -1,6 +1,6 @@
 {
-  "version": "0.4.6",
-  "body": "## 0.4.6 - 2026-10-03\n\n- Added a Related Content column to the custom code list table with same-tab editor links to each related content item.\n",
+  "version": "0.4.7",
+  "body": "## 0.4.7 - 2026-10-03\n\n- Ensure the Related Content list-table column remains available when column-layout tools filter the custom code columns.\n",
   "requires": "7.0",
   "requires_php": "7.4"
 }

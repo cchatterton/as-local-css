@@ -2,6 +2,10 @@
 
 All notable changes to AS Local CSS are recorded here.
 
+## 0.4.7 - 2026-10-03
+
+- Ensure the Related Content list-table column remains available when column-layout tools filter the custom code columns.
+
 ## 0.4.6 - 2026-10-03
 
 - Added a Related Content column to the custom code list table with same-tab editor links to each related content item.

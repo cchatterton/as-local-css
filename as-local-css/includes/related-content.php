@@ -17,8 +17,7 @@ add_action( 'save_post', 'aslc_save_relationship_meta_boxes', 20, 2 );
 add_action( 'wp_ajax_aslc_search_relationship_targets', 'aslc_ajax_search_relationship_targets' );
 add_action( 'admin_post_aslc_create_related_code', 'aslc_create_related_code' );
 add_filter( 'custom-css-js-meta-boxes', 'aslc_allow_relationship_meta_box' );
-add_filter( 'manage_custom-css-js_posts_columns', 'aslc_add_related_content_list_column', 20 );
-add_action( 'manage_custom-css-js_posts_custom_column', 'aslc_render_related_content_list_column', 20, 2 );
+add_filter( 'manage_custom-css-js_posts_columns', 'aslc_ensure_related_content_list_column', PHP_INT_MAX );
 
 function aslc_add_relationship_meta_boxes() {
 	aslc_add_custom_code_relationship_meta_box();
@@ -52,15 +51,18 @@ function aslc_allow_relationship_meta_box( array $allowed ) {
 	return array_values( array_unique( $allowed ) );
 }
 
-function aslc_add_related_content_list_column( array $columns ) {
+function aslc_ensure_related_content_list_column( array $columns ) {
+	if ( isset( $columns['aslc-related-content'] ) ) {
+		return $columns;
+	}
+
 	$updated = array();
-
 	foreach ( $columns as $key => $label ) {
-		$updated[ $key ] = $label;
-
-		if ( 'title' === $key ) {
+		if ( 'author' === $key ) {
 			$updated['aslc-related-content'] = __( 'Related Content', 'custom-css-js' );
 		}
+
+		$updated[ $key ] = $label;
 	}
 
 	if ( ! isset( $updated['aslc-related-content'] ) ) {

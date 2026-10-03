@@ -3,7 +3,7 @@ Contributors:
 Tags: CSS, JS, javascript, custom CSS, custom JS, custom code, local css
 Requires at least: 7.0
 Tested up to: 7.0
-Stable tag: 0.4.6
+Stable tag: 0.4.7
 Requires PHP: 7.4
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -27,6 +27,9 @@ Original plugin: https://wordpress.org/plugins/custom-css-js/
 Thank you to the original author and maintainers for the plugin this AlphaSys-controlled release continues from.
 
 == Changelog ==
+
+= 0.4.7 =
+* Ensure the Related Content list-table column remains available when column-layout tools filter the custom code columns.
 
 = 0.4.6 =
 * Added a Related Content column to the custom code list table with same-tab editor links to each related content item.
