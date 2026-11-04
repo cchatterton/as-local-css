@@ -2,7 +2,7 @@
 /**
  * Plugin Name: AS Local CSS
  * Description: Compatible AlphaSys-maintained release of Simple Custom CSS and JS for adding local CSS, JavaScript, and HTML snippets.
- * Version: 0.4.8
+ * Version: 0.4.9
  * Requires at least: 7.0
  * Requires PHP: 7.4
  * Update URI: https://github.com/cchatterton/as-local-css
@@ -23,13 +23,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-define( 'ASLC_VERSION', '0.4.8' );
+define( 'ASLC_VERSION', '0.4.9' );
 define( 'ASLC_PLUGIN_FILE', __FILE__ );
 define( 'ASLC_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'ASLC_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 
 require_once ASLC_PLUGIN_DIR . 'includes/controller-client.php';
 asuc_client_register( __FILE__, 'as-local-css' );
+require_once ASLC_PLUGIN_DIR . 'includes/html-snippets.php';
 require_once ASLC_PLUGIN_DIR . 'includes/editor-assets.php';
 if ( is_admin() ) {
 	require_once ASLC_PLUGIN_DIR . 'includes/related-content.php';
@@ -210,8 +211,10 @@ foreach($args as $key => $arg) {
 				}
 
 				if ( 'internal' === $where && ! strstr( $_filename, 'css' ) && ! strstr( $_filename, 'js' ) ) {
-					$post = get_post( $_filename );
-					echo $before . $post->post_content . $after;
+					$html = aslc_get_html_snippet_content( $_filename );
+					if ( '' !== $html ) {
+						echo $before . $html . $after;
+					}
 				}
 
 				if ( 'external' === $where && 'js' === $type ) {
@@ -224,9 +227,10 @@ foreach($args as $key => $arg) {
 				}
 
 				if ( 'external' === $where && 'html' === $type ) {
-					$_filename = str_replace( '.html', '', $_filename );
-					$post      = get_post( $_filename );
-					echo $post->post_content . PHP_EOL;
+					$html = aslc_get_html_snippet_content( $_filename );
+					if ( '' !== $html ) {
+						echo $html . PHP_EOL;
+					}
 				}
 			}
 		}

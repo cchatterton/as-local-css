@@ -2,6 +2,12 @@
 
 All notable changes to AS Local CSS are recorded here.
 
+## 0.4.9 - 2026-11-05
+
+- Fixed internal HTML snippets not rendering on WordPress 7.0 because filename-shaped search-tree references such as `123.html` were passed directly to `get_post()`.
+- Resolved and validated HTML snippet post IDs consistently for internal, external, and both linking modes.
+- Ignored stale or invalid HTML references instead of rendering the current page or raising a null-post warning.
+
 ## 0.4.8 - 2026-10-03
 
 - Add a rendered-table fallback so the Related Content column appears on saved custom-code column layouts.

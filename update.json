@@ -1,6 +1,6 @@
 {
-  "version": "0.4.8",
-  "body": "## 0.4.8 - 2026-10-03\n\n- Add a rendered-table fallback so the Related Content column appears on saved custom-code column layouts.\n",
+  "version": "0.4.9",
+  "body": "## 0.4.9 - 2026-11-05\n\n- Fix internal HTML snippet rendering on WordPress 7.0 by resolving filename-shaped search-tree references to validated published snippet post IDs.\n- Ignore stale or invalid HTML references safely.\n",
   "requires": "7.0",
   "requires_php": "7.4"
 }
