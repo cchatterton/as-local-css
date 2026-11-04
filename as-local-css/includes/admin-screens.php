@@ -66,7 +66,8 @@ class CustomCSSandJS_Admin {
 			'restrict_manage_posts'      => 'restrict_manage_posts',
 			'load-post.php'              => 'contextual_help',
 			'load-post-new.php'          => 'contextual_help',
-			'edit_form_before_permalink' => 'edit_form_before_permalink',
+			// Permalink editing belongs to the disabled external-file mode.
+			// 'edit_form_before_permalink' => 'edit_form_before_permalink',
 			'before_delete_post'         => 'before_delete_post',
 		);
 		foreach ( $actions as $_key => $_value ) {
@@ -83,6 +84,7 @@ class CustomCSSandJS_Admin {
 		add_filter( 'parse_query', array( $this, 'parse_query' ), 10 );
 		add_filter( 'wp_statuses_get_supported_post_types', array( $this, 'wp_statuses_get_supported_post_types' ), 20 );
 		add_action( 'wp_restore_post_revision', array( $this, 'restore_post_revision' ), 20, 2 );
+		add_action( 'admin_init', array( $this, 'migrate_inline_only_snippets' ) );
 
 		add_action( 'current_screen', array( $this, 'current_screen_2' ), 100 );
 
@@ -123,9 +125,8 @@ class CustomCSSandJS_Admin {
 		}
 
 		// Some handy variables
-		$a  = plugins_url( '/', CCJ_PLUGIN_FILE ) . 'assets';
-		$cm = $a . '/codemirror';
-		$v  = CCJ_VERSION;
+		$a = plugins_url( '/', CCJ_PLUGIN_FILE ) . 'assets';
+		$v = CCJ_VERSION;
 		$is_code_editor_screen = in_array( $hook, array( 'post-new.php', 'post.php' ), true );
 		$admin_dependencies    = array( 'jquery', 'jquery-ui-resizable', 'ccj-tipsy' );
 		if ( $is_code_editor_screen ) {
@@ -144,50 +145,10 @@ class CustomCSSandJS_Admin {
 		if ( $is_code_editor_screen ) {
 			wp_deregister_script( 'wp-codemirror' );
 
-			wp_enqueue_style( 'jquery-ui', 'https://code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css', array(), $v );
-			wp_enqueue_script( 'ccj-codemirror', $cm . '/lib/codemirror.js', array( 'jquery' ), $v, false );
-			wp_enqueue_style( 'ccj-codemirror', $cm . '/lib/codemirror.css', array(), $v );
+			wp_enqueue_style( 'ccj-jquery-ui', $a . '/jquery-ui.css', array(), $v );
+			wp_enqueue_script( 'ccj-codemirror', $a . '/codemirror.min.js', array( 'jquery' ), $v, false );
+			wp_enqueue_style( 'ccj-codemirror', $a . '/codemirror.min.css', array(), $v );
 			wp_enqueue_script( 'ccj-admin_url_rules', $a . '/ccj_admin-url_rules.js', array( 'jquery' ), $v, false );
-
-			// Add the language modes
-			$cmm = $cm . '/mode/';
-			wp_enqueue_script( 'cm-xml', $cmm . 'xml/xml.js', array( 'ccj-codemirror' ), $v, false );
-			wp_enqueue_script( 'cm-js', $cmm . 'javascript/javascript.js', array( 'ccj-codemirror' ), $v, false );
-			wp_enqueue_script( 'cm-css', $cmm . 'css/css.js', array( 'ccj-codemirror' ), $v, false );
-			wp_enqueue_script( 'cm-htmlmixed', $cmm . 'htmlmixed/htmlmixed.js', array( 'ccj-codemirror' ), $v, false );
-
-			$cma = $cm . '/addon/';
-			wp_enqueue_script( 'ccj-closebrackets', $cma . 'edit/closebrackets.js', array( 'ccj-codemirror' ), $v, false );
-			wp_enqueue_script( 'ccj-matchbrackets', $cma . 'edit/matchbrackets.js', array( 'ccj-codemirror' ), $v, false );
-			wp_enqueue_script( 'ccj-matchtags', $cma . 'edit/matchtags.js', array( 'ccj-codemirror' ), $v, false );
-			wp_enqueue_script( 'cm-dialog', $cma . 'dialog/dialog.js', array( 'ccj-codemirror' ), $v, false );
-			wp_enqueue_script( 'cm-search', $cma . 'search/search.js', array( 'ccj-codemirror' ), $v, false );
-			wp_enqueue_script( 'cm-searchcursor', $cma . 'search/searchcursor.js', array( 'ccj-codemirror' ), $v, false );
-			wp_enqueue_script( 'cm-jump-to-line', $cma . 'search/jump-to-line.js', array( 'ccj-codemirror' ), $v, false );
-			wp_enqueue_script( 'ccj-fullscreen', $cma . 'display/fullscreen.js', array( 'ccj-codemirror' ), $v, false );
-			wp_enqueue_style( 'cm-dialog', $cma . 'dialog/dialog.css', array(), $v );
-			wp_enqueue_script( 'ccj-formatting', $cm . '/lib/util/formatting.js', array( 'ccj-codemirror' ), $v, false );
-			wp_enqueue_script( 'ccj-comment', $cma . 'comment/comment.js', array( 'ccj-codemirror' ), $v, false );
-			wp_enqueue_script( 'ccj-active-line', $cma . 'selection/active-line.js', array( 'ccj-codemirror' ), $v, false );
-
-			// Hint Addons
-			wp_enqueue_script( 'ccj-hint', $cma . 'hint/show-hint.js', array( 'ccj-codemirror' ), $v, false );
-			wp_enqueue_script( 'ccj-hint-js', $cma . 'hint/javascript-hint.js', array( 'ccj-codemirror' ), $v, false );
-			wp_enqueue_script( 'ccj-hint-xml', $cma . 'hint/xml-hint.js', array( 'ccj-codemirror' ), $v, false );
-			wp_enqueue_script( 'ccj-hint-html', $cma . 'hint/html-hint.js', array( 'ccj-codemirror' ), $v, false );
-			wp_enqueue_script( 'ccj-hint-css', $cma . 'hint/css-hint.js', array( 'ccj-codemirror' ), $v, false );
-			wp_enqueue_script( 'ccj-hint-anyword', $cma . 'hint/anyword-hint.js', array( 'ccj-codemirror' ), $v, false );
-			wp_enqueue_style( 'ccj-hint', $cma . 'hint/show-hint.css', array(), $v );
-
-			// Fold Addons
-			wp_enqueue_script( 'ccj-fold-brace', $cma . 'fold/brace-fold.js', array( 'ccj-codemirror' ), $v, false );
-			wp_enqueue_script( 'ccj-fold-comment', $cma . 'fold/comment-fold.js', array( 'ccj-codemirror' ), $v, false );
-			wp_enqueue_script( 'ccj-fold-code', $cma . 'fold/foldcode.js', array( 'ccj-codemirror' ), $v, false );
-			wp_enqueue_script( 'ccj-fold-gutter', $cma . 'fold/foldgutter.js', array( 'ccj-codemirror' ), $v, false );
-			wp_enqueue_script( 'ccj-fold-indent', $cma . 'fold/indent-fold.js', array( 'ccj-codemirror' ), $v, false );
-			wp_enqueue_script( 'ccj-fold-markdown', $cma . 'fold/markdown-fold.js', array( 'ccj-codemirror' ), $v, false );
-			wp_enqueue_script( 'ccj-fold-xml', $cma . 'fold/xml-fold.js', array( 'ccj-codemirror' ), $v, false );
-			wp_enqueue_style( 'ccj-fold-gutter', $cma . 'fold/foldgutter.css', array(), $v );
 
 			// remove the CodeMirror library added by the Product Slider for WooCommerce plugin by ShapedPlugin
 			wp_enqueue_style( 'spwps-codemirror', $a . '/empty.css', array(), '1.0' );
@@ -534,18 +495,17 @@ class CustomCSSandJS_Admin {
 		}
 
 		$code_id = absint( $_GET['code_id'] );
-
-		$response = 'error';
-		if ( check_admin_referer( 'ccj-active-code-' . $code_id ) ) {
-
-			if ( 'custom-css-js' === get_post_type( $code_id ) ) {
-				$active = get_post_meta( $code_id, '_active', true );
-				$active = ( $active !== 'no' ) ? $active = 'yes' : 'no';
-
-				update_post_meta( $code_id, '_active', $active === 'yes' ? 'no' : 'yes' );
-				$this->build_search_tree();
-			}
+		if ( 'custom-css-js' !== get_post_type( $code_id ) || ! current_user_can( 'edit_post', $code_id ) ) {
+			wp_die( -1, 403 );
 		}
+
+		check_admin_referer( 'ccj-active-code-' . $code_id );
+
+		$active = get_post_meta( $code_id, '_active', true );
+		$active = ( $active !== 'no' ) ? 'yes' : 'no';
+
+		update_post_meta( $code_id, '_active', $active === 'yes' ? 'no' : 'yes' );
+		$this->build_search_tree();
 		echo $active;
 
 		die();
@@ -928,10 +888,11 @@ End of comment */ ',
 				'type'    => 'radio',
 				'default' => 'internal',
 				'values'  => array(
-					'external' => array(
-						'title'    => __( 'External File', 'custom-css-js' ),
-						'dashicon' => 'media-code',
-					),
+					// External file output is intentionally disabled. AS Local CSS is inline-only.
+					// 'external' => array(
+					// 	'title'    => __( 'External File', 'custom-css-js' ),
+					// 	'dashicon' => 'media-code',
+					// ),
 					'internal' => array(
 						'title'    => __( 'Internal', 'custom-css-js' ),
 						'dashicon' => 'editor-alignleft',
@@ -1191,6 +1152,9 @@ End of comment */ ',
 		$options['side'] = implode(',', $options['side'] );
 
 		$options['language'] = in_array( $options['language'], array( 'html', 'css', 'js' ), true ) ? $options['language'] : $defaults['language'];
+		if ( in_array( $options['language'], array( 'css', 'js' ), true ) ) {
+			$options['linking'] = 'internal';
+		}
 
 		update_post_meta( $post_id, 'options', $options );
 		$this->options[ $post_id ] = $options;
@@ -1288,6 +1252,49 @@ End of comment */ ',
 		if ( $slug ) {
 			@file_put_contents( CCJ_UPLOAD_DIR . '/' . sanitize_file_name( $slug ) . '.' . $options['language'], $file_content );
 		}
+	}
+
+	/**
+	 * Convert legacy external CSS/JS snippets to the supported inline format once.
+	 */
+	function migrate_inline_only_snippets() {
+		if ( get_option( 'aslc_inline_only_migration_0_5_0', false ) ) {
+			return;
+		}
+
+		$post_statuses = array_keys( get_post_stati() );
+		$posts         = get_posts(
+			array(
+				'post_type'      => 'custom-css-js',
+				'post_status'    => $post_statuses,
+				'posts_per_page' => -1,
+				'orderby'        => 'ID',
+				'order'          => 'ASC',
+			)
+		);
+		$changed       = false;
+
+		foreach ( $posts as $post ) {
+			$options = get_post_meta( $post->ID, 'options', true );
+			if ( ! is_array( $options )
+				|| ! isset( $options['language'], $options['linking'] )
+				|| ! in_array( $options['language'], array( 'css', 'js' ), true )
+				|| 'external' !== $options['linking'] ) {
+				continue;
+			}
+
+			$options['linking']         = 'internal';
+			$this->options[ $post->ID ] = $options;
+			update_post_meta( $post->ID, 'options', $options );
+			$this->write_code_file( $post->ID, $post->post_content, $post->post_author, $options );
+			$changed = true;
+		}
+
+		if ( $changed ) {
+			$this->build_search_tree();
+		}
+
+		update_option( 'aslc_inline_only_migration_0_5_0', true, false );
 	}
 
 	/**
@@ -1602,6 +1609,10 @@ endif;
 		}
 
 		$code_id   = isset( $_POST['code_id'] ) ? intval( $_POST['code_id'] ) : 0;
+		if ( 'custom-css-js' !== get_post_type( $code_id ) || ! current_user_can( 'edit_post', $code_id ) ) {
+			wp_die( -1, 403 );
+		}
+
 		$permalink = isset( $_POST['permalink'] ) ? $_POST['permalink'] : null;
 		$slug      = isset( $_POST['new_slug'] ) ? trim( sanitize_file_name( $_POST['new_slug'] ) ) : null;
 		$filetype  = isset( $_POST['filetype'] ) ? $_POST['filetype'] : 'css';

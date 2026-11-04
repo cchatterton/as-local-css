@@ -3,7 +3,7 @@ Contributors:
 Tags: CSS, JS, javascript, custom CSS, custom JS, custom code, local css
 Requires at least: 7.0
 Tested up to: 7.0
-Stable tag: 0.4.10
+Stable tag: 0.5.0
 Requires PHP: 7.4
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -27,6 +27,12 @@ Original plugin: https://wordpress.org/plugins/custom-css-js/
 Thank you to the original author and maintainers for the plugin this AlphaSys-controlled release continues from.
 
 == Changelog ==
+
+= 0.5.0 =
+* Require contextual edit capability checks before either legacy AJAX action can change a custom code item.
+* Upgrade the bundled CodeMirror editor from 5.28.0 to 5.65.20.
+* Make CSS and JavaScript output inline-only and migrate existing external-file snippets safely.
+* Remove the content-side Related Custom Code panel and its Create CSS/Create JS actions while retaining relationships on custom code items.
 
 = 0.4.10 =
 * Enabled complete revisions for custom code, including snippet execution options.

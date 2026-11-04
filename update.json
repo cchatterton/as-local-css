@@ -1,6 +1,6 @@
 {
-  "version": "0.4.10",
-  "body": "## 0.4.10 - 2026-11-05\n\n- Enable complete revisions for custom code and its execution options.\n- Rebuild generated CSS and JavaScript files plus the active snippet search tree after restoring a revision.\n",
+  "version": "0.5.0",
+  "body": "## 0.5.0 - 2026-11-05\n\n- Add contextual capability checks to both legacy AJAX handlers.\n- Upgrade CodeMirror to 5.65.20.\n- Make CSS and JavaScript inline-only and migrate existing external-file snippets.\n- Remove the content-side Related Custom Code panel and Create CSS/Create JS actions.\n",
   "requires": "7.0",
   "requires_php": "7.4"
 }

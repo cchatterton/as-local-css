@@ -10,30 +10,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 const ASLC_RELATED_CONTENT_META = '_aslc_related_content_ids';
 const ASLC_RELATED_CODE_META    = '_aslc_related_code_ids';
 
-add_action( 'add_meta_boxes', 'aslc_add_relationship_meta_boxes', 20 );
 add_action( 'add_meta_boxes_custom-css-js', 'aslc_add_custom_code_relationship_meta_box', 20 );
 add_action( 'admin_enqueue_scripts', 'aslc_enqueue_relationship_assets' );
 add_action( 'save_post', 'aslc_save_relationship_meta_boxes', 20, 2 );
 add_action( 'wp_ajax_aslc_search_relationship_targets', 'aslc_ajax_search_relationship_targets' );
-add_action( 'admin_post_aslc_create_related_code', 'aslc_create_related_code' );
 add_action( 'admin_footer-edit.php', 'aslc_render_related_content_list_column_fallback' );
 add_filter( 'custom-css-js-meta-boxes', 'aslc_allow_relationship_meta_box' );
 add_filter( 'manage_custom-css-js_posts_columns', 'aslc_ensure_related_content_list_column', PHP_INT_MAX );
-
-function aslc_add_relationship_meta_boxes() {
-	aslc_add_custom_code_relationship_meta_box();
-
-	foreach ( aslc_get_supported_content_post_types() as $post_type ) {
-		add_meta_box(
-			'aslc-related-code',
-			__( 'Related Custom Code', 'custom-css-js' ),
-			'aslc_render_related_code_meta_box',
-			$post_type,
-			'side',
-			'high'
-		);
-	}
-}
 
 function aslc_add_custom_code_relationship_meta_box() {
 	add_meta_box(
@@ -235,7 +218,7 @@ function aslc_enqueue_relationship_assets( $hook ) {
 	}
 
 	$screen = get_current_screen();
-	if ( ! $screen || ( 'custom-css-js' !== $screen->post_type && ! in_array( $screen->post_type, aslc_get_supported_content_post_types(), true ) ) ) {
+	if ( ! $screen || 'custom-css-js' !== $screen->post_type ) {
 		return;
 	}
 
@@ -285,24 +268,6 @@ function aslc_render_related_content_meta_box( $post ) {
 			'related_ids' => $related_ids,
 		)
 	);
-}
-
-function aslc_render_related_code_meta_box( $post ) {
-	$related_ids = aslc_get_related_code_ids_for_content( $post->ID );
-
-	wp_nonce_field( 'aslc_save_relationships', 'aslc_relationships_nonce' );
-	aslc_render_relationship_picker(
-		array(
-			'context'     => 'code',
-			'field_name'  => 'aslc_related_code_ids[]',
-			'placeholder' => __( 'Search custom code by title...', 'custom-css-js' ),
-			'button'      => __( 'Add Code', 'custom-css-js' ),
-			'empty'       => __( 'No related custom code selected.', 'custom-css-js' ),
-			'related_ids' => $related_ids,
-		)
-	);
-
-	aslc_render_create_code_links( $post );
 }
 
 function aslc_render_relationship_picker( array $args ) {
@@ -358,39 +323,6 @@ function aslc_render_relationship_item( $post_id, $field_name ) {
 		</button>
 	</li>
 	<?php
-}
-
-function aslc_render_create_code_links( WP_Post $post ) {
-	if ( ! current_user_can( 'publish_custom_csss' ) ) {
-		return;
-	}
-
-	$css_url = aslc_get_create_code_url( $post->ID, 'css' );
-	$js_url  = aslc_get_create_code_url( $post->ID, 'js' );
-	?>
-	<div class="aslc-create-code-links">
-		<a class="button" href="<?php echo esc_url( $css_url ); ?>" target="_blank" rel="noopener noreferrer">
-			<?php esc_html_e( 'Create CSS', 'custom-css-js' ); ?>
-		</a>
-		<a class="button" href="<?php echo esc_url( $js_url ); ?>" target="_blank" rel="noopener noreferrer">
-			<?php esc_html_e( 'Create JS', 'custom-css-js' ); ?>
-		</a>
-	</div>
-	<?php
-}
-
-function aslc_get_create_code_url( $content_id, $language ) {
-	return wp_nonce_url(
-		add_query_arg(
-			array(
-				'action'     => 'aslc_create_related_code',
-				'content_id' => absint( $content_id ),
-				'language'   => $language,
-			),
-			admin_url( 'admin-post.php' )
-		),
-		'aslc_create_related_code_' . absint( $content_id )
-	);
 }
 
 function aslc_save_relationship_meta_boxes( $post_id, $post ) {
@@ -455,56 +387,6 @@ function aslc_ajax_search_relationship_targets() {
 	}
 
 	wp_send_json_success( $results );
-}
-
-function aslc_create_related_code() {
-	$content_id = isset( $_GET['content_id'] ) ? absint( $_GET['content_id'] ) : 0;
-	$language   = isset( $_GET['language'] ) ? sanitize_key( wp_unslash( $_GET['language'] ) ) : 'css';
-
-	if ( ! $content_id || ! in_array( $language, array( 'css', 'js' ), true ) ) {
-		wp_die( esc_html__( 'Invalid custom code request.', 'custom-css-js' ) );
-	}
-
-	check_admin_referer( 'aslc_create_related_code_' . $content_id );
-
-	if ( ! current_user_can( 'edit_post', $content_id ) || ! current_user_can( 'publish_custom_csss' ) ) {
-		wp_die( esc_html__( 'You do not have permission to create related custom code.', 'custom-css-js' ) );
-	}
-
-	$content_post = get_post( $content_id );
-	if ( ! $content_post || ! in_array( $content_post->post_type, aslc_get_supported_content_post_types(), true ) ) {
-		wp_die( esc_html__( 'The related content item is not available.', 'custom-css-js' ) );
-	}
-
-	$code_id = wp_insert_post(
-		array(
-			'post_type'    => 'custom-css-js',
-			'post_status'  => 'draft',
-			'post_title'   => sprintf( '%s for %s', strtoupper( $language ), get_the_title( $content_post ) ),
-			'post_content' => '',
-		),
-		true
-	);
-
-	if ( is_wp_error( $code_id ) ) {
-		wp_die( esc_html__( 'The related custom code could not be created.', 'custom-css-js' ) );
-	}
-
-	update_post_meta(
-		$code_id,
-		'options',
-		array(
-			'type'     => 'header',
-			'linking'  => 'internal',
-			'priority' => 5,
-			'side'     => 'frontend',
-			'language' => $language,
-		)
-	);
-
-	aslc_sync_code_relationships( $code_id, array( $content_id ) );
-	wp_safe_redirect( get_edit_post_link( $code_id, 'raw' ) );
-	exit;
 }
 
 function aslc_prepare_relationship_search_result( WP_Post $post ) {

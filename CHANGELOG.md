@@ -2,6 +2,16 @@
 
 All notable changes to AS Local CSS are recorded here.
 
+## 0.5.0 - 2026-11-05
+
+- Added contextual `edit_post` capability checks to both legacy AJAX handlers before they can change a custom code item.
+- Upgraded the bundled CodeMirror editor from 5.28.0 to 5.65.20 and moved the editor to a locally bundled minified asset set.
+- Disabled the legacy external-file selector and permalink editor so new and edited CSS and JavaScript snippets always render inline.
+- Added a one-time migration that converts existing external CSS and JavaScript snippets to inline output and rebuilds their generated assets and search tree.
+- Removed the content-side Related Custom Code panel and its Create CSS/Create JS actions while retaining relationship management on custom code items.
+- Added a backlog-candidates file for the recommended metadata-query and output-escaping follow-up work.
+- Added WordPress integration coverage for inline migration, editor assets, relationship UI removal, and AJAX authorization.
+
 ## 0.4.10 - 2026-11-05
 
 - Enabled WordPress revisions for the `custom-css-js` post type's snippet code and execution options.

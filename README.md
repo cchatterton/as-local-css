@@ -1,7 +1,7 @@
 # AS Local CSS
 
 Author: AlphaSys
-Version: 0.4.10
+Version: 0.5.0
 Status: Production
 
 ## Purpose
@@ -12,14 +12,14 @@ AS Local CSS is an AlphaSys-maintained, compatible replacement for the WordPress
 
 - Custom code post type remains `custom-css-js`.
 - Existing options, post meta, capabilities, upload folder, AJAX actions, and editor screens are preserved.
-- Existing custom CSS, JavaScript, and HTML snippets continue to load from `wp-content/uploads/custom-css-js`.
+- Custom CSS and JavaScript snippets are rendered inline; existing external-file snippets are migrated automatically without changing their authored code.
 - Active front-end CSS snippets load in the block editor content iframe as well as on the site front end.
 - Stylesheets registered through WordPress's front-end enqueue hook load in the editor iframe before Local CSS, preserving design-token dependencies.
 - Local CSS is promoted after Gutenberg's native block styles in the editor canvas so authored rules retain front-end cascade authority.
 - The block editor content canvas receives the edited post's front-end WordPress body classes so class-scoped CSS has the same selector context.
-- Custom code can be bidirectionally related to editable content items, with new-tab editor links on both sides.
+- Custom code can be related to editable content items from the custom code editor, with relationship details retained in the custom-code list table.
 - Custom code revisions preserve both authored code and execution options, and restored revisions immediately rebuild generated assets.
-- Content editors can create related draft CSS or JS code directly from the content edit screen.
+- The bundled CodeMirror 5 editor is maintained at version 5.65.20.
 - AS Update Controller handles GitHub release discovery and installation; this plugin only registers its identity and local controller actions.
 - The interface is maintained in English only.
 
@@ -33,6 +33,7 @@ AS Local CSS is an AlphaSys-maintained, compatible replacement for the WordPress
 ## Important Notes
 
 - The plugin intentionally preserves the original `custom-css-js` text domain, post type, data keys, and upload directory for compatibility.
+- CSS and JavaScript use inline output only; the legacy external-file selector and permalink editor are intentionally disabled.
 - Only active snippets assigned to the front end are mirrored into the block editor content canvas.
 - Gutenberg's native editor classes remain intact when front-end body classes are added.
 - JavaScript and HTML snippets are not loaded in the editor iframe.
