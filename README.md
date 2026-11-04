@@ -63,6 +63,14 @@ The script creates:
 
 The ZIP contains `as-local-css/` as its top-level directory.
 
+After publishing the matching GitHub release, refresh the AS Update Controller catalogue:
+
+```bash
+python3 scripts/publish-catalogue.py --repo as-local-css --expect-version <version>
+```
+
+Run that command from a current `cchatterton/as-update-controller` checkout, commit and push `catalogue.json`, then verify the public raw catalogue entry and checksum. The plugin release is incomplete until this catalogue publication succeeds.
+
 ## GitHub Update Metadata
 
 - GitHub owner: `cchatterton`
