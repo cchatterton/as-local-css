@@ -2,6 +2,13 @@
 
 All notable changes to AS Local CSS are recorded here.
 
+## 0.4.10 - 2026-11-05
+
+- Enabled WordPress revisions for the `custom-css-js` post type's snippet code and execution options.
+- Registered the `options` post meta as revisioned so language, location, linking mode, side, and priority restore with the code.
+- Rebuilt generated CSS and JavaScript files and the active snippet search tree after a revision is restored.
+- Added regression coverage for revision registration and regenerated CSS output.
+
 ## 0.4.9 - 2026-11-05
 
 - Fixed internal HTML snippets not rendering on WordPress 7.0 because filename-shaped search-tree references such as `123.html` were passed directly to `get_post()`.

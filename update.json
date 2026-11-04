@@ -1,6 +1,6 @@
 {
-  "version": "0.4.9",
-  "body": "## 0.4.9 - 2026-11-05\n\n- Fix internal HTML snippet rendering on WordPress 7.0 by resolving filename-shaped search-tree references to validated published snippet post IDs.\n- Ignore stale or invalid HTML references safely.\n",
+  "version": "0.4.10",
+  "body": "## 0.4.10 - 2026-11-05\n\n- Enable complete revisions for custom code and its execution options.\n- Rebuild generated CSS and JavaScript files plus the active snippet search tree after restoring a revision.\n",
   "requires": "7.0",
   "requires_php": "7.4"
 }

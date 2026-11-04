@@ -79,6 +79,17 @@ class CustomCSSandJS_Install {
         );
 
         register_post_type( 'custom-css-js', $args );
+
+        register_post_meta(
+            'custom-css-js',
+            'options',
+            array(
+                'type'              => 'array',
+                'single'            => true,
+                'show_in_rest'      => false,
+                'revisions_enabled' => true,
+            )
+        );
     }
 
  
