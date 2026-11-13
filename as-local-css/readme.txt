@@ -3,7 +3,7 @@ Contributors:
 Tags: CSS, JS, javascript, custom CSS, custom JS, custom code, local css
 Requires at least: 7.0
 Tested up to: 7.0
-Stable tag: 0.6.2
+Stable tag: 0.6.3
 Requires PHP: 7.4
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -27,6 +27,11 @@ Original plugin: https://wordpress.org/plugins/custom-css-js/
 Thank you to the original author and maintainers for the plugin this AlphaSys-controlled release continues from.
 
 == Changelog ==
+
+= 0.6.3 =
+* Add a CSS Delivery submenu with inline legacy and generated-file choices.
+* Switch CSS delivery immediately without changing JavaScript or HTML output.
+* Continue maintaining generated bundles while inline mode is selected.
 
 = 0.6.2 =
 * Build CSS bundles from the same generated per-snippet files used by inline delivery.

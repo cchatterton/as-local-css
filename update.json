@@ -1,6 +1,6 @@
 {
-  "version": "0.6.2",
-  "body": "## 0.6.2 - 2026-11-13\n\n- Build CSS bundles from the same generated per-snippet files used by inline delivery.\n- Refresh all bundles on plugin activation and update without a migration-version flag.\n- Recover obsolete bundles automatically on the first request after upgrading.\n- Retain the last known-good bundle or inline fallback when a generated snippet file cannot be read.\n",
+  "version": "0.6.3",
+  "body": "## 0.6.3 - 2026-11-13\n\n- Add a CSS Delivery submenu with inline legacy and generated-file choices.\n- Switch CSS delivery immediately without changing JavaScript or HTML output.\n- Continue maintaining generated bundles while inline mode is selected.\n",
   "requires": "7.0",
   "requires_php": "7.4"
 }

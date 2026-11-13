@@ -8,6 +8,26 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 define( 'ASLC_CSS_BUNDLE_SCHEMA', 3 );
+define( 'ASLC_CSS_DELIVERY_OPTION', 'aslc_css_delivery_mode' );
+
+/**
+ * Return the selected CSS delivery mode.
+ *
+ * @return string Either file or inline.
+ */
+function aslc_get_css_delivery_mode() {
+	$mode = get_option( ASLC_CSS_DELIVERY_OPTION, 'file' );
+	return 'inline' === $mode ? 'inline' : 'file';
+}
+
+/**
+ * Determine whether generated-file CSS delivery is selected.
+ *
+ * @return bool
+ */
+function aslc_use_css_file_delivery() {
+	return 'file' === aslc_get_css_delivery_mode();
+}
 
 /**
  * Return the supported CSS delivery contexts.
@@ -127,6 +147,10 @@ add_filter( 'style_loader_tag', 'aslc_double_quote_bundle_link_attributes', PHP_
  * @return bool Whether a valid bundle was enqueued.
  */
 function aslc_enqueue_css_bundle( $side, $handle = '' ) {
+	if ( ! aslc_use_css_file_delivery() ) {
+		return false;
+	}
+
 	$entry = aslc_get_css_bundle_entry( $side );
 	if ( false === $entry ) {
 		return false;

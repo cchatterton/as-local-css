@@ -55,6 +55,7 @@ function aslc_bundle_test_post( $title, $css, $location, $priority, $side = 'fro
 }
 
 $post_ids = array();
+$original_delivery_mode = get_option( ASLC_CSS_DELIVERY_OPTION, false );
 $admin    = new CustomCSSandJS_Admin();
 $rebuild  = new ReflectionMethod( 'CustomCSSandJS_Admin', 'build_search_tree' );
 if ( PHP_VERSION_ID < 80100 ) {
@@ -142,6 +143,15 @@ try {
 	$inline_output = ob_get_clean();
 	aslc_bundle_test( '' === $inline_output, 'Inline frontend CSS was printed while a valid bundle was active.' );
 
+	update_option( ASLC_CSS_DELIVERY_OPTION, 'inline', false );
+	wp_dequeue_style( 'aslc-css-frontend' );
+	aslc_bundle_test( false === aslc_enqueue_css_bundle( 'frontend' ), 'Inline mode still enqueued the generated CSS bundle.' );
+	ob_start();
+	CustomCSSandJS()->{'print_frontend-css-header-internal'}();
+	$legacy_inline_output = ob_get_clean();
+	aslc_bundle_test( false !== strpos( $legacy_inline_output, '.aslc-bundle-header-late' ), 'Inline mode did not print the generated snippet CSS.' );
+	update_option( ASLC_CSS_DELIVERY_OPTION, 'file', false );
+
 	$old_file = $frontend['file'];
 	file_put_contents(
 		trailingslashit( CCJ_UPLOAD_DIR ) . $post_ids[0] . '.css',
@@ -195,6 +205,11 @@ try {
 		wp_delete_post( $post_id, true );
 	}
 	$rebuild->invoke( $admin );
+	if ( false === $original_delivery_mode ) {
+		delete_option( ASLC_CSS_DELIVERY_OPTION );
+	} else {
+		update_option( ASLC_CSS_DELIVERY_OPTION, $original_delivery_mode, false );
+	}
 	wp_dequeue_style( 'aslc-css-frontend' );
 	wp_dequeue_style( 'aslc-editor-css-bundle' );
 }

@@ -2,6 +2,12 @@
 
 All notable changes to AS Local CSS are recorded here.
 
+## 0.6.3 - 2026-11-13
+
+- Added a CSS Delivery submenu with inline legacy and generated-file delivery choices.
+- Restored the original per-record inline rendering path when inline mode is selected.
+- Kept JavaScript and HTML delivery unchanged and continued rebuilding bundles so file mode remains ready to select.
+
 ## 0.6.2 - 2026-11-13
 
 - Compiled bundles from the generated per-snippet CSS files used by inline delivery instead of potentially stale database content.

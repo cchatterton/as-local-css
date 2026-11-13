@@ -30,7 +30,14 @@ function __( $text ) {
 	return $text;
 }
 function get_option( $name, $default = false ) {
-	return 'ccj_settings' === $name ? array( 'remove_comments' => false ) : $default;
+	global $aslc_test_delivery_mode;
+	if ( 'ccj_settings' === $name ) {
+		return array( 'remove_comments' => false );
+	}
+	if ( 'aslc_css_delivery_mode' === $name ) {
+		return $aslc_test_delivery_mode;
+	}
+	return $default;
 }
 function get_post( $post_id ) {
 	$priorities = array( 101 => 10, 102 => 2, 103 => 1 );
@@ -61,6 +68,16 @@ class WP_Error {
 }
 
 require dirname( __DIR__ ) . '/as-local-css/includes/css-bundles.php';
+
+$aslc_test_delivery_mode = 'file';
+if ( ! aslc_use_css_file_delivery() ) {
+	throw new RuntimeException( 'Generated-file mode was not recognised.' );
+}
+$aslc_test_delivery_mode = 'inline';
+if ( aslc_use_css_file_delivery() ) {
+	throw new RuntimeException( 'Inline mode still enabled generated-file delivery.' );
+}
+$aslc_test_delivery_mode = 'file';
 
 $tree = array(
 	'frontend-css-footer-internal' => array( 10 => array( '101.css' ) ),
