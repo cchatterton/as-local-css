@@ -268,6 +268,7 @@ function aslc_scan_css_record( $post_id, $css ) {
 			'%SM%' => '48rem',
 			'%MD%' => '68rem',
 			'%LG%' => '75rem',
+			'%XL%' => '80rem',
 		);
 	if ( preg_match_all( '/%[A-Z][A-Z0-9_-]*%/', $without_comments, $token_matches, PREG_OFFSET_CAPTURE ) ) {
 		foreach ( $token_matches[0] as $token_match ) {

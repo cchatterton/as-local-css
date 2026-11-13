@@ -44,7 +44,7 @@ function aslc_get_css_priority_order() {
 /**
  * Return the default breakpoint-token replacements.
  *
- * The existing AlphaSys CSS convention uses a three-point responsive scale.
+ * The existing AlphaSys CSS convention uses a four-point responsive scale.
  * Sites can replace, remove, or extend these rows on the CSS Breakpoints page.
  *
  * @return array<string,string> Token to CSS length.
@@ -54,6 +54,7 @@ function aslc_get_default_css_breakpoint_tokens() {
 		'%SM%' => '48rem',
 		'%MD%' => '68rem',
 		'%LG%' => '75rem',
+		'%XL%' => '80rem',
 	);
 }
 

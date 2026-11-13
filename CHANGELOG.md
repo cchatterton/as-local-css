@@ -2,6 +2,11 @@
 
 All notable changes to AS Local CSS are recorded here.
 
+## 0.6.10 - 2026-11-13
+
+- Replaced the oversized breakpoint list with a compact settings card using tighter rows, constrained inputs, monospace tokens, quiet row actions, a card-level add control, and a right-aligned save action.
+- Added `%XL%` at `80rem` to the complete default breakpoint set.
+
 ## 0.6.9 - 2026-11-13
 
 - Restyled the CSS Breakpoints repeater as a native WordPress post list with standard headings, responsive primary-column behavior, hover row actions, empty state, and Add New control.
