@@ -2,6 +2,10 @@
 
 All notable changes to AS Local CSS are recorded here.
 
+## 0.6.8 - 2026-11-13
+
+- Completed Update 2a by preloading the full AlphaSys breakpoint set: `%SM%` at `48rem`, `%MD%` at `68rem`, and `%LG%` at `75rem`.
+
 ## 0.6.7 - 2026-11-13
 
 - Added the Update 2a CSS Breakpoints submenu with repeatable token and CSS-length rows.

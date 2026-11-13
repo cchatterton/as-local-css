@@ -77,7 +77,10 @@ require dirname( __DIR__ ) . '/as-local-css/includes/css-bundles.php';
 
 $aslc_test_delivery_mode = 'file';
 $aslc_test_priority_order = '5-to-1';
-$aslc_test_breakpoints = array( '%MD%' => '68rem' );
+$aslc_test_breakpoints = aslc_get_default_css_breakpoint_tokens();
+if ( array( '%SM%' => '48rem', '%MD%' => '68rem', '%LG%' => '75rem' ) !== $aslc_test_breakpoints ) {
+	throw new RuntimeException( 'The complete default breakpoint set is not available.' );
+}
 if ( ! aslc_use_css_file_delivery() ) {
 	throw new RuntimeException( 'Generated-file mode was not recognised.' );
 }

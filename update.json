@@ -1,6 +1,6 @@
 {
-  "version": "0.6.7",
-  "body": "## 0.6.7 - 2026-11-13\n\n- Add the Update 2a CSS Breakpoints submenu with repeatable token and CSS-length mappings.\n- Resolve configured tokens in generated CSS while preserving authored records and inline output.\n- Refresh bundles after breakpoint changes and block unresolved uppercase breakpoint tokens.\n",
+  "version": "0.6.8",
+  "body": "## 0.6.8 - 2026-11-13\n\n- Complete Update 2a with the CSS Breakpoints submenu and repeatable token-to-length mappings.\n- Preload %SM% at 48rem, %MD% at 68rem, and %LG% at 75rem.\n- Resolve configured tokens in generated CSS while preserving authored records and inline output.\n",
   "requires": "7.0",
   "requires_php": "7.4"
 }

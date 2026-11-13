@@ -264,7 +264,11 @@ function aslc_scan_css_record( $post_id, $css ) {
 
 	$configured_tokens = function_exists( 'aslc_get_css_breakpoint_tokens' )
 		? aslc_get_css_breakpoint_tokens()
-		: array( '%MD%' => '68rem' );
+		: array(
+			'%SM%' => '48rem',
+			'%MD%' => '68rem',
+			'%LG%' => '75rem',
+		);
 	if ( preg_match_all( '/%[A-Z][A-Z0-9_-]*%/', $without_comments, $token_matches, PREG_OFFSET_CAPTURE ) ) {
 		foreach ( $token_matches[0] as $token_match ) {
 			if ( isset( $configured_tokens[ $token_match[0] ] ) ) {
