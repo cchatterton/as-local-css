@@ -23,6 +23,11 @@ if ( array() !== aslc_scan_css_record( 10, $css ) ) {
 	throw new RuntimeException( 'Valid CSS or an approved token produced a false positive.' );
 }
 
+$unknown_token = aslc_scan_css_record( 11, '@media (min-width: %XL%) { .valid { display: block; } }' );
+if ( 'unresolved_breakpoint_token' !== ( $unknown_token[0]['code'] ?? '' ) ) {
+	throw new RuntimeException( 'An unresolved breakpoint token was not reported.' );
+}
+
 $broken = <<<'CSS'
 & .top-level { color: red; }
 .broken {

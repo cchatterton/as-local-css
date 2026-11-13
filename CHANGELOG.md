@@ -2,6 +2,12 @@
 
 All notable changes to AS Local CSS are recorded here.
 
+## 0.6.7 - 2026-11-13
+
+- Added the Update 2a CSS Breakpoints submenu with repeatable token and CSS-length rows.
+- Resolved configured breakpoint tokens when generated bundles are compiled without modifying authored CSS or legacy inline delivery.
+- Added the existing `%MD%` to `68rem` convention by default, rebuilt bundles immediately after breakpoint saves, and blocked generated delivery when an uppercase breakpoint token has no configured replacement.
+
 ## 0.6.6 - 2026-11-13
 
 - Scanned the exact generated CSS files referenced by the active search tree as part of every compilation.

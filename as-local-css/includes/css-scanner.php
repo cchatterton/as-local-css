@@ -121,7 +121,7 @@ function aslc_scan_css_records( $search_tree = null ) {
  * @return array
  */
 function aslc_get_bundle_blocking_css_findings( array $findings ) {
-	$blocking_codes = array( 'unclosed_brace', 'unclosed_comment', 'unclosed_string' );
+	$blocking_codes = array( 'unclosed_brace', 'unclosed_comment', 'unclosed_string', 'unresolved_breakpoint_token' );
 	return array_values(
 		array_filter(
 			$findings,
@@ -260,6 +260,28 @@ function aslc_scan_css_record( $post_id, $css ) {
 	);
 	if ( ! is_string( $without_comments ) ) {
 		$without_comments = $css;
+	}
+
+	$configured_tokens = function_exists( 'aslc_get_css_breakpoint_tokens' )
+		? aslc_get_css_breakpoint_tokens()
+		: array( '%MD%' => '68rem' );
+	if ( preg_match_all( '/%[A-Z][A-Z0-9_-]*%/', $without_comments, $token_matches, PREG_OFFSET_CAPTURE ) ) {
+		foreach ( $token_matches[0] as $token_match ) {
+			if ( isset( $configured_tokens[ $token_match[0] ] ) ) {
+				continue;
+			}
+			$findings[] = aslc_css_scan_finding(
+				$post_id,
+				1 + substr_count( substr( $without_comments, 0, $token_match[1] ), "\n" ),
+				'critical',
+				'unresolved_breakpoint_token',
+				sprintf(
+					/* translators: %s: unresolved breakpoint token. */
+					__( 'Breakpoint token %s has no replacement configured under CSS Breakpoints.', 'custom-css-js' ),
+					$token_match[0]
+				)
+			);
+		}
 	}
 
 	$patterns = array(

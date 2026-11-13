@@ -7,9 +7,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'ASLC_CSS_BUNDLE_SCHEMA', 4 );
+define( 'ASLC_CSS_BUNDLE_SCHEMA', 5 );
 define( 'ASLC_CSS_DELIVERY_OPTION', 'aslc_css_delivery_mode' );
 define( 'ASLC_CSS_ORDER_OPTION', 'aslc_css_priority_order' );
+define( 'ASLC_CSS_BREAKPOINTS_OPTION', 'aslc_css_breakpoint_tokens' );
 
 /**
  * Return the selected CSS delivery mode.
@@ -38,6 +39,82 @@ function aslc_use_css_file_delivery() {
 function aslc_get_css_priority_order() {
 	$order = get_option( ASLC_CSS_ORDER_OPTION, '5-to-1' );
 	return '1-to-5' === $order ? '1-to-5' : '5-to-1';
+}
+
+/**
+ * Return the default breakpoint-token replacements.
+ *
+ * The existing AlphaSys CSS convention resolves %MD% to the 68rem desktop
+ * breakpoint. Sites can replace or remove this row on the CSS Breakpoints page.
+ *
+ * @return array<string,string> Token to CSS length.
+ */
+function aslc_get_default_css_breakpoint_tokens() {
+	return array( '%MD%' => '68rem' );
+}
+
+/**
+ * Normalise submitted breakpoint repeater rows.
+ *
+ * @param array $rows Repeater rows or an existing token-to-value map.
+ * @return array<string,string> Valid unique token replacements.
+ */
+function aslc_sanitize_css_breakpoint_tokens( $rows ) {
+	if ( ! is_array( $rows ) ) {
+		return array();
+	}
+
+	$tokens = array();
+	foreach ( $rows as $key => $row ) {
+		if ( is_array( $row ) ) {
+			$name  = isset( $row['token'] ) ? $row['token'] : '';
+			$value = isset( $row['value'] ) ? $row['value'] : '';
+		} else {
+			$name  = $key;
+			$value = $row;
+		}
+
+		$name  = strtoupper( trim( (string) $name ) );
+		$value = strtolower( preg_replace( '/\s+/', '', trim( (string) $value ) ) );
+		$name  = trim( $name, '%' );
+
+		if ( ! preg_match( '/^[A-Z][A-Z0-9_-]{0,31}$/', $name ) ) {
+			continue;
+		}
+		if ( ! preg_match( '/^(?:0|(?:\d+(?:\.\d+)?|\.\d+)(?:px|rem|em|ch|ex|vw|vh|vmin|vmax|cm|mm|in|pt|pc))$/', $value ) ) {
+			continue;
+		}
+
+		$tokens[ '%' . $name . '%' ] = $value;
+	}
+
+	return $tokens;
+}
+
+/**
+ * Return configured breakpoint-token replacements.
+ *
+ * @return array<string,string> Token to CSS length.
+ */
+function aslc_get_css_breakpoint_tokens() {
+	$saved = get_option( ASLC_CSS_BREAKPOINTS_OPTION, false );
+	if ( false === $saved ) {
+		return aslc_get_default_css_breakpoint_tokens();
+	}
+
+	return aslc_sanitize_css_breakpoint_tokens( $saved );
+}
+
+/**
+ * Resolve configured breakpoint tokens in compiled CSS without changing the
+ * authored snippet files used by legacy inline delivery.
+ *
+ * @param string $css Compiled CSS.
+ * @return string CSS with configured breakpoint tokens resolved once.
+ */
+function aslc_replace_css_breakpoint_tokens( $css ) {
+	$tokens = aslc_get_css_breakpoint_tokens();
+	return empty( $tokens ) ? $css : strtr( $css, $tokens );
 }
 
 /**
@@ -450,7 +527,7 @@ function aslc_compile_css_bundle( array $search_tree, $side ) {
 		array_unshift( $parts, '/* AS Local CSS generated bundle. Do not edit. */' );
 	}
 
-	return implode( PHP_EOL . PHP_EOL, $parts ) . PHP_EOL;
+	return aslc_replace_css_breakpoint_tokens( implode( PHP_EOL . PHP_EOL, $parts ) . PHP_EOL );
 }
 
 /**

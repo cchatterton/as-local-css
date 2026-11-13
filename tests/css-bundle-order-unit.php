@@ -30,7 +30,7 @@ function __( $text ) {
 	return $text;
 }
 function get_option( $name, $default = false ) {
-	global $aslc_test_delivery_mode, $aslc_test_priority_order;
+	global $aslc_test_delivery_mode, $aslc_test_priority_order, $aslc_test_breakpoints;
 	if ( 'ccj_settings' === $name ) {
 		return array( 'remove_comments' => false );
 	}
@@ -39,6 +39,9 @@ function get_option( $name, $default = false ) {
 	}
 	if ( 'aslc_css_priority_order' === $name ) {
 		return $aslc_test_priority_order;
+	}
+	if ( 'aslc_css_breakpoint_tokens' === $name ) {
+		return $aslc_test_breakpoints;
 	}
 	return $default;
 }
@@ -74,6 +77,7 @@ require dirname( __DIR__ ) . '/as-local-css/includes/css-bundles.php';
 
 $aslc_test_delivery_mode = 'file';
 $aslc_test_priority_order = '5-to-1';
+$aslc_test_breakpoints = array( '%MD%' => '68rem' );
 if ( ! aslc_use_css_file_delivery() ) {
 	throw new RuntimeException( 'Generated-file mode was not recognised.' );
 }
@@ -92,7 +96,7 @@ $tree = array(
 );
 $generated_css = array(
 	101 => '.priority-10 {}',
-	102 => '.priority-2 {}',
+	102 => '@media (min-width: %MD%) { .priority-2 {} }',
 	103 => '.priority-1-from-file {}',
 );
 foreach ( $generated_css as $post_id => $contents ) {
@@ -114,6 +118,15 @@ if ( ! is_string( $css )
 }
 if ( false !== strpos( $css, '.priority-1 {}' ) ) {
 	throw new RuntimeException( 'The bundle used stale database content instead of the generated CSS file.' );
+}
+if ( false !== strpos( $css, '%MD%' ) || false === strpos( $css, '@media (min-width: 68rem)' ) ) {
+	throw new RuntimeException( 'Configured breakpoint tokens were not replaced in the generated bundle.' );
+}
+if ( array( '%MD%' => '68rem' ) !== aslc_sanitize_css_breakpoint_tokens( array( array( 'token' => 'md', 'value' => ' 68REM ' ) ) ) ) {
+	throw new RuntimeException( 'Breakpoint repeater values were not normalised.' );
+}
+if ( array() !== aslc_sanitize_css_breakpoint_tokens( array( array( 'token' => 'bad token', 'value' => 'javascript:1' ) ) ) ) {
+	throw new RuntimeException( 'Invalid breakpoint repeater values were accepted.' );
 }
 if ( false === strpos( $css, 'Local Start ID:103 Author:7' )
 	|| false === strpos( $css, 'Local End ID:103 Author:7' ) ) {

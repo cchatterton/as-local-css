@@ -1,7 +1,7 @@
 # AS Local CSS
 
 Author: AlphaSys
-Version: 0.6.6
+Version: 0.6.7
 Status: Production
 
 ## Purpose
@@ -17,6 +17,7 @@ AS Local CSS is an AlphaSys-maintained, compatible replacement for the WordPress
 - Activating or updating the plugin refreshes all CSS bundles; obsolete bundle schemas also self-heal on the first request without a migration-version flag.
 - A CSS Delivery submenu lets administrators switch between original inline CSS output and the generated-file bundle without changing JavaScript or HTML delivery.
 - CSS Delivery also controls whether record priorities are emitted from 1 to 5 or from 5 to 1, with the numeric direction applied to legacy priorities 6 through 10.
+- A separate CSS Breakpoints submenu manages repeatable token-to-length mappings; generated bundles resolve tokens such as `%MD%` without changing authored records or legacy inline output.
 - Published CSS records are scanned on saves and bundle refreshes; a CSS Errors submenu shows a native WordPress findings table, an update-style counter, descriptions, line numbers, and direct edit links.
 - Active front-end CSS snippets load in the block editor content iframe as well as on the site front end.
 - Stylesheets registered through WordPress's front-end enqueue hook load in the editor iframe before Local CSS, preserving design-token dependencies.
