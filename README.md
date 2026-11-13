@@ -1,7 +1,7 @@
 # AS Local CSS
 
 Author: AlphaSys
-Version: 0.6.4
+Version: 0.6.5
 Status: Production
 
 ## Purpose
@@ -39,7 +39,7 @@ AS Local CSS is an AlphaSys-maintained, compatible replacement for the WordPress
 
 - The plugin intentionally preserves the original `custom-css-js` text domain, post type, data keys, and upload directory for compatibility.
 - The legacy per-snippet external-file selector and permalink editor remain disabled; CSS delivery is managed centrally through generated bundles.
-- Frontend CSS is enqueued in the document head. Snippets are ordered globally by their documented priority; header/footer position only breaks ties between snippets at the same priority.
+- Frontend CSS is linked in the document head at the legacy inline-CSS hook position. Snippets are ordered globally by their documented priority; header/footer position only breaks ties between snippets at the same priority.
 - Relative URLs in authored CSS resolve from the generated bundle in `wp-content/uploads/custom-css-js`; use root-relative or absolute asset URLs when location matters.
 - Only active snippets assigned to the front end are mirrored into the block editor content canvas.
 - Gutenberg's native editor classes remain intact when front-end body classes are added.

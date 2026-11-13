@@ -126,28 +126,53 @@ function aslc_ensure_current_css_bundles() {
 add_action( 'init', 'aslc_ensure_current_css_bundles', 20 );
 
 /**
- * Enqueue the active front-end CSS bundle.
+ * Print one generated CSS bundle at the legacy inline-CSS hook position.
+ *
+ * Enqueued styles are normally printed by WordPress at wp_head priority 8.
+ * Legacy Local CSS is printed at priority 10, after that stylesheet pass.
+ * Printing the generated link at the same position preserves that cascade.
+ *
+ * @param string $side Frontend, admin, or login.
+ * @return bool Whether a valid bundle link was printed.
  */
-function aslc_enqueue_frontend_css_bundle() {
-	aslc_enqueue_css_bundle( 'frontend' );
-}
-add_action( 'wp_enqueue_scripts', 'aslc_enqueue_frontend_css_bundle', PHP_INT_MAX );
+function aslc_print_css_bundle_link( $side ) {
+	if ( ! aslc_use_css_file_delivery() ) {
+		return false;
+	}
 
-/**
- * Enqueue the active WordPress admin CSS bundle.
- */
-function aslc_enqueue_admin_css_bundle() {
-	aslc_enqueue_css_bundle( 'admin' );
-}
-add_action( 'admin_enqueue_scripts', 'aslc_enqueue_admin_css_bundle', PHP_INT_MAX );
+	$entry = aslc_get_css_bundle_entry( $side );
+	if ( false === $entry ) {
+		return false;
+	}
 
-/**
- * Enqueue the active login CSS bundle.
- */
-function aslc_enqueue_login_css_bundle() {
-	aslc_enqueue_css_bundle( 'login' );
+	$handle     = 'aslc-css-' . $side;
+	$bundle_url = trailingslashit( CCJ_UPLOAD_URL ) . rawurlencode( $entry['file'] );
+	printf(
+		'<link rel="stylesheet" id="%1$s-css" href="%2$s" media="all">' . "\n",
+		esc_attr( $handle ),
+		esc_url( $bundle_url )
+	);
+
+	return true;
 }
-add_action( 'login_enqueue_scripts', 'aslc_enqueue_login_css_bundle', PHP_INT_MAX );
+
+/** Print the front-end bundle where legacy inline CSS is printed. */
+function aslc_print_frontend_css_bundle() {
+	aslc_print_css_bundle_link( 'frontend' );
+}
+add_action( 'wp_head', 'aslc_print_frontend_css_bundle', 10 );
+
+/** Print the WordPress admin bundle where legacy inline CSS is printed. */
+function aslc_print_admin_css_bundle() {
+	aslc_print_css_bundle_link( 'admin' );
+}
+add_action( 'admin_head', 'aslc_print_admin_css_bundle', 10 );
+
+/** Print the login bundle where legacy inline CSS is printed. */
+function aslc_print_login_css_bundle() {
+	aslc_print_css_bundle_link( 'login' );
+}
+add_action( 'login_head', 'aslc_print_login_css_bundle', 10 );
 
 /**
  * Use double-quoted attributes for AS Local CSS bundle link elements.

@@ -2,6 +2,11 @@
 
 All notable changes to AS Local CSS are recorded here.
 
+## 0.6.5 - 2026-11-13
+
+- Printed generated CSS links at the same hook and priority as legacy inline CSS instead of the earlier standard WordPress stylesheet pass.
+- Preserved the working theme and plugin cascade when switching between inline and generated-file delivery.
+
 ## 0.6.4 - 2026-11-13
 
 - Added selectable top-to-bottom CSS priority ordering for both inline and generated-file delivery.

@@ -129,6 +129,16 @@ try {
 	aslc_bundle_test( true === $rebuild->invoke( $admin ), 'The descending CSS order did not rebuild successfully.' );
 	$frontend = aslc_get_css_bundle_entry( 'frontend' );
 
+	aslc_bundle_test(
+		10 === has_action( 'wp_head', 'aslc_print_frontend_css_bundle' ),
+		'The generated frontend stylesheet was not registered at the legacy inline-CSS hook priority.'
+	);
+	ob_start();
+	aslc_bundle_test( aslc_print_css_bundle_link( 'frontend' ), 'The frontend CSS bundle link was not printed.' );
+	$bundle_link = ob_get_clean();
+	aslc_bundle_test( false !== strpos( $bundle_link, 'id="aslc-css-frontend-css"' ), 'The generated bundle link has the wrong ID.' );
+	aslc_bundle_test( false !== strpos( $bundle_link, $frontend['file'] ), 'The generated bundle link does not use the current file.' );
+
 	wp_dequeue_style( 'aslc-css-frontend' );
 	aslc_bundle_test( aslc_enqueue_css_bundle( 'frontend' ), 'The frontend CSS bundle was not enqueued.' );
 	aslc_bundle_test( wp_style_is( 'aslc-css-frontend', 'enqueued' ), 'The frontend bundle handle is not in the style queue.' );
