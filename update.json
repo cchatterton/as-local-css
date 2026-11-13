@@ -1,6 +1,6 @@
 {
-  "version": "0.7.2",
-  "body": "## 0.7.2 - 2026-11-13\n\n- Refine the CSS Errors table with content-sized utility columns and a separate ID column.\n- Give descriptions more space, cap them at two lines on common desktop widths, and shorten Edit CSS actions to Edit.\n",
+  "version": "0.7.3",
+  "body": "## 0.7.3 - 2026-11-13\n\n- Shorten repetitive CSS finding descriptions so the table gets directly to the point.\n- Move detailed explanations, severity guidance, and suggested fixes into the native WordPress Help panel.\n",
   "requires": "7.0",
   "requires_php": "7.4"
 }

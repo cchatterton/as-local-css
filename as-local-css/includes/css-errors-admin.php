@@ -125,7 +125,7 @@ function aslc_register_css_errors_page() {
 		);
 	}
 
-	add_submenu_page(
+	$hook = add_submenu_page(
 		'edit.php?post_type=custom-css-js',
 		__( 'CSS Errors', 'custom-css-js' ),
 		$menu_title,
@@ -133,8 +133,34 @@ function aslc_register_css_errors_page() {
 		'aslc-css-errors',
 		'aslc_render_css_errors_page'
 	);
+	add_action( 'load-' . $hook, 'aslc_add_css_errors_help' );
 }
 add_action( 'admin_menu', 'aslc_register_css_errors_page', 21 );
+
+/** Add native contextual guidance to the CSS Errors screen. */
+function aslc_add_css_errors_help() {
+	$screen = get_current_screen();
+	if ( ! $screen ) {
+		return;
+	}
+
+	$screen->add_help_tab(
+		array(
+			'id'      => 'aslc-css-errors-help',
+			'title'   => __( 'CSS findings', 'custom-css-js' ),
+			'content' =>
+				'<p>' . esc_html__( 'Information findings are suggestions and never block compiled CSS. Errors identify CSS that is likely ineffective. Critical findings can change how later records are parsed, so generated-file delivery stays disabled until they are fixed.', 'custom-css-js' ) . '</p>' .
+				'<h3>' . esc_html__( 'Common findings', 'custom-css-js' ) . '</h3>' .
+				'<ul>' .
+				'<li><strong>' . esc_html__( 'Media query in Base', 'custom-css-js' ) . '</strong> — ' . esc_html__( 'Move the responsive rules into the matching breakpoint accordion when practical.', 'custom-css-js' ) . '</li>' .
+				'<li><strong>' . esc_html__( 'Unclosed opening brace, comment, or quoted value', 'custom-css-js' ) . '</strong> — ' . esc_html__( 'Close the structure in the reported section before rebuilding compiled CSS.', 'custom-css-js' ) . '</li>' .
+				'<li><strong>' . esc_html__( 'No configured breakpoint', 'custom-css-js' ) . '</strong> — ' . esc_html__( 'Add the token under CSS Breakpoints or replace it with a valid configured token.', 'custom-css-js' ) . '</li>' .
+				'<li><strong>' . esc_html__( 'Selector or value errors', 'custom-css-js' ) . '</strong> — ' . esc_html__( 'Use the reported line to correct the selector, decimal, shorthand, or missing selector.', 'custom-css-js' ) . '</li>' .
+				'</ul>' .
+				'<p>' . esc_html__( 'Edit opens the affected record and, when available, the exact accordion containing the finding. The scanner never changes CSS automatically.', 'custom-css-js' ) . '</p>',
+		)
+	);
+}
 
 /**
  * Run a requested manual CSS scan.
@@ -195,7 +221,7 @@ function aslc_render_css_errors_page() {
 		<?php if ( empty( $findings ) ) : ?>
 			<div class="notice notice-success inline"><p><?php esc_html_e( 'No CSS errors were found.', 'custom-css-js' ); ?></p></div>
 		<?php else : ?>
-			<p><?php esc_html_e( 'Review each finding and open its CSS record to make corrections. The scanner never changes CSS automatically.', 'custom-css-js' ); ?></p>
+			<p><?php esc_html_e( 'Open a finding to review it. See the Help tab for explanations and suggested fixes.', 'custom-css-js' ); ?></p>
 		<?php endif; ?>
 
 		<?php $table->display(); ?>

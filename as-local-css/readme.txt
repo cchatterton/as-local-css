@@ -3,7 +3,7 @@ Contributors:
 Tags: CSS, JS, javascript, custom CSS, custom JS, custom code, local css
 Requires at least: 7.0
 Tested up to: 7.0
-Stable tag: 0.7.2
+Stable tag: 0.7.3
 Requires PHP: 7.4
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -27,6 +27,9 @@ Original plugin: https://wordpress.org/plugins/custom-css-js/
 Thank you to the original author and maintainers for the plugin this AlphaSys-controlled release continues from.
 
 == Changelog ==
+
+= 0.7.3 =
+* Shortened repetitive CSS finding descriptions and moved detailed explanations, severity guidance, and suggested fixes into the native WordPress Help panel.
 
 = 0.7.2 =
 * Refined the CSS Errors table with content-sized utility columns, a separate ID column, wider two-line descriptions, and compact Edit actions.

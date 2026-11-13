@@ -217,7 +217,7 @@ function aslc_scan_css_record( $post_id, $css, $section = '' ) {
 					$line,
 					'error',
 					'top_level_nesting',
-					__( 'A top-level "&" nesting selector has no parent rule.', 'custom-css-js' )
+					__( 'Top-level "&" has no parent rule.', 'custom-css-js' )
 				);
 			}
 		}
@@ -231,7 +231,7 @@ function aslc_scan_css_record( $post_id, $css, $section = '' ) {
 					$line,
 					'critical',
 					'extra_closing_brace',
-					__( 'An extra closing brace can change how later CSS is parsed.', 'custom-css-js' )
+					__( 'Extra closing brace.', 'custom-css-js' )
 				);
 			} else {
 				array_pop( $brace_stack );
@@ -245,7 +245,7 @@ function aslc_scan_css_record( $post_id, $css, $section = '' ) {
 			$state_line,
 			'critical',
 			'unclosed_comment',
-			__( 'A CSS comment is not closed.', 'custom-css-js' )
+			__( 'Unclosed CSS comment.', 'custom-css-js' )
 		);
 	} elseif ( 'single' === $state || 'double' === $state ) {
 		$findings[] = aslc_css_scan_finding(
@@ -253,7 +253,7 @@ function aslc_scan_css_record( $post_id, $css, $section = '' ) {
 			$state_line,
 			'critical',
 			'unclosed_string',
-			__( 'A quoted CSS value is not closed.', 'custom-css-js' )
+			__( 'Unclosed quoted value.', 'custom-css-js' )
 		);
 	}
 
@@ -263,7 +263,7 @@ function aslc_scan_css_record( $post_id, $css, $section = '' ) {
 			$open_line,
 			'critical',
 			'unclosed_brace',
-			__( 'An opening brace is not closed. Later records may be captured by this rule.', 'custom-css-js' )
+			__( 'Unclosed opening brace.', 'custom-css-js' )
 		);
 	}
 
@@ -285,7 +285,7 @@ function aslc_scan_css_record( $post_id, $css, $section = '' ) {
 			1 + substr_count( substr( $without_comments, 0, $media_match[0][1] ), "\n" ),
 			'information',
 			'media_query_in_base',
-			__( 'The Base section contains a media query. Consider moving its CSS into the matching breakpoint accordion.', 'custom-css-js' )
+			__( 'Media query in Base.', 'custom-css-js' )
 		);
 	}
 
@@ -309,7 +309,7 @@ function aslc_scan_css_record( $post_id, $css, $section = '' ) {
 				'unresolved_breakpoint_token',
 				sprintf(
 					/* translators: %s: unresolved breakpoint token. */
-					__( 'Breakpoint token %s has no replacement configured under CSS Breakpoints.', 'custom-css-js' ),
+					__( 'No breakpoint is configured for %s.', 'custom-css-js' ),
 					$token_match[0]
 				)
 			);
@@ -321,25 +321,25 @@ function aslc_scan_css_record( $post_id, $css, $section = '' ) {
 			'pattern'  => '/&\.\s+[a-z_-]/i',
 			'severity' => 'error',
 			'code'     => 'broken_nested_class',
-			'message'  => __( 'A nested class selector has whitespace between the period and class name.', 'custom-css-js' ),
+			'message'  => __( 'Space after a nested class dot.', 'custom-css-js' ),
 		),
 		array(
 			'pattern'  => '/:not\s*:has\s*\(/i',
 			'severity' => 'error',
 			'code'     => 'broken_not_has',
-			'message'  => __( 'The :has() selector must be placed inside :not(), for example :not(:has(...)).', 'custom-css-js' ),
+			'message'  => __( 'Use :not(:has(...)).', 'custom-css-js' ),
 		),
 		array(
 			'pattern'  => '/\bcalc\([^)]*\/\s*\d+,\d+/i',
 			'severity' => 'error',
 			'code'     => 'comma_decimal',
-			'message'  => __( 'A calculation contains a comma decimal. CSS decimals must use a period.', 'custom-css-js' ),
+			'message'  => __( 'Use a period for CSS decimals.', 'custom-css-js' ),
 		),
 		array(
 			'pattern'  => '/@(?:media|supports|container)\b[^{}]*\{\s*(?:padding|margin|display|position|width|height|color|background|font-size|line-height|gap)\s*:/i',
 			'severity' => 'error',
 			'code'     => 'declaration_without_selector',
-			'message'  => __( 'A declaration appears directly inside a conditional block without a selector.', 'custom-css-js' ),
+			'message'  => __( 'Declaration has no selector.', 'custom-css-js' ),
 		),
 	);
 
@@ -366,7 +366,7 @@ function aslc_scan_css_record( $post_id, $css, $section = '' ) {
 					1 + substr_count( substr( $without_comments, 0, $declaration[1] ), "\n" ),
 					'error',
 					'mixed_css_wide_keyword',
-					__( 'The inherit keyword cannot be mixed with other values in a padding or margin shorthand.', 'custom-css-js' )
+					__( 'Use inherit by itself in this shorthand.', 'custom-css-js' )
 				);
 			}
 		}

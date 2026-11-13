@@ -2,6 +2,10 @@
 
 All notable changes to AS Local CSS are recorded here.
 
+## 0.7.3 - 2026-11-13
+
+- Shortened repetitive CSS finding descriptions and moved detailed explanations, severity guidance, and suggested fixes into the native WordPress Help panel.
+
 ## 0.7.2 - 2026-11-13
 
 - Refined the CSS Errors table with content-sized utility columns, a separate ID column, wider two-line descriptions, and compact Edit actions.
