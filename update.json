@@ -1,6 +1,6 @@
 {
-  "version": "0.6.0",
-  "body": "## 0.6.0 - 2026-11-13\n\n- Combine active CSS into one content-addressed stylesheet per frontend, admin, or login context.\n- Enqueue the same frontend bundle on the site and in the block editor instead of printing inline CSS.\n- Publish bundles atomically with cache-safe filenames and preserve the last working bundle or inline fallback after a failed rebuild.\n- Preserve legacy snippet ordering while moving frontend CSS delivery to the document head.\n",
+  "version": "0.6.1",
+  "body": "## 0.6.1 - 2026-11-13\n\n- Emit combined CSS from priority 10 through priority 1 so priority 1 is last and wins the cascade.\n- Preserve each snippet's author ID in generated start and end comments.\n- Render generated bundle link attributes with double quotes.\n- Apply the corrected order to fallback delivery and rebuild 0.6.0 bundles whose generated order is no longer valid.\n",
   "requires": "7.0",
   "requires_php": "7.4"
 }

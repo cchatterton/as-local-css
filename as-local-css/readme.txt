@@ -3,7 +3,7 @@ Contributors:
 Tags: CSS, JS, javascript, custom CSS, custom JS, custom code, local css
 Requires at least: 7.0
 Tested up to: 7.0
-Stable tag: 0.6.0
+Stable tag: 0.6.1
 Requires PHP: 7.4
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -27,6 +27,12 @@ Original plugin: https://wordpress.org/plugins/custom-css-js/
 Thank you to the original author and maintainers for the plugin this AlphaSys-controlled release continues from.
 
 == Changelog ==
+
+= 0.6.1 =
+* Emit combined CSS from priority 10 through priority 1 so priority 1 is last and wins the cascade.
+* Preserve each snippet's author ID in generated start and end comments.
+* Render generated AS Local CSS bundle link attributes with double quotes.
+* Invalidate and rebuild 0.6.0 bundles whose saved order is no longer valid.
 
 = 0.6.0 =
 * Combine active CSS snippets into one content-addressed stylesheet per frontend, admin, or login context.

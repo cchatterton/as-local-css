@@ -1307,12 +1307,12 @@ End of comment */ ',
 	 * Build the first generated CSS bundles after upgrading from inline output.
 	 */
 	function migrate_css_bundle_delivery() {
-		if ( get_option( 'aslc_css_bundle_migration_0_6_0', false ) ) {
+		if ( '0.6.1' === get_option( 'aslc_css_bundle_migration_version', '' ) ) {
 			return;
 		}
 
 		if ( $this->build_search_tree() ) {
-			update_option( 'aslc_css_bundle_migration_0_6_0', true, false );
+			update_option( 'aslc_css_bundle_migration_version', '0.6.1', false );
 		}
 	}
 

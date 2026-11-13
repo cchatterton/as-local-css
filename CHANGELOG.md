@@ -2,6 +2,14 @@
 
 All notable changes to AS Local CSS are recorded here.
 
+## 0.6.1 - 2026-11-13
+
+- Corrected combined stylesheet ordering so priority 10 is emitted first and priority 1 is emitted last, allowing the documented highest priority to win the cascade.
+- Preserved each snippet's author ID in generated start and end boundary comments.
+- Rendered AS Local CSS bundle link attributes with double quotes without changing other WordPress stylesheet tags.
+- Applied the same priority order to inline and block-editor fallback delivery.
+- Invalidated 0.6.0 bundle manifests and scheduled a one-time rebuild so incorrectly ordered generated files are not reused.
+
 ## 0.6.0 - 2026-11-13
 
 - Combined active CSS snippets into one generated stylesheet for each frontend, WordPress admin, or login context.

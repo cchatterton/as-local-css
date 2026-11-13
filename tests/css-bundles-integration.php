@@ -53,6 +53,7 @@ try {
 	$post_ids[] = aslc_bundle_test_post( 'Bundle header late', '.aslc-bundle-header-late { color: blue; }', 'header', 8 );
 	$post_ids[] = aslc_bundle_test_post( 'Bundle header early', '.aslc-bundle-header-early { color: green; }', 'header', 2 );
 	$post_ids[] = aslc_bundle_test_post( 'Bundle footer', '.aslc-bundle-footer { color: purple; }', 'footer', 1 );
+	$post_ids[] = aslc_bundle_test_post( 'Bundle footer low priority', '.aslc-bundle-footer-low { color: brown; }', 'footer', 10 );
 	$post_ids[] = aslc_bundle_test_post( 'Bundle admin', '.aslc-bundle-admin { color: black; }', 'header', 3, 'admin' );
 
 	aslc_bundle_test( true === $rebuild->invoke( $admin ), 'CSS bundles did not rebuild successfully.' );
@@ -71,12 +72,21 @@ try {
 	aslc_bundle_test( false !== strpos( $bundle_css, '.aslc-bundle-header-late' ), 'Priority 8 header CSS is missing.' );
 	aslc_bundle_test( false !== strpos( $bundle_css, '.aslc-bundle-footer' ), 'Footer CSS is missing.' );
 	aslc_bundle_test(
-		strpos( $bundle_css, '.aslc-bundle-header-early' ) < strpos( $bundle_css, '.aslc-bundle-header-late' ),
-		'Header CSS priority order was not preserved.'
+		strpos( $bundle_css, '.aslc-bundle-footer-low {' ) < strpos( $bundle_css, '.aslc-bundle-header-late {' ),
+		'Priority 10 CSS was not emitted before higher-priority CSS.'
 	);
 	aslc_bundle_test(
-		strpos( $bundle_css, '.aslc-bundle-header-late' ) < strpos( $bundle_css, '.aslc-bundle-footer' ),
-		'Legacy footer CSS was not placed after header CSS.'
+		strpos( $bundle_css, '.aslc-bundle-header-late {' ) < strpos( $bundle_css, '.aslc-bundle-header-early {' ),
+		'Priority 2 CSS was not emitted after priority 8 CSS.'
+	);
+	aslc_bundle_test(
+		strpos( $bundle_css, '.aslc-bundle-header-early {' ) < strpos( $bundle_css, '.aslc-bundle-footer {' ),
+		'Priority 1 CSS was not emitted last.'
+	);
+	aslc_bundle_test(
+		false !== strpos( $bundle_css, 'Local Start ID:' . $post_ids[0] . ' Author:1' )
+		&& false !== strpos( $bundle_css, 'Local End ID:' . $post_ids[0] . ' Author:1' ),
+		'Generated bundle boundary comments did not retain the snippet author ID.'
 	);
 
 	wp_dequeue_style( 'aslc-css-frontend' );
@@ -85,6 +95,19 @@ try {
 	$registered = wp_styles()->registered['aslc-css-frontend'];
 	aslc_bundle_test( false !== strpos( $registered->src, $frontend['file'] ), 'The enqueued URL does not use the generated bundle file.' );
 	aslc_bundle_test( $frontend['hash'] === $registered->ver, 'The enqueued bundle does not use its content hash as the version.' );
+	$bundle_tag = aslc_double_quote_bundle_link_attributes(
+		"<link rel='stylesheet' id='aslc-css-frontend-css' href='https://example.test/bundle.css' media='all' />",
+		'aslc-css-frontend'
+	);
+	aslc_bundle_test( false === strpos( $bundle_tag, "='" ), 'The generated bundle link retained single-quoted attributes.' );
+	aslc_bundle_test( false !== strpos( $bundle_tag, 'rel="stylesheet"' ), 'The generated bundle link did not use double-quoted attributes.' );
+	aslc_bundle_test(
+		"<link rel='stylesheet' id='theme-css' href='https://example.test/theme.css' />" === aslc_double_quote_bundle_link_attributes(
+			"<link rel='stylesheet' id='theme-css' href='https://example.test/theme.css' />",
+			'theme'
+		),
+		'The quote filter modified a stylesheet outside AS Local CSS.'
+	);
 
 	wp_dequeue_style( 'aslc-editor-css-bundle' );
 	aslc_bundle_test(

@@ -7,6 +7,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+define( 'ASLC_CSS_BUNDLE_SCHEMA', 2 );
+
 /**
  * Return the supported CSS delivery contexts.
  *
@@ -39,6 +41,23 @@ function aslc_enqueue_login_css_bundle() {
 	aslc_enqueue_css_bundle( 'login' );
 }
 add_action( 'login_enqueue_scripts', 'aslc_enqueue_login_css_bundle', PHP_INT_MAX );
+
+/**
+ * Use double-quoted attributes for AS Local CSS bundle link elements.
+ *
+ * @param string $html   Rendered stylesheet link element.
+ * @param string $handle Registered WordPress style handle.
+ * @return string
+ */
+function aslc_double_quote_bundle_link_attributes( $html, $handle ) {
+	if ( 0 !== strpos( $handle, 'aslc-css-' ) && 'aslc-editor-css-bundle' !== $handle ) {
+		return $html;
+	}
+
+	$converted = preg_replace( "/='([^']*)'/", '="$1"', $html );
+	return is_string( $converted ) ? $converted : $html;
+}
+add_filter( 'style_loader_tag', 'aslc_double_quote_bundle_link_attributes', PHP_INT_MAX, 2 );
 
 /**
  * Enqueue one generated CSS bundle.
@@ -92,6 +111,7 @@ function aslc_get_css_bundle_entry( $side ) {
 	$entry = $manifest[ $side ];
 	if ( empty( $entry['file'] )
 		|| empty( $entry['hash'] )
+		|| ASLC_CSS_BUNDLE_SCHEMA !== (int) ( $entry['schema'] ?? 0 )
 		|| ! preg_match( '/^as-local-css-' . preg_quote( $side, '/' ) . '-[a-f0-9]{16}\.css$/', $entry['file'] )
 		|| ! preg_match( '/^[a-f0-9]{64}$/', $entry['hash'] ) ) {
 		return false;
@@ -184,7 +204,7 @@ function aslc_rebuild_css_bundles( $search_tree = null ) {
 }
 
 /**
- * Compile active CSS for one delivery context in legacy location and priority order.
+ * Compile active CSS for one delivery context in global priority order.
  *
  * @param array  $search_tree Active custom-code search tree.
  * @param string $side        Frontend, admin, or login.
@@ -198,6 +218,7 @@ function aslc_compile_css_bundle( array $search_tree, $side ) {
 	$settings        = get_option( 'ccj_settings', array() );
 	$remove_comments = is_array( $settings ) && ! empty( $settings['remove_comments'] );
 	$parts           = array();
+	$priority_groups = array();
 
 	foreach ( array( 'header', 'footer' ) as $location ) {
 		foreach ( array( 'internal', 'external' ) as $linking ) {
@@ -206,33 +227,49 @@ function aslc_compile_css_bundle( array $search_tree, $side ) {
 				continue;
 			}
 
-			$priority_groups = $search_tree[ $branch ];
-			ksort( $priority_groups, SORT_NUMERIC );
-
-			foreach ( $priority_groups as $priority => $filenames ) {
+			foreach ( $search_tree[ $branch ] as $priority => $filenames ) {
 				if ( ! is_array( $filenames ) ) {
 					continue;
 				}
 
 				foreach ( $filenames as $filename ) {
-					$source = aslc_get_css_source_from_tree_filename( $filename );
-					if ( is_wp_error( $source ) ) {
-						return $source;
-					}
-					if ( '' === trim( $source['css'] ) ) {
-						continue;
-					}
-
-					if ( ! $remove_comments ) {
-						$parts[] = sprintf(
-							'/* Local CSS ID:%d Location:%s Priority:%d */',
-							$source['id'],
-							$location,
-							(int) $priority
-						);
-					}
-					$parts[] = rtrim( $source['css'] );
+					$priority_groups[ (int) $priority ][] = array(
+						'filename' => $filename,
+						'location' => $location,
+					);
 				}
+			}
+		}
+	}
+
+	// Priority 1 is highest and must be emitted last so it wins the cascade.
+	krsort( $priority_groups, SORT_NUMERIC );
+	foreach ( $priority_groups as $priority => $items ) {
+		foreach ( $items as $item ) {
+			$source = aslc_get_css_source_from_tree_filename( $item['filename'] );
+			if ( is_wp_error( $source ) ) {
+				return $source;
+			}
+			if ( '' === trim( $source['css'] ) ) {
+				continue;
+			}
+
+			if ( ! $remove_comments ) {
+				$parts[] = sprintf(
+					'/* Local Start ID:%d Author:%d Location:%s Priority:%d */',
+					$source['id'],
+					$source['author'],
+					$item['location'],
+					(int) $priority
+				);
+			}
+			$parts[] = rtrim( $source['css'] );
+			if ( ! $remove_comments ) {
+				$parts[] = sprintf(
+					'/* Local End ID:%d Author:%d */',
+					$source['id'],
+					$source['author']
+				);
 			}
 		}
 	}
@@ -267,8 +304,9 @@ function aslc_get_css_source_from_tree_filename( $filename ) {
 	}
 
 	return array(
-		'id'  => (int) $post->ID,
-		'css' => (string) $post->post_content,
+		'id'     => (int) $post->ID,
+		'author' => (int) $post->post_author,
+		'css'    => (string) $post->post_content,
 	);
 }
 
@@ -311,8 +349,9 @@ function aslc_write_css_bundle( $side, $css ) {
 	}
 
 	return array(
-		'file' => $file_name,
-		'hash' => $hash,
+		'file'   => $file_name,
+		'hash'   => $hash,
+		'schema' => ASLC_CSS_BUNDLE_SCHEMA,
 	);
 }
 

@@ -70,22 +70,30 @@ function aslc_enqueue_frontend_css_in_block_editor() {
 		return;
 	}
 
+	$ordered_files = array();
 	foreach ( array( 'header', 'footer' ) as $location ) {
 		foreach ( $search_tree as $branch => $priority_groups ) {
 			if ( ! aslc_is_frontend_css_branch( $branch, $location ) || ! is_array( $priority_groups ) ) {
 				continue;
 			}
 
-			ksort( $priority_groups, SORT_NUMERIC );
-			foreach ( $priority_groups as $filenames ) {
+			foreach ( $priority_groups as $priority => $filenames ) {
 				if ( ! is_array( $filenames ) ) {
 					continue;
 				}
 
 				foreach ( $filenames as $filename ) {
-					aslc_enqueue_editor_css_file( $branch, $filename );
+					$ordered_files[ (int) $priority ][] = array( $branch, $filename );
 				}
 			}
+		}
+	}
+
+	// Priority 1 is highest and must be enqueued last to win the cascade.
+	krsort( $ordered_files, SORT_NUMERIC );
+	foreach ( $ordered_files as $files ) {
+		foreach ( $files as $file ) {
+			aslc_enqueue_editor_css_file( $file[0], $file[1] );
 		}
 	}
 }
