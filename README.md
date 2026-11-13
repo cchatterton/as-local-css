@@ -1,7 +1,7 @@
 # AS Local CSS
 
 Author: AlphaSys
-Version: 0.6.3
+Version: 0.6.4
 Status: Production
 
 ## Purpose
@@ -13,9 +13,11 @@ AS Local CSS is an AlphaSys-maintained, compatible replacement for the WordPress
 - Custom code post type remains `custom-css-js`.
 - Existing options, post meta, capabilities, upload folder, AJAX actions, and editor screens are preserved.
 - Active CSS snippets are compiled into one content-addressed stylesheet per frontend, admin, or login context; JavaScript remains inline.
-- CSS bundles are compiled from the same generated per-snippet files used by inline delivery, written atomically, emit priority 10 through priority 1 so the highest priority wins, preserve snippet author IDs in start/end comments, and keep the last working bundle or inline fallback if rebuilding fails.
+- CSS bundles are compiled from the same generated per-snippet files used by inline delivery, written atomically, follow the selected numeric priority direction, preserve snippet author IDs in start/end comments, and keep the last working bundle or inline fallback if rebuilding fails.
 - Activating or updating the plugin refreshes all CSS bundles; obsolete bundle schemas also self-heal on the first request without a migration-version flag.
 - A CSS Delivery submenu lets administrators switch between original inline CSS output and the generated-file bundle without changing JavaScript or HTML delivery.
+- CSS Delivery also controls whether record priorities are emitted from 1 to 5 or from 5 to 1, with the numeric direction applied to legacy priorities 6 through 10.
+- Published CSS records are scanned on saves and bundle refreshes; a CSS Errors submenu shows a native WordPress findings table, an update-style counter, descriptions, line numbers, and direct edit links.
 - Active front-end CSS snippets load in the block editor content iframe as well as on the site front end.
 - Stylesheets registered through WordPress's front-end enqueue hook load in the editor iframe before Local CSS, preserving design-token dependencies.
 - Local CSS is promoted after Gutenberg's native block styles in the editor canvas so authored rules retain front-end cascade authority.

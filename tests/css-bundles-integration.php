@@ -56,6 +56,10 @@ function aslc_bundle_test_post( $title, $css, $location, $priority, $side = 'fro
 
 $post_ids = array();
 $original_delivery_mode = get_option( ASLC_CSS_DELIVERY_OPTION, false );
+$original_priority_order = get_option( ASLC_CSS_ORDER_OPTION, false );
+$original_scan_results   = get_option( ASLC_CSS_SCAN_OPTION, false );
+update_option( ASLC_CSS_DELIVERY_OPTION, 'file', false );
+update_option( ASLC_CSS_ORDER_OPTION, '5-to-1', false );
 $admin    = new CustomCSSandJS_Admin();
 $rebuild  = new ReflectionMethod( 'CustomCSSandJS_Admin', 'build_search_tree' );
 if ( PHP_VERSION_ID < 80100 ) {
@@ -109,6 +113,21 @@ try {
 		&& false !== strpos( $bundle_css, 'Local End ID:' . $post_ids[0] . ' Author:1' ),
 		'Generated bundle boundary comments did not retain the snippet author ID.'
 	);
+	aslc_bundle_test( is_array( get_option( ASLC_CSS_SCAN_OPTION, false ) ), 'Bundle rebuilding did not save CSS scan results.' );
+
+	update_option( ASLC_CSS_ORDER_OPTION, '1-to-5', false );
+	aslc_bundle_test( true === $rebuild->invoke( $admin ), 'The ascending CSS order did not rebuild successfully.' );
+	$ascending_entry = aslc_get_css_bundle_entry( 'frontend' );
+	$ascending_css   = file_get_contents( trailingslashit( CCJ_UPLOAD_DIR ) . $ascending_entry['file'] );
+	aslc_bundle_test(
+		strpos( $ascending_css, '.aslc-bundle-footer {' ) < strpos( $ascending_css, '.aslc-bundle-header-early {' )
+		&& strpos( $ascending_css, '.aslc-bundle-header-early {' ) < strpos( $ascending_css, '.aslc-bundle-header-late {' )
+		&& strpos( $ascending_css, '.aslc-bundle-header-late {' ) < strpos( $ascending_css, '.aslc-bundle-footer-low {' ),
+		'The selected ascending CSS order was not written to the generated file.'
+	);
+	update_option( ASLC_CSS_ORDER_OPTION, '5-to-1', false );
+	aslc_bundle_test( true === $rebuild->invoke( $admin ), 'The descending CSS order did not rebuild successfully.' );
+	$frontend = aslc_get_css_bundle_entry( 'frontend' );
 
 	wp_dequeue_style( 'aslc-css-frontend' );
 	aslc_bundle_test( aslc_enqueue_css_bundle( 'frontend' ), 'The frontend CSS bundle was not enqueued.' );
@@ -209,6 +228,16 @@ try {
 		delete_option( ASLC_CSS_DELIVERY_OPTION );
 	} else {
 		update_option( ASLC_CSS_DELIVERY_OPTION, $original_delivery_mode, false );
+	}
+	if ( false === $original_priority_order ) {
+		delete_option( ASLC_CSS_ORDER_OPTION );
+	} else {
+		update_option( ASLC_CSS_ORDER_OPTION, $original_priority_order, false );
+	}
+	if ( false === $original_scan_results ) {
+		delete_option( ASLC_CSS_SCAN_OPTION );
+	} else {
+		update_option( ASLC_CSS_SCAN_OPTION, $original_scan_results, false );
 	}
 	wp_dequeue_style( 'aslc-css-frontend' );
 	wp_dequeue_style( 'aslc-editor-css-bundle' );

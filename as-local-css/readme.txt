@@ -3,7 +3,7 @@ Contributors:
 Tags: CSS, JS, javascript, custom CSS, custom JS, custom code, local css
 Requires at least: 7.0
 Tested up to: 7.0
-Stable tag: 0.6.3
+Stable tag: 0.6.4
 Requires PHP: 7.4
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -27,6 +27,11 @@ Original plugin: https://wordpress.org/plugins/custom-css-js/
 Thank you to the original author and maintainers for the plugin this AlphaSys-controlled release continues from.
 
 == Changelog ==
+
+= 0.6.4 =
+* Add selectable top-to-bottom CSS priority ordering to both delivery modes.
+* Scan published CSS records on saves and bundle refreshes without modifying authored CSS.
+* Show findings in a native CSS Errors table with a submenu counter and direct edit links.
 
 = 0.6.3 =
 * Add a CSS Delivery submenu with inline legacy and generated-file choices.

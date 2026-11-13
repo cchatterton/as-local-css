@@ -2,6 +2,14 @@
 
 All notable changes to AS Local CSS are recorded here.
 
+## 0.6.4 - 2026-11-13
+
+- Added selectable top-to-bottom CSS priority ordering for both inline and generated-file delivery.
+- Scanned all published CSS records whenever snippets are saved or bundles are refreshed by activation, update, file-mode selection, or manual request.
+- Added a native CSS Errors table with severity, line, description, direct record edit links, and a submenu counter.
+- Recognised project breakpoint tokens such as `%MD%` without false-positive scan findings and never modified CSS automatically.
+- Invalidated older bundle manifests so upgrading from 0.6.3 performs a first-request rebuild and scan.
+
 ## 0.6.3 - 2026-11-13
 
 - Added a CSS Delivery submenu with inline legacy and generated-file delivery choices.

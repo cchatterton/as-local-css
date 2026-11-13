@@ -1,6 +1,6 @@
 {
-  "version": "0.6.3",
-  "body": "## 0.6.3 - 2026-11-13\n\n- Add a CSS Delivery submenu with inline legacy and generated-file choices.\n- Switch CSS delivery immediately without changing JavaScript or HTML output.\n- Continue maintaining generated bundles while inline mode is selected.\n",
+  "version": "0.6.4",
+  "body": "## 0.6.4 - 2026-11-13\n\n- Add selectable top-to-bottom CSS priority ordering to both delivery modes.\n- Scan published CSS records on saves and bundle refreshes without modifying authored CSS.\n- Show findings in a native CSS Errors table with a submenu counter and direct edit links.\n- Refresh and scan generated CSS after activation, update, and switching to file delivery.\n",
   "requires": "7.0",
   "requires_php": "7.4"
 }

@@ -2,7 +2,7 @@
 /**
  * Plugin Name: AS Local CSS
  * Description: Compatible AlphaSys-maintained release of Simple Custom CSS and JS for adding local CSS, JavaScript, and HTML snippets.
- * Version: 0.6.3
+ * Version: 0.6.4
  * Requires at least: 7.0
  * Requires PHP: 7.4
  * Update URI: https://github.com/cchatterton/as-local-css
@@ -23,7 +23,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-define( 'ASLC_VERSION', '0.6.3' );
+define( 'ASLC_VERSION', '0.6.4' );
 define( 'ASLC_PLUGIN_FILE', __FILE__ );
 define( 'ASLC_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'ASLC_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
@@ -32,9 +32,11 @@ require_once ASLC_PLUGIN_DIR . 'includes/controller-client.php';
 asuc_client_register( __FILE__, 'as-local-css' );
 require_once ASLC_PLUGIN_DIR . 'includes/html-snippets.php';
 require_once ASLC_PLUGIN_DIR . 'includes/css-bundles.php';
+require_once ASLC_PLUGIN_DIR . 'includes/css-scanner.php';
 require_once ASLC_PLUGIN_DIR . 'includes/editor-assets.php';
 if ( is_admin() ) {
 	require_once ASLC_PLUGIN_DIR . 'includes/delivery-settings.php';
+	require_once ASLC_PLUGIN_DIR . 'includes/css-errors-admin.php';
 	require_once ASLC_PLUGIN_DIR . 'includes/related-content.php';
 }
 
@@ -214,8 +216,7 @@ if ( ! class_exists( 'CustomCSSandJS' ) ) :
 				}
 
 			}
-			// Priority 1 is highest and must be emitted last to win the cascade.
-			krsort($args, SORT_NUMERIC);
+			aslc_sort_css_priority_groups( $args );
 foreach($args as $key => $arg) {
     
 			foreach ( $arg as $_filename ) {

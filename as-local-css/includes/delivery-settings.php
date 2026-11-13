@@ -42,8 +42,20 @@ function aslc_save_css_delivery_mode() {
 	if ( ! in_array( $mode, array( 'inline', 'file' ), true ) ) {
 		$mode = 'file';
 	}
+	$order = isset( $_POST['aslc_css_priority_order'] )
+		? sanitize_key( wp_unslash( $_POST['aslc_css_priority_order'] ) )
+		: '';
+	if ( ! in_array( $order, array( '1-to-5', '5-to-1' ), true ) ) {
+		$order = '5-to-1';
+	}
 
 	update_option( ASLC_CSS_DELIVERY_OPTION, $mode, false );
+	update_option( ASLC_CSS_ORDER_OPTION, $order, false );
+	if ( 'file' === $mode ) {
+		aslc_rebuild_css_bundles();
+	} else {
+		aslc_scan_css_records();
+	}
 
 	wp_safe_redirect(
 		add_query_arg(
@@ -67,7 +79,8 @@ function aslc_render_css_delivery_page() {
 		return;
 	}
 
-	$mode = aslc_get_css_delivery_mode();
+	$mode  = aslc_get_css_delivery_mode();
+	$order = aslc_get_css_priority_order();
 	?>
 	<div class="wrap">
 		<h1><?php esc_html_e( 'CSS Delivery', 'custom-css-js' ); ?></h1>
@@ -96,6 +109,26 @@ function aslc_render_css_delivery_page() {
 						<input type="radio" name="aslc_css_delivery_mode" value="file" <?php checked( 'file', $mode ); ?>>
 						<strong><?php esc_html_e( 'Run as generated file', 'custom-css-js' ); ?></strong><br>
 						<span class="description"><?php esc_html_e( 'Load the combined, cache-safe CSS bundle.', 'custom-css-js' ); ?></span>
+					</label>
+				</p>
+			</fieldset>
+
+			<h2><?php esc_html_e( 'CSS order', 'custom-css-js' ); ?></h2>
+			<p><?php esc_html_e( 'Choose how record priorities are written from the top to the bottom of the CSS output.', 'custom-css-js' ); ?></p>
+			<fieldset>
+				<legend class="screen-reader-text"><?php esc_html_e( 'CSS priority order', 'custom-css-js' ); ?></legend>
+				<p>
+					<label>
+						<input type="radio" name="aslc_css_priority_order" value="1-to-5" <?php checked( '1-to-5', $order ); ?>>
+						<strong><?php esc_html_e( 'Top 1 → 5 Bottom', 'custom-css-js' ); ?></strong><br>
+						<span class="description"><?php esc_html_e( 'Write priority 1 first and priority 5 last. Legacy priorities 6–10 follow the same ascending order.', 'custom-css-js' ); ?></span>
+					</label>
+				</p>
+				<p>
+					<label>
+						<input type="radio" name="aslc_css_priority_order" value="5-to-1" <?php checked( '5-to-1', $order ); ?>>
+						<strong><?php esc_html_e( 'Top 5 → 1 Bottom', 'custom-css-js' ); ?></strong><br>
+						<span class="description"><?php esc_html_e( 'Write priority 5 first and priority 1 last. Legacy priorities 6–10 follow the same descending order.', 'custom-css-js' ); ?></span>
 					</label>
 				</p>
 			</fieldset>

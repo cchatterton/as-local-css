@@ -30,12 +30,15 @@ function __( $text ) {
 	return $text;
 }
 function get_option( $name, $default = false ) {
-	global $aslc_test_delivery_mode;
+	global $aslc_test_delivery_mode, $aslc_test_priority_order;
 	if ( 'ccj_settings' === $name ) {
 		return array( 'remove_comments' => false );
 	}
 	if ( 'aslc_css_delivery_mode' === $name ) {
 		return $aslc_test_delivery_mode;
+	}
+	if ( 'aslc_css_priority_order' === $name ) {
+		return $aslc_test_priority_order;
 	}
 	return $default;
 }
@@ -70,6 +73,7 @@ class WP_Error {
 require dirname( __DIR__ ) . '/as-local-css/includes/css-bundles.php';
 
 $aslc_test_delivery_mode = 'file';
+$aslc_test_priority_order = '5-to-1';
 if ( ! aslc_use_css_file_delivery() ) {
 	throw new RuntimeException( 'Generated-file mode was not recognised.' );
 }
@@ -115,6 +119,15 @@ if ( false === strpos( $css, 'Local Start ID:103 Author:7' )
 	|| false === strpos( $css, 'Local End ID:103 Author:7' ) ) {
 	throw new RuntimeException( 'Author IDs were not retained in boundary comments.' );
 }
+
+$aslc_test_priority_order = '1-to-5';
+$ascending_css = aslc_compile_css_bundle( $tree, 'frontend' );
+if ( ! is_string( $ascending_css )
+	|| ! ( strpos( $ascending_css, '.priority-1-from-file {}' ) < strpos( $ascending_css, '.priority-2 {}' ) )
+	|| ! ( strpos( $ascending_css, '.priority-2 {}' ) < strpos( $ascending_css, '.priority-10 {}' ) ) ) {
+	throw new RuntimeException( 'The selected ascending CSS priority order was not applied.' );
+}
+$aslc_test_priority_order = '5-to-1';
 
 $tag = aslc_double_quote_bundle_link_attributes(
 	"<link rel='stylesheet' id='aslc-css-frontend-css' href='https://example.test/bundle.css' media='all' />",

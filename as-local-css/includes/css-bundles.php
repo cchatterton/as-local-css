@@ -7,8 +7,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'ASLC_CSS_BUNDLE_SCHEMA', 3 );
+define( 'ASLC_CSS_BUNDLE_SCHEMA', 4 );
 define( 'ASLC_CSS_DELIVERY_OPTION', 'aslc_css_delivery_mode' );
+define( 'ASLC_CSS_ORDER_OPTION', 'aslc_css_priority_order' );
 
 /**
  * Return the selected CSS delivery mode.
@@ -27,6 +28,32 @@ function aslc_get_css_delivery_mode() {
  */
 function aslc_use_css_file_delivery() {
 	return 'file' === aslc_get_css_delivery_mode();
+}
+
+/**
+ * Return the selected top-to-bottom CSS priority order.
+ *
+ * @return string Either 1-to-5 or 5-to-1.
+ */
+function aslc_get_css_priority_order() {
+	$order = get_option( ASLC_CSS_ORDER_OPTION, '5-to-1' );
+	return '1-to-5' === $order ? '1-to-5' : '5-to-1';
+}
+
+/**
+ * Sort priority groups into the selected top-to-bottom output order.
+ *
+ * The labels use the common 1-5 range, while the numeric sort also handles
+ * legacy records using priorities 6-10.
+ *
+ * @param array $priority_groups Priority-keyed groups to sort in place.
+ */
+function aslc_sort_css_priority_groups( &$priority_groups ) {
+	if ( '1-to-5' === aslc_get_css_priority_order() ) {
+		ksort( $priority_groups, SORT_NUMERIC );
+	} else {
+		krsort( $priority_groups, SORT_NUMERIC );
+	}
 }
 
 /**
@@ -227,6 +254,10 @@ function aslc_get_css_bundle_entry( $side ) {
  * @return bool Whether every requested bundle was rebuilt successfully.
  */
 function aslc_rebuild_css_bundles( $search_tree = null ) {
+	if ( function_exists( 'aslc_scan_css_records' ) ) {
+		aslc_scan_css_records();
+	}
+
 	if ( null === $search_tree ) {
 		$search_tree = get_option( 'custom-css-js-tree', array() );
 	}
@@ -326,8 +357,7 @@ function aslc_compile_css_bundle( array $search_tree, $side ) {
 		}
 	}
 
-	// Priority 1 is highest and must be emitted last so it wins the cascade.
-	krsort( $priority_groups, SORT_NUMERIC );
+	aslc_sort_css_priority_groups( $priority_groups );
 	foreach ( $priority_groups as $priority => $items ) {
 		foreach ( $items as $item ) {
 			$source = aslc_get_css_source_from_tree_filename( $item['filename'] );
