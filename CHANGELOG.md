@@ -2,6 +2,13 @@
 
 All notable changes to AS Local CSS are recorded here.
 
+## 0.6.2 - 2026-11-13
+
+- Compiled bundles from the generated per-snippet CSS files used by inline delivery instead of potentially stale database content.
+- Rebuilt every CSS bundle unconditionally when the plugin is activated or updated.
+- Removed the one-time CSS bundle migration-version flag and added schema-based first-request recovery for upgrades from older releases.
+- Added regression coverage proving corrected generated-file CSS overrides a divergent database copy and reaches refreshed bundles.
+
 ## 0.6.1 - 2026-11-13
 
 - Corrected combined stylesheet ordering so priority 10 is emitted first and priority 1 is emitted last, allowing the documented highest priority to win the cascade.

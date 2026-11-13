@@ -1,6 +1,6 @@
 {
-  "version": "0.6.1",
-  "body": "## 0.6.1 - 2026-11-13\n\n- Emit combined CSS from priority 10 through priority 1 so priority 1 is last and wins the cascade.\n- Preserve each snippet's author ID in generated start and end comments.\n- Render generated bundle link attributes with double quotes.\n- Apply the corrected order to fallback delivery and rebuild 0.6.0 bundles whose generated order is no longer valid.\n",
+  "version": "0.6.2",
+  "body": "## 0.6.2 - 2026-11-13\n\n- Build CSS bundles from the same generated per-snippet files used by inline delivery.\n- Refresh all bundles on plugin activation and update without a migration-version flag.\n- Recover obsolete bundles automatically on the first request after upgrading.\n- Retain the last known-good bundle or inline fallback when a generated snippet file cannot be read.\n",
   "requires": "7.0",
   "requires_php": "7.4"
 }

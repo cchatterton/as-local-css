@@ -3,7 +3,7 @@ Contributors:
 Tags: CSS, JS, javascript, custom CSS, custom JS, custom code, local css
 Requires at least: 7.0
 Tested up to: 7.0
-Stable tag: 0.6.1
+Stable tag: 0.6.2
 Requires PHP: 7.4
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -27,6 +27,11 @@ Original plugin: https://wordpress.org/plugins/custom-css-js/
 Thank you to the original author and maintainers for the plugin this AlphaSys-controlled release continues from.
 
 == Changelog ==
+
+= 0.6.2 =
+* Build CSS bundles from the same generated per-snippet files used by inline delivery.
+* Refresh all bundles on plugin activation and update without a migration-version flag.
+* Recover obsolete bundles automatically on the first request after upgrading.
 
 = 0.6.1 =
 * Emit combined CSS from priority 10 through priority 1 so priority 1 is last and wins the cascade.

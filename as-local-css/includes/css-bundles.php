@@ -7,7 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'ASLC_CSS_BUNDLE_SCHEMA', 2 );
+define( 'ASLC_CSS_BUNDLE_SCHEMA', 3 );
 
 /**
  * Return the supported CSS delivery contexts.
@@ -17,6 +17,66 @@ define( 'ASLC_CSS_BUNDLE_SCHEMA', 2 );
 function aslc_css_bundle_sides() {
 	return array( 'frontend', 'admin', 'login' );
 }
+
+/**
+ * Refresh generated CSS bundles after this plugin is updated.
+ *
+ * @param WP_Upgrader $upgrader WordPress upgrader instance.
+ * @param array       $options  Completed upgrade details.
+ */
+function aslc_refresh_css_bundles_after_plugin_update( $upgrader, $options ) {
+	unset( $upgrader );
+
+	if ( empty( $options['action'] )
+		|| 'update' !== $options['action']
+		|| empty( $options['type'] )
+		|| 'plugin' !== $options['type'] ) {
+		return;
+	}
+
+	$updated_plugins = array();
+	if ( ! empty( $options['plugins'] ) && is_array( $options['plugins'] ) ) {
+		$updated_plugins = $options['plugins'];
+	} elseif ( ! empty( $options['plugin'] ) && is_string( $options['plugin'] ) ) {
+		$updated_plugins = array( $options['plugin'] );
+	}
+
+	if ( ! in_array( plugin_basename( ASLC_PLUGIN_FILE ), $updated_plugins, true ) ) {
+		return;
+	}
+
+	aslc_rebuild_css_bundles();
+}
+add_action( 'upgrader_process_complete', 'aslc_refresh_css_bundles_after_plugin_update', 10, 2 );
+
+/**
+ * Rebuild missing or obsolete bundles on the first request after an update.
+ *
+ * The manifest schema is bundle validation, not a one-time migration flag. It
+ * ensures an update from a version that did not yet have the upgrader hook is
+ * refreshed without keeping separate migration state.
+ */
+function aslc_ensure_current_css_bundles() {
+	$search_tree = get_option( 'custom-css-js-tree', array() );
+	if ( ! is_array( $search_tree ) ) {
+		return;
+	}
+
+	$required_sides = array();
+	foreach ( array_keys( $search_tree ) as $branch ) {
+		if ( preg_match( '/^(frontend|admin|login)-css-/', (string) $branch, $matches ) ) {
+			$required_sides[ $matches[1] ] = true;
+		}
+	}
+
+	foreach ( array_keys( $required_sides ) as $side ) {
+		if ( ! aslc_css_bundle_is_available( $side ) ) {
+			aslc_rebuild_css_bundles( $search_tree );
+			return;
+		}
+	}
+}
+add_action( 'init', 'aslc_ensure_current_css_bundles', 20 );
 
 /**
  * Enqueue the active front-end CSS bundle.
@@ -286,7 +346,7 @@ function aslc_compile_css_bundle( array $search_tree, $side ) {
 }
 
 /**
- * Resolve one search-tree filename to its authored CSS post content.
+ * Resolve one search-tree filename to its generated CSS file.
  *
  * @param string $filename Search-tree filename, optionally with a query string.
  * @return array|WP_Error
@@ -303,11 +363,65 @@ function aslc_get_css_source_from_tree_filename( $filename ) {
 		return new WP_Error( 'aslc_missing_css_source', __( 'AS Local CSS could not read an active CSS snippet while building its bundle.', 'custom-css-js' ) );
 	}
 
+	$css = aslc_get_generated_css_contents( $safe_filename );
+	if ( is_wp_error( $css ) ) {
+		return $css;
+	}
+
 	return array(
 		'id'     => (int) $post->ID,
 		'author' => (int) $post->post_author,
-		'css'    => (string) $post->post_content,
+		'css'    => $css,
 	);
+}
+
+/**
+ * Read CSS from a generated snippet file and remove its inline HTML wrapper.
+ *
+ * @param string $filename Safe generated CSS filename.
+ * @return string|WP_Error
+ */
+function aslc_get_generated_css_contents( $filename ) {
+	$safe_filename = basename( (string) $filename );
+	if ( $safe_filename !== $filename || ! preg_match( '/^\d+\.css$/', $safe_filename ) ) {
+		return new WP_Error( 'aslc_invalid_generated_css_file', __( 'AS Local CSS could not identify a generated CSS snippet file.', 'custom-css-js' ) );
+	}
+
+	$upload_directory = realpath( CCJ_UPLOAD_DIR );
+	$css_file         = realpath( trailingslashit( CCJ_UPLOAD_DIR ) . $safe_filename );
+	if ( false === $upload_directory || false === $css_file || ! is_file( $css_file ) || ! is_readable( $css_file ) ) {
+		return new WP_Error(
+			'aslc_missing_generated_css_file',
+			sprintf(
+				/* translators: %s: generated CSS filename. */
+				__( 'AS Local CSS could not read the generated snippet file %s while building its bundle.', 'custom-css-js' ),
+				$safe_filename
+			)
+		);
+	}
+
+	if ( 0 !== strpos( $css_file, trailingslashit( $upload_directory ) ) ) {
+		return new WP_Error( 'aslc_invalid_generated_css_path', __( 'AS Local CSS rejected a generated CSS path outside its upload directory.', 'custom-css-js' ) );
+	}
+
+	$file_contents = file_get_contents( $css_file );
+	if ( false === $file_contents ) {
+		return new WP_Error(
+			'aslc_generated_css_read_failed',
+			sprintf(
+				/* translators: %s: generated CSS filename. */
+				__( 'AS Local CSS could not read the generated snippet file %s while building its bundle.', 'custom-css-js' ),
+				$safe_filename
+			)
+		);
+	}
+
+	if ( preg_match( '/<style\b[^>]*>([\s\S]*?)<\/style>/i', $file_contents, $matches ) ) {
+		return trim( $matches[1] );
+	}
+
+	$css = preg_replace( '/<!--\s*Local (?:Start|End)[\s\S]*?-->/', '', $file_contents );
+	return trim( is_string( $css ) ? $css : $file_contents );
 }
 
 /**

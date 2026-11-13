@@ -85,7 +85,6 @@ class CustomCSSandJS_Admin {
 		add_filter( 'wp_statuses_get_supported_post_types', array( $this, 'wp_statuses_get_supported_post_types' ), 20 );
 		add_action( 'wp_restore_post_revision', array( $this, 'restore_post_revision' ), 20, 2 );
 		add_action( 'admin_init', array( $this, 'migrate_inline_only_snippets' ) );
-		add_action( 'admin_init', array( $this, 'migrate_css_bundle_delivery' ) );
 
 		add_action( 'current_screen', array( $this, 'current_screen_2' ), 100 );
 
@@ -1301,19 +1300,6 @@ End of comment */ ',
 		}
 
 		update_option( 'aslc_inline_only_migration_0_5_0', true, false );
-	}
-
-	/**
-	 * Build the first generated CSS bundles after upgrading from inline output.
-	 */
-	function migrate_css_bundle_delivery() {
-		if ( '0.6.1' === get_option( 'aslc_css_bundle_migration_version', '' ) ) {
-			return;
-		}
-
-		if ( $this->build_search_tree() ) {
-			update_option( 'aslc_css_bundle_migration_version', '0.6.1', false );
-		}
 	}
 
 	/**

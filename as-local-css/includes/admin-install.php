@@ -16,6 +16,7 @@ class CustomCSSandJS_Install {
     public static function install() {
         self::create_roles();
         self::register_post_type();
+        aslc_rebuild_css_bundles();
         flush_rewrite_rules();
     }  
 

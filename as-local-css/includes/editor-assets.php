@@ -298,25 +298,6 @@ function aslc_enqueue_editor_css_file( $branch, $filename ) {
  * @return string
  */
 function aslc_read_generated_css( $filename ) {
-	$upload_directory = realpath( CCJ_UPLOAD_DIR );
-	$css_file         = realpath( trailingslashit( CCJ_UPLOAD_DIR ) . $filename );
-	if ( false === $upload_directory || false === $css_file || ! is_file( $css_file ) || ! is_readable( $css_file ) ) {
-		return '';
-	}
-
-	$upload_prefix = trailingslashit( $upload_directory );
-	if ( 0 !== strpos( $css_file, $upload_prefix ) ) {
-		return '';
-	}
-
-	$file_contents = file_get_contents( $css_file );
-	if ( false === $file_contents ) {
-		return '';
-	}
-
-	if ( preg_match( '/<style\b[^>]*>([\s\S]*?)<\/style>/i', $file_contents, $matches ) ) {
-		return trim( $matches[1] );
-	}
-
-	return trim( preg_replace( '/<!--\s*Local (?:Start|End)[\s\S]*?-->/', '', $file_contents ) );
+	$css = aslc_get_generated_css_contents( $filename );
+	return is_wp_error( $css ) ? '' : $css;
 }
