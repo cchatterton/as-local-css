@@ -3,7 +3,7 @@ Contributors:
 Tags: CSS, JS, javascript, custom CSS, custom JS, custom code, local css
 Requires at least: 7.0
 Tested up to: 7.0
-Stable tag: 0.8.1
+Stable tag: 0.8.2
 Requires PHP: 7.4
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -27,6 +27,11 @@ Original plugin: https://wordpress.org/plugins/custom-css-js/
 Thank you to the original author and maintainers for the plugin this AlphaSys-controlled release continues from.
 
 == Changelog ==
+
+= 0.8.2 =
+* Removed the Related Content editor panel, relationship search and save behaviour, and related-content list column while retaining previously stored relationship metadata.
+* Tightened the CSS Errors header into a compact action row with a single-line scan summary.
+* Refresh CSS findings automatically whenever the CSS Errors page is opened.
 
 = 0.8.1 =
 * Removed the redundant Linking type, Cascade position, and disabled Apply network wide controls from CSS records while preserving stored cascade positions internally.

@@ -289,7 +289,6 @@ class CustomCSSandJS_Admin {
 			'active'               => '<span class="ccj-dashicons dashicons dashicons-star-empty" title="' . __( 'Active', 'custom-css-js' ) . '"></span>',
 			'type'                 => __( 'Type', 'custom-css-js' ),
 			'title'                => __( 'Title' ),
-			'aslc-related-content' => __( 'Related Content', 'custom-css-js' ),
 			'author'               => __( 'Author' ),
 			'published'            => __( 'Published' ),
 			'modified'             => __( 'Modified', 'custom-css-js' ),
@@ -327,10 +326,6 @@ class CustomCSSandJS_Admin {
 			}
 
 			echo $h_time;
-		}
-
-		if ( 'aslc-related-content' === $column && function_exists( 'aslc_render_related_content_list_column' ) ) {
-			aslc_render_related_content_list_column( $column, $post_id );
 		}
 
 		if ( 'active' === $column ) {

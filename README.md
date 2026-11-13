@@ -1,7 +1,7 @@
 # AS Local CSS
 
 Author: AlphaSys
-Version: 0.8.1
+Version: 0.8.2
 Status: Production
 
 ## Purpose
@@ -25,7 +25,6 @@ AS Local CSS is an AlphaSys-maintained, compatible replacement for the WordPress
 - Stylesheets registered through WordPress's front-end enqueue hook load in the editor iframe before Local CSS, preserving design-token dependencies.
 - Local CSS is promoted after Gutenberg's native block styles in the editor canvas so authored rules retain front-end cascade authority.
 - The block editor content canvas receives the edited post's front-end WordPress body classes so class-scoped CSS has the same selector context.
-- Custom code can be related to editable content items from the custom code editor, with relationship details retained in the custom-code list table.
 - Custom code revisions preserve authored code, target scopes, responsive CSS sections, and execution options, and restored revisions immediately rebuild generated assets.
 - The bundled CodeMirror 5 editor is maintained at version 5.65.20.
 - AS Update Controller handles GitHub release discovery and installation; this plugin only registers its identity and local controller actions.

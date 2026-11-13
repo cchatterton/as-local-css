@@ -2,6 +2,12 @@
 
 All notable changes to AS Local CSS are recorded here.
 
+## 0.8.2 - 2026-11-13
+
+- Removed the Related Content editor panel, relationship search and save behaviour, and related-content list column while retaining previously stored relationship metadata.
+- Tightened the CSS Errors header into a compact action row with a single-line scan summary.
+- Refresh CSS findings automatically whenever the CSS Errors page is opened.
+
 ## 0.8.1 - 2026-11-13
 
 - Removed the redundant Linking type, Cascade position, and disabled Apply network wide controls from CSS records while preserving stored cascade positions internally.

@@ -1,6 +1,6 @@
 {
-  "version": "0.8.1",
-  "body": "## 0.8.1 - 2026-11-13\n\n- Remove the redundant Linking type, Cascade position, and disabled Apply network wide controls from CSS records.\n- Preserve each record's stored cascade position internally so editing it cannot silently reorder live CSS.\n",
+  "version": "0.8.2",
+  "body": "## 0.8.2 - 2026-11-13\n\n- Remove the Related Content editor panel, relationship search and save behaviour, and related-content list column.\n- Retain previously stored relationship metadata so the change is non-destructive.\n- Tighten the CSS Errors header into a compact action row with a single-line scan summary.\n- Refresh CSS findings automatically whenever the CSS Errors page is opened.\n",
   "requires": "7.0",
   "requires_php": "7.4"
 }

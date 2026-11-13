@@ -133,9 +133,17 @@ function aslc_register_css_errors_page() {
 		'aslc-css-errors',
 		'aslc_render_css_errors_page'
 	);
+	add_action( 'load-' . $hook, 'aslc_scan_css_errors_on_page_load' );
 	add_action( 'load-' . $hook, 'aslc_add_css_errors_help' );
 }
 add_action( 'admin_menu', 'aslc_register_css_errors_page', 21 );
+
+/** Refresh CSS findings whenever the CSS Errors screen is opened. */
+function aslc_scan_css_errors_on_page_load() {
+	if ( current_user_can( 'manage_options' ) ) {
+		aslc_scan_css_records();
+	}
+}
 
 /** Add native contextual guidance to the CSS Errors screen. */
 function aslc_add_css_errors_help() {
@@ -198,16 +206,19 @@ function aslc_render_css_errors_page() {
 	$table->prepare_items();
 	?>
 	<div class="wrap aslc-css-errors-page">
-		<h1 class="wp-heading-inline"><?php esc_html_e( 'CSS Errors', 'custom-css-js' ); ?></h1>
-		<form action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" method="post" style="display:inline-block;margin-left:8px;">
-			<input type="hidden" name="action" value="aslc_run_css_scan">
-			<?php wp_nonce_field( 'aslc_run_css_scan' ); ?>
-			<?php submit_button( __( 'Scan CSS now', 'custom-css-js' ), 'secondary', 'submit', false ); ?>
-		</form>
+		<div class="aslc-css-errors-header">
+			<h1><?php esc_html_e( 'CSS Errors', 'custom-css-js' ); ?></h1>
+			<form action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" method="post">
+				<input type="hidden" name="action" value="aslc_run_css_scan">
+				<?php wp_nonce_field( 'aslc_run_css_scan' ); ?>
+				<?php submit_button( __( 'Scan CSS now', 'custom-css-js' ), 'secondary', 'submit', false ); ?>
+			</form>
+		</div>
 		<hr class="wp-header-end">
 
-		<?php if ( ! empty( $results['scanned_at'] ) ) : ?>
-			<p class="description">
+		<div class="aslc-css-errors-summary">
+			<?php if ( ! empty( $results['scanned_at'] ) ) : ?>
+				<span class="description">
 				<?php
 				printf(
 					/* translators: %s: date and time of the latest CSS scan. */
@@ -215,18 +226,44 @@ function aslc_render_css_errors_page() {
 					esc_html( wp_date( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), (int) $results['scanned_at'] ) )
 				);
 				?>
-			</p>
-		<?php endif; ?>
+				</span>
+			<?php endif; ?>
+
+			<?php if ( ! empty( $findings ) ) : ?>
+				<span><?php esc_html_e( 'Open a finding to review it. See Help for details.', 'custom-css-js' ); ?></span>
+			<?php endif; ?>
+		</div>
 
 		<?php if ( empty( $findings ) ) : ?>
 			<div class="notice notice-success inline"><p><?php esc_html_e( 'No CSS errors were found.', 'custom-css-js' ); ?></p></div>
-		<?php else : ?>
-			<p><?php esc_html_e( 'Open a finding to review it. See the Help tab for explanations and suggested fixes.', 'custom-css-js' ); ?></p>
 		<?php endif; ?>
 
 		<?php $table->display(); ?>
 
 		<style>
+		.aslc-css-errors-header {
+			display: flex;
+			align-items: center;
+			gap: 0.75rem;
+			margin: 0.6rem 0 0;
+		}
+		.aslc-css-errors-header h1 {
+			padding: 0;
+		}
+		.aslc-css-errors-header form {
+			margin: 0;
+		}
+		.aslc-css-errors-summary {
+			display: flex;
+			align-items: center;
+			gap: 0.6rem;
+			margin: 0.45rem 0 0.8rem;
+		}
+		.aslc-css-errors-summary > span + span::before {
+			content: "·";
+			margin-right: 0.6rem;
+			color: #8c8f94;
+		}
 		.aslc-css-errors-page .wp-list-table {
 			border-radius: 8px;
 			box-shadow: 0 1px 2px rgba(0, 0, 0, 0.035);
@@ -277,6 +314,14 @@ function aslc_render_css_errors_page() {
 			.aslc-css-errors-page .column-action { width: 5rem; }
 		}
 		@media screen and (max-width: 782px) {
+			.aslc-css-errors-summary {
+				align-items: flex-start;
+				flex-direction: column;
+				gap: 0.2rem;
+			}
+			.aslc-css-errors-summary > span + span::before {
+				display: none;
+			}
 			.aslc-css-errors-page .column-record strong {
 				overflow: visible;
 				white-space: normal;
