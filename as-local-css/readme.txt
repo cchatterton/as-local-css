@@ -3,7 +3,7 @@ Contributors:
 Tags: CSS, JS, javascript, custom CSS, custom JS, custom code, local css
 Requires at least: 7.0
 Tested up to: 7.0
-Stable tag: 0.6.13
+Stable tag: 0.7.0
 Requires PHP: 7.4
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -27,6 +27,13 @@ Original plugin: https://wordpress.org/plugins/custom-css-js/
 Thank you to the original author and maintainers for the plugin this AlphaSys-controlled release continues from.
 
 == Changelog ==
+
+= 0.7.0 =
+* Added a backward-compatible Base CSS accordion and independent responsive CSS accordions for every configured min-width breakpoint.
+* Added live per-section character counts and automatic media-query wrapping while omitting empty breakpoint sections.
+* Stored breakpoint CSS in revision-enabled metadata keyed by stable row IDs so breakpoint labels and values can change without disconnecting authored CSS.
+* Unified inline and generated-file output, including breakpoint-token replacement, through one CSS section assembler, and regenerate all snippet files when breakpoint settings change.
+* Scan each CSS section independently and identify its section in the CSS Errors table and direct edit link.
 
 = 0.6.13 =
 

@@ -1,7 +1,7 @@
 # AS Local CSS
 
 Author: AlphaSys
-Version: 0.6.13
+Version: 0.7.0
 Status: Production
 
 ## Purpose
@@ -14,17 +14,17 @@ AS Local CSS is an AlphaSys-maintained, compatible replacement for the WordPress
 - Existing options, post meta, capabilities, upload folder, AJAX actions, and editor screens are preserved.
 - Active CSS snippets are compiled into one content-addressed stylesheet per frontend, admin, or login context; JavaScript remains inline.
 - CSS bundles are compiled from the same generated per-snippet files used by inline delivery, written atomically, follow the selected numeric priority direction, preserve snippet author IDs in start/end comments, and keep the last working bundle or inline fallback if rebuilding fails.
-- Activating or updating the plugin refreshes all CSS bundles; obsolete bundle schemas also self-heal on the first request without a migration-version flag.
+- Activating or updating the plugin refreshes generated per-record CSS and all CSS bundles; obsolete bundle schemas also self-heal on the first request without a migration-version flag.
 - A CSS Delivery submenu lets administrators switch between original inline CSS output and the generated-file bundle without changing JavaScript or HTML delivery.
 - CSS Delivery also controls whether record priorities are emitted from 1 to 5 or from 5 to 1, with the numeric direction applied to legacy priorities 6 through 10.
-- A separate CSS Breakpoints submenu manages repeatable token-to-length mappings; generated bundles resolve tokens such as `%MD%` without changing authored records or legacy inline output.
-- Published CSS records are scanned on saves and bundle refreshes; a CSS Errors submenu shows a native WordPress findings table, an update-style counter, descriptions, line numbers, and direct edit links.
+- A separate CSS Breakpoints submenu manages repeatable token-to-length mappings. Each CSS record has a backward-compatible Base editor and one independent accordion per min-width breakpoint; non-empty responsive sections are wrapped automatically, and both delivery modes resolve tokens such as `%MD%` without changing authored records.
+- Published CSS records are scanned by section on saves and bundle refreshes; a CSS Errors submenu shows a native WordPress findings table, an update-style counter, section labels, descriptions, line numbers, and direct accordion links.
 - Active front-end CSS snippets load in the block editor content iframe as well as on the site front end.
 - Stylesheets registered through WordPress's front-end enqueue hook load in the editor iframe before Local CSS, preserving design-token dependencies.
 - Local CSS is promoted after Gutenberg's native block styles in the editor canvas so authored rules retain front-end cascade authority.
 - The block editor content canvas receives the edited post's front-end WordPress body classes so class-scoped CSS has the same selector context.
 - Custom code can be related to editable content items from the custom code editor, with relationship details retained in the custom-code list table.
-- Custom code revisions preserve both authored code and execution options, and restored revisions immediately rebuild generated assets.
+- Custom code revisions preserve authored code, responsive CSS sections, and execution options, and restored revisions immediately rebuild generated assets.
 - The bundled CodeMirror 5 editor is maintained at version 5.65.20.
 - AS Update Controller handles GitHub release discovery and installation; this plugin only registers its identity and local controller actions.
 - The interface is maintained in English only.

@@ -42,6 +42,7 @@ class ASLC_CSS_Errors_List_Table extends WP_List_Table {
 		return array(
 			'record'      => __( 'CSS record', 'custom-css-js' ),
 			'severity'    => __( 'Severity', 'custom-css-js' ),
+			'section'     => __( 'Section', 'custom-css-js' ),
 			'line'        => __( 'Line', 'custom-css-js' ),
 			'description' => __( 'Description', 'custom-css-js' ),
 			'action'      => __( 'Action', 'custom-css-js' ),
@@ -73,6 +74,9 @@ class ASLC_CSS_Errors_List_Table extends WP_List_Table {
 		if ( 'severity' === $column_name ) {
 			return esc_html( ucfirst( $item['severity'] ) );
 		}
+		if ( 'section' === $column_name ) {
+			return ! empty( $item['section'] ) ? '<code>' . esc_html( $item['section'] ) . '</code>' : '&mdash;';
+		}
 		if ( 'line' === $column_name ) {
 			return $item['line'] ? (string) (int) $item['line'] : '&mdash;';
 		}
@@ -81,6 +85,17 @@ class ASLC_CSS_Errors_List_Table extends WP_List_Table {
 		}
 		if ( 'action' === $column_name ) {
 			$edit_link = get_edit_post_link( $item['post_id'], '' );
+			if ( $edit_link && ! empty( $item['section'] ) ) {
+				$rows = function_exists( 'aslc_get_css_breakpoint_rows' ) ? aslc_get_css_breakpoint_rows() : array();
+				$hash = 'aslc-css-section-base';
+				foreach ( $rows as $row ) {
+					if ( $row['token'] === $item['section'] ) {
+						$hash = 'aslc-css-section-' . $row['id'];
+						break;
+					}
+				}
+				$edit_link .= '#' . $hash;
+			}
 			return $edit_link
 				? sprintf( '<a class="button button-secondary" href="%s">%s</a>', esc_url( $edit_link ), esc_html__( 'Edit CSS', 'custom-css-js' ) )
 				: '&mdash;';

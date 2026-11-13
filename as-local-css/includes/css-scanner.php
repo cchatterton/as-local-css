@@ -99,7 +99,22 @@ function aslc_scan_css_records( $search_tree = null ) {
 			continue;
 		}
 
-		$findings = array_merge( $findings, aslc_scan_css_record( $post_id, $css ) );
+		$post = get_post( $post_id );
+		if ( $post && function_exists( 'aslc_get_css_breakpoint_sections' ) ) {
+			$findings = array_merge( $findings, aslc_scan_css_record( $post_id, $post->post_content, __( 'Base', 'custom-css-js' ) ) );
+			$sections = aslc_get_css_breakpoint_sections( $post_id );
+			foreach ( aslc_get_css_breakpoint_rows() as $row ) {
+				if ( empty( $sections[ $row['id'] ] ) ) {
+					continue;
+				}
+				$findings = array_merge(
+					$findings,
+					aslc_scan_css_record( $post_id, $sections[ $row['id'] ], $row['token'] )
+				);
+			}
+		} else {
+			$findings = array_merge( $findings, aslc_scan_css_record( $post_id, $css ) );
+		}
 	}
 
 	update_option(
@@ -137,9 +152,10 @@ function aslc_get_bundle_blocking_css_findings( array $findings ) {
  *
  * @param int    $post_id CSS record ID.
  * @param string $css     Authored CSS without its HTML style wrapper.
+ * @param string $section Optional editor section label.
  * @return array
  */
-function aslc_scan_css_record( $post_id, $css ) {
+function aslc_scan_css_record( $post_id, $css, $section = '' ) {
 	$findings     = array();
 	$brace_stack  = array();
 	$length       = strlen( $css );
@@ -345,6 +361,13 @@ function aslc_scan_css_record( $post_id, $css ) {
 		}
 	}
 
+	if ( '' !== $section ) {
+		foreach ( $findings as &$finding ) {
+			$finding['section'] = $section;
+		}
+		unset( $finding );
+	}
+
 	return $findings;
 }
 
@@ -365,5 +388,6 @@ function aslc_css_scan_finding( $post_id, $line, $severity, $code, $message ) {
 		'severity' => $severity,
 		'code'     => $code,
 		'message'  => $message,
+		'section'  => '',
 	);
 }

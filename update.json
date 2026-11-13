@@ -1,6 +1,6 @@
 {
-  "version": "0.6.13",
-  "body": "## 0.6.13 - 2026-11-13\n\n- Group Add and Save together on the lower right of the breakpoint card.\n- Remove the misaligned Add icon and match both controls' height, padding, and spacing.\n",
+  "version": "0.7.0",
+  "body": "## 0.7.0 - 2026-11-13\n\n- Add a backward-compatible Base CSS accordion and independent responsive CSS accordions for every configured min-width breakpoint.\n- Add live character counts and automatically wrap non-empty responsive sections in their media queries.\n- Keep inline and generated-file delivery identical, including token replacement, through one shared assembler with revision support and section-aware CSS error reporting.\n",
   "requires": "7.0",
   "requires_php": "7.4"
 }

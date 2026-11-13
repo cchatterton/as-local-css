@@ -148,6 +148,7 @@ class CustomCSSandJS_Admin {
 			wp_enqueue_style( 'ccj-jquery-ui', $a . '/jquery-ui.css', array(), $v );
 			wp_enqueue_script( 'ccj-codemirror', $a . '/codemirror.min.js', array( 'jquery' ), $v, false );
 			wp_enqueue_style( 'ccj-codemirror', $a . '/codemirror.min.css', array(), $v );
+			wp_enqueue_script( 'aslc-breakpoint-editor', $a . '/aslc-breakpoint-editor.js', array( 'ccj-admin', 'ccj-codemirror' ), ASLC_VERSION, true );
 			wp_enqueue_script( 'ccj-admin_url_rules', $a . '/ccj_admin-url_rules.js', array( 'jquery' ), $v, false );
 
 			// remove the CodeMirror library added by the Product Slider for WooCommerce plugin by ShapedPlugin
@@ -764,7 +765,20 @@ End of comment */ ',
 
 		}
 
+		$is_css              = 'css' === $language;
+		$breakpoint_rows     = $is_css ? aslc_get_css_breakpoint_rows() : array();
+		$breakpoint_sections = $is_css && $post->ID ? aslc_get_css_breakpoint_sections( $post->ID ) : array();
+
 		?>
+			<?php if ( $is_css ) : ?>
+			<div class="aslc-css-sections">
+				<details class="aslc-css-section" id="aslc-css-section-base" open>
+					<summary>
+						<span class="aslc-css-section__identity"><strong><?php esc_html_e( 'Base', 'custom-css-js' ); ?></strong><span><?php esc_html_e( 'All screen sizes', 'custom-css-js' ); ?></span></span>
+						<span class="aslc-css-section__count" data-count-for="ccj_content"></span>
+					</summary>
+					<div class="aslc-css-section__editor">
+			<?php endif; ?>
 
 				<div class="code-mirror-buttons">
 				<div class="button-left"><span rel="tipsy" original-title="<?php _e( 'Beautify Code', 'custom-css-js-pro' ); ?>"><button type="button" tabindex="-1" id="ccj-beautifier"><i class="ccj-i-beautifier"></i></button></span></div>
@@ -798,6 +812,29 @@ End of comment */ ',
 
 
 				<input type="hidden" id="update-post_<?php echo $post->ID; ?>" value="<?php echo wp_create_nonce( 'update-post_' . $post->ID ); ?>" />
+			<?php if ( $is_css ) : ?>
+					</div>
+				</details>
+
+				<?php foreach ( $breakpoint_rows as $breakpoint ) : ?>
+					<?php
+					$section_id  = 'aslc_breakpoint_css_' . $breakpoint['id'];
+					$section_css = isset( $breakpoint_sections[ $breakpoint['id'] ] ) ? $breakpoint_sections[ $breakpoint['id'] ] : '';
+					?>
+					<details class="aslc-css-section" id="aslc-css-section-<?php echo esc_attr( $breakpoint['id'] ); ?>" data-breakpoint-id="<?php echo esc_attr( $breakpoint['id'] ); ?>">
+						<summary>
+							<span class="aslc-css-section__identity"><strong><?php echo esc_html( $breakpoint['token'] ); ?></strong><span><?php echo esc_html( 'min-width: ' . $breakpoint['value'] ); ?></span></span>
+							<span class="aslc-css-section__count" data-count-for="<?php echo esc_attr( $section_id ); ?>"></span>
+						</summary>
+						<div class="aslc-css-section__editor">
+							<div class="code-mirror-before"><div><?php echo esc_html( '@media (min-width: ' . $breakpoint['value'] . ') {' ); ?></div></div>
+							<textarea class="wp-editor-area aslc-breakpoint-textarea" id="<?php echo esc_attr( $section_id ); ?>" mode="text/css" name="aslc_breakpoint_css[<?php echo esc_attr( $breakpoint['id'] ); ?>]"><?php echo esc_textarea( $section_css ); ?></textarea>
+							<div class="code-mirror-after"><div>}</div></div>
+						</div>
+					</details>
+				<?php endforeach; ?>
+			</div>
+			<?php endif; ?>
 		<?php
 
 	}
@@ -1163,6 +1200,10 @@ End of comment */ ',
 
 		update_post_meta( $post_id, 'options', $options );
 		$this->options[ $post_id ] = $options;
+		if ( 'css' === $options['language'] ) {
+			$submitted_sections = isset( $_POST['aslc_breakpoint_css'] ) ? $_POST['aslc_breakpoint_css'] : array();
+			aslc_save_css_breakpoint_sections( $post_id, $submitted_sections );
+		}
 
 		if ( $options['language'] == 'html' ) {
 			$this->build_search_tree();
@@ -1214,6 +1255,11 @@ End of comment */ ',
 	 * Write a CSS or JavaScript snippet to its generated upload file.
 	 */
 	private function write_code_file( $post_id, $content, $author_id, $options ) {
+		if ( 'css' === ( $options['language'] ?? '' ) ) {
+			aslc_write_css_snippet_file( $post_id, $content, $author_id, $options );
+			return;
+		}
+
 		if ( ! file_exists( CCJ_UPLOAD_DIR ) ) {
 			wp_mkdir_p( CCJ_UPLOAD_DIR );
 		}

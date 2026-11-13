@@ -16,6 +16,7 @@ class CustomCSSandJS_Install {
     public static function install() {
         self::create_roles();
         self::register_post_type();
+        aslc_regenerate_all_css_snippet_files();
         aslc_rebuild_css_bundles();
         flush_rewrite_rules();
     }  
@@ -86,6 +87,17 @@ class CustomCSSandJS_Install {
             'options',
             array(
                 'type'              => 'array',
+                'single'            => true,
+                'show_in_rest'      => false,
+                'revisions_enabled' => true,
+            )
+        );
+
+        register_post_meta(
+            'custom-css-js',
+            ASLC_CSS_BREAKPOINT_SECTIONS_META,
+            array(
+                'type'              => 'object',
                 'single'            => true,
                 'show_in_rest'      => false,
                 'revisions_enabled' => true,

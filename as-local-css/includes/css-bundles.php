@@ -7,7 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'ASLC_CSS_BUNDLE_SCHEMA', 5 );
+define( 'ASLC_CSS_BUNDLE_SCHEMA', 6 );
 define( 'ASLC_CSS_DELIVERY_OPTION', 'aslc_css_delivery_mode' );
 define( 'ASLC_CSS_ORDER_OPTION', 'aslc_css_priority_order' );
 define( 'ASLC_CSS_BREAKPOINTS_OPTION', 'aslc_css_breakpoint_tokens' );
@@ -42,39 +42,59 @@ function aslc_get_css_priority_order() {
 }
 
 /**
- * Return the default breakpoint-token replacements.
+ * Return the default breakpoint rows.
  *
  * The existing AlphaSys CSS convention uses a four-point responsive scale.
  * Sites can replace, remove, or extend these rows on the CSS Breakpoints page.
  *
- * @return array<string,string> Token to CSS length.
+ * @return array<int,array{id:string,token:string,value:string}> Breakpoint rows.
  */
-function aslc_get_default_css_breakpoint_tokens() {
+function aslc_get_default_css_breakpoint_rows() {
 	return array(
-		'%SM%' => '48rem',
-		'%MD%' => '68rem',
-		'%LG%' => '75rem',
-		'%XL%' => '80rem',
+		array( 'id' => 'sm', 'token' => '%SM%', 'value' => '48rem' ),
+		array( 'id' => 'md', 'token' => '%MD%', 'value' => '68rem' ),
+		array( 'id' => 'lg', 'token' => '%LG%', 'value' => '75rem' ),
+		array( 'id' => 'xl', 'token' => '%XL%', 'value' => '80rem' ),
 	);
 }
 
 /**
- * Normalise submitted breakpoint repeater rows.
+ * Build a stable fallback ID from a breakpoint token.
  *
- * @param array $rows Repeater rows or an existing token-to-value map.
- * @return array<string,string> Valid unique token replacements.
+ * @param string $token Normalized token including percent signs.
+ * @return string Stable breakpoint ID.
  */
-function aslc_sanitize_css_breakpoint_tokens( $rows ) {
+function aslc_css_breakpoint_id_from_token( $token ) {
+	$id = strtolower( trim( (string) $token, '%' ) );
+	$id = preg_replace( '/[^a-z0-9_-]+/', '-', $id );
+	$id = trim( (string) $id, '-' );
+	return '' !== $id ? substr( $id, 0, 48 ) : 'breakpoint';
+}
+
+/**
+ * Normalise submitted breakpoint rows while preserving stable row IDs.
+ *
+ * Legacy token-to-value maps are upgraded in memory and receive deterministic
+ * IDs, so existing sites retain their configured order and values.
+ *
+ * @param array $rows Repeater rows or a legacy token-to-value map.
+ * @return array<int,array{id:string,token:string,value:string}> Valid rows.
+ */
+function aslc_sanitize_css_breakpoint_rows( $rows ) {
 	if ( ! is_array( $rows ) ) {
 		return array();
 	}
 
-	$tokens = array();
+	$sanitized     = array();
+	$used_ids      = array();
+	$used_tokens   = array();
 	foreach ( $rows as $key => $row ) {
 		if ( is_array( $row ) ) {
+			$id    = isset( $row['id'] ) ? strtolower( trim( (string) $row['id'] ) ) : '';
 			$name  = isset( $row['token'] ) ? $row['token'] : '';
 			$value = isset( $row['value'] ) ? $row['value'] : '';
 		} else {
+			$id    = '';
 			$name  = $key;
 			$value = $row;
 		}
@@ -90,9 +110,71 @@ function aslc_sanitize_css_breakpoint_tokens( $rows ) {
 			continue;
 		}
 
-		$tokens[ '%' . $name . '%' ] = $value;
+		$token = '%' . $name . '%';
+		if ( isset( $used_tokens[ $token ] ) ) {
+			continue;
+		}
+
+		if ( ! preg_match( '/^[a-z0-9][a-z0-9_-]{0,63}$/', $id ) ) {
+			$id = aslc_css_breakpoint_id_from_token( $token );
+		}
+		$base_id = $id;
+		$suffix  = 2;
+		while ( isset( $used_ids[ $id ] ) ) {
+			$id = substr( $base_id, 0, 58 ) . '-' . $suffix;
+			$suffix++;
+		}
+
+		$used_ids[ $id ]       = true;
+		$used_tokens[ $token ] = true;
+		$sanitized[]           = array(
+			'id'    => $id,
+			'token' => $token,
+			'value' => $value,
+		);
 	}
 
+	return $sanitized;
+}
+
+/**
+ * Return configured breakpoint rows in their mobile-first output order.
+ *
+ * @return array<int,array{id:string,token:string,value:string}> Breakpoint rows.
+ */
+function aslc_get_css_breakpoint_rows() {
+	$saved = get_option( ASLC_CSS_BREAKPOINTS_OPTION, false );
+	if ( false === $saved ) {
+		return aslc_get_default_css_breakpoint_rows();
+	}
+
+	return aslc_sanitize_css_breakpoint_rows( $saved );
+}
+
+/**
+ * Return the default breakpoint-token replacements.
+ *
+ * @return array<string,string> Token to CSS length.
+ */
+function aslc_get_default_css_breakpoint_tokens() {
+	$tokens = array();
+	foreach ( aslc_get_default_css_breakpoint_rows() as $row ) {
+		$tokens[ $row['token'] ] = $row['value'];
+	}
+	return $tokens;
+}
+
+/**
+ * Normalise breakpoint rows into a token-to-value map.
+ *
+ * @param array $rows Breakpoint rows or a legacy map.
+ * @return array<string,string> Token replacements.
+ */
+function aslc_sanitize_css_breakpoint_tokens( $rows ) {
+	$tokens = array();
+	foreach ( aslc_sanitize_css_breakpoint_rows( $rows ) as $row ) {
+		$tokens[ $row['token'] ] = $row['value'];
+	}
 	return $tokens;
 }
 
@@ -102,12 +184,11 @@ function aslc_sanitize_css_breakpoint_tokens( $rows ) {
  * @return array<string,string> Token to CSS length.
  */
 function aslc_get_css_breakpoint_tokens() {
-	$saved = get_option( ASLC_CSS_BREAKPOINTS_OPTION, false );
-	if ( false === $saved ) {
-		return aslc_get_default_css_breakpoint_tokens();
+	$tokens = array();
+	foreach ( aslc_get_css_breakpoint_rows() as $row ) {
+		$tokens[ $row['token'] ] = $row['value'];
 	}
-
-	return aslc_sanitize_css_breakpoint_tokens( $saved );
+	return $tokens;
 }
 
 /**
@@ -174,6 +255,9 @@ function aslc_refresh_css_bundles_after_plugin_update( $upgrader, $options ) {
 		return;
 	}
 
+	if ( function_exists( 'aslc_regenerate_all_css_snippet_files' ) ) {
+		aslc_regenerate_all_css_snippet_files();
+	}
 	aslc_rebuild_css_bundles();
 }
 add_action( 'upgrader_process_complete', 'aslc_refresh_css_bundles_after_plugin_update', 10, 2 );
@@ -386,9 +470,10 @@ function aslc_rebuild_css_bundles( $search_tree = null ) {
 				'aslc_css_bundle_error',
 				array(
 					'message' => sprintf(
-						/* translators: 1: CSS record ID, 2: line number, 3: error description. */
-						__( 'CSS record %1$d, line %2$d: %3$s Generated-file delivery has been disabled until the record is fixed.', 'custom-css-js' ),
+						/* translators: 1: CSS record ID, 2: section label, 3: line number, 4: error description. */
+						__( 'CSS record %1$d, %2$s, line %3$d: %4$s Generated-file delivery has been disabled until the record is fixed.', 'custom-css-js' ),
 						(int) $first['post_id'],
+						! empty( $first['section'] ) ? $first['section'] : __( 'generated CSS', 'custom-css-js' ),
 						(int) $first['line'],
 						$first['message']
 					),

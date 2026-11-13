@@ -457,6 +457,102 @@ pre.CodeMirror-line {
 	display: block !important;
 }
 
+/* Responsive CSS section editor. */
+.aslc-css-sections {
+	margin-top: 1rem;
+	overflow: hidden;
+	background: #fff;
+	border: 1px solid #c3c4c7;
+	border-radius: 10px;
+	box-shadow: 0 1px 2px rgba(0, 0, 0, .04), 0 8px 24px rgba(0, 0, 0, .035);
+}
+.aslc-css-section {
+	border-bottom: 1px solid #dcdcde;
+}
+.aslc-css-section:last-child {
+	border-bottom: 0;
+}
+.aslc-css-section > summary {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 1rem;
+	min-height: 3.75rem;
+	padding: 0 1.25rem;
+	cursor: pointer;
+	list-style: none;
+	background: #fff;
+	transition: background-color 120ms ease;
+}
+.aslc-css-section > summary::-webkit-details-marker {
+	display: none;
+}
+.aslc-css-section > summary::before {
+	content: "\f347";
+	flex: 0 0 auto;
+	font: normal 18px/1 dashicons;
+	color: #646970;
+	transition: transform 120ms ease;
+}
+.aslc-css-section[open] > summary::before {
+	transform: rotate(180deg);
+}
+.aslc-css-section > summary:hover,
+.aslc-css-section > summary:focus-visible {
+	background: #f6f7f7;
+}
+.aslc-css-section > summary:focus-visible {
+	outline: 2px solid var(--wp-admin-theme-color, #2271b1);
+	outline-offset: -2px;
+}
+.aslc-css-section__identity {
+	display: flex;
+	align-items: baseline;
+	gap: .65rem;
+	min-width: 0;
+	margin-right: auto;
+}
+.aslc-css-section__identity strong {
+	font-size: .875rem;
+	font-family: Consolas, Monaco, monospace;
+}
+.aslc-css-section__identity span,
+.aslc-css-section__count {
+	color: #646970;
+	font-size: .75rem;
+}
+.aslc-css-section__count {
+	font-variant-numeric: tabular-nums;
+	white-space: nowrap;
+}
+.aslc-css-section__editor {
+	padding: 0;
+	border-top: 1px solid #dcdcde;
+}
+.aslc-css-section__editor .code-mirror-before,
+.aslc-css-section__editor .code-mirror-after {
+	margin: 0;
+}
+.aslc-css-section__editor .CodeMirror {
+	width: 100% !important;
+	max-width: 100% !important;
+	border-right: 0;
+	border-left: 0;
+}
+.aslc-css-section__editor #post-status-info {
+	width: 100%;
+}
+@media screen and (max-width: 782px) {
+	.aslc-css-section__identity {
+		align-items: flex-start;
+		flex-direction: column;
+		gap: .15rem;
+	}
+	.aslc-css-section > summary {
+		padding: .75rem 1rem;
+	}
+}
+
 /**
  * RTL
  */

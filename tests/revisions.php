@@ -7,6 +7,7 @@ if ( ! is_dir( $aslc_revision_upload_dir ) ) {
 	mkdir( $aslc_revision_upload_dir );
 }
 define( 'CCJ_UPLOAD_DIR', $aslc_revision_upload_dir );
+define( 'ASLC_PLUGIN_FILE', __FILE__ );
 
 $GLOBALS['aslc_registered_post_type'] = array();
 $GLOBALS['aslc_registered_post_meta'] = array();
@@ -24,7 +25,22 @@ function register_post_type( $post_type, $args ) {
 }
 
 function register_post_meta( $post_type, $meta_key, $args ) {
-	$GLOBALS['aslc_registered_post_meta'] = array( $post_type, $meta_key, $args );
+	$GLOBALS['aslc_registered_post_meta'][ $meta_key ] = array( $post_type, $meta_key, $args );
+}
+
+function get_option( $name, $default = false ) {
+	return $default;
+}
+
+function update_post_meta() {
+}
+
+function sanitize_key( $key ) {
+	return preg_replace( '/[^a-z0-9_-]/', '', strtolower( $key ) );
+}
+
+function plugin_basename( $file ) {
+	return basename( $file );
 }
 
 function wp_is_writable( $path ) {
@@ -49,6 +65,8 @@ function add_filter() {
 function add_action() {
 }
 
+require dirname( __DIR__ ) . '/as-local-css/includes/css-bundles.php';
+require dirname( __DIR__ ) . '/as-local-css/includes/breakpoint-content.php';
 require dirname( __DIR__ ) . '/as-local-css/includes/admin-install.php';
 require dirname( __DIR__ ) . '/as-local-css/includes/admin-screens.php';
 
@@ -65,11 +83,17 @@ list( $post_type, $post_type_args ) = $GLOBALS['aslc_registered_post_type'];
 aslc_revision_test( 'custom-css-js' === $post_type, 'The custom code post type was not registered.' );
 aslc_revision_test( in_array( 'revisions', $post_type_args['supports'], true ), 'The custom code post type does not support revisions.' );
 
-list( $meta_post_type, $meta_key, $meta_args ) = $GLOBALS['aslc_registered_post_meta'];
+list( $meta_post_type, $meta_key, $meta_args ) = $GLOBALS['aslc_registered_post_meta']['options'];
 aslc_revision_test( 'custom-css-js' === $meta_post_type, 'Revisioned meta was registered for the wrong post type.' );
 aslc_revision_test( 'options' === $meta_key, 'The custom code options meta key was not registered.' );
 aslc_revision_test( true === $meta_args['revisions_enabled'], 'Custom code options were not enabled for revisions.' );
 aslc_revision_test( true === $meta_args['single'], 'Custom code options must remain a single meta value.' );
+
+list( $section_post_type, $section_meta_key, $section_meta_args ) = $GLOBALS['aslc_registered_post_meta'][ ASLC_CSS_BREAKPOINT_SECTIONS_META ];
+aslc_revision_test( 'custom-css-js' === $section_post_type, 'Breakpoint CSS was registered for the wrong post type.' );
+aslc_revision_test( ASLC_CSS_BREAKPOINT_SECTIONS_META === $section_meta_key, 'Breakpoint CSS meta was not registered.' );
+aslc_revision_test( true === $section_meta_args['revisions_enabled'], 'Breakpoint CSS was not enabled for revisions.' );
+aslc_revision_test( true === $section_meta_args['single'], 'Breakpoint CSS must remain a single meta value.' );
 
 $admin      = ( new ReflectionClass( 'CustomCSSandJS_Admin' ) )->newInstanceWithoutConstructor();
 $write_file = new ReflectionMethod( 'CustomCSSandJS_Admin', 'write_code_file' );
@@ -79,7 +103,7 @@ if ( PHP_VERSION_ID < 80100 ) {
 $write_file->invoke(
 	$admin,
 	42,
-	'.revision-test { color: green; }',
+	".revision-test { color: green; }\n@media (min-width: %MD%) { .revision-wide { display: grid; } }",
 	7,
 	array(
 		'language' => 'css',
@@ -92,6 +116,10 @@ aslc_revision_test( file_exists( $generated_file ), 'Restored CSS was not writte
 aslc_revision_test(
 	false !== strpos( file_get_contents( $generated_file ), '.revision-test { color: green; }' ),
 	'The generated revision file did not contain the restored CSS.'
+);
+aslc_revision_test(
+	false !== strpos( file_get_contents( $generated_file ), '@media (min-width: 68rem)' ),
+	'Configured breakpoint tokens were not resolved in the shared generated CSS file.'
 );
 
 unlink( $generated_file );

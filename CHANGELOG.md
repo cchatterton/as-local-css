@@ -2,6 +2,14 @@
 
 All notable changes to AS Local CSS are recorded here.
 
+## 0.7.0 - 2026-11-13
+
+- Added a backward-compatible Base CSS accordion and independent responsive CSS accordions for every configured min-width breakpoint.
+- Added live per-section character counts and automatic media-query wrapping while omitting empty breakpoint sections.
+- Stored breakpoint CSS in revision-enabled metadata keyed by stable row IDs so breakpoint labels and values can change without disconnecting authored CSS.
+- Unified inline and generated-file output, including breakpoint-token replacement, through one CSS section assembler, and regenerate all snippet files when breakpoint settings change.
+- Scanned each CSS section independently and identified its section in the CSS Errors table and direct edit link.
+
 ## 0.6.13 - 2026-11-13
 
 - Grouped Add and Save together on the lower right of the breakpoint card.
