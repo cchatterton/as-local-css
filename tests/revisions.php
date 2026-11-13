@@ -70,6 +70,7 @@ function add_action() {
 
 require dirname( __DIR__ ) . '/as-local-css/includes/css-bundles.php';
 require dirname( __DIR__ ) . '/as-local-css/includes/breakpoint-content.php';
+require dirname( __DIR__ ) . '/as-local-css/includes/code-domains.php';
 require dirname( __DIR__ ) . '/as-local-css/includes/admin-install.php';
 require dirname( __DIR__ ) . '/as-local-css/includes/admin-screens.php';
 
@@ -85,6 +86,7 @@ CustomCSSandJS_Install::register_post_type();
 list( $post_type, $post_type_args ) = $GLOBALS['aslc_registered_post_type'];
 aslc_revision_test( 'custom-css-js' === $post_type, 'The custom code post type was not registered.' );
 aslc_revision_test( in_array( 'revisions', $post_type_args['supports'], true ), 'The custom code post type does not support revisions.' );
+aslc_revision_test( in_array( ASLC_CODE_DOMAIN_TAXONOMY, $post_type_args['taxonomies'], true ), 'The Code Domains taxonomy is not attached to the custom code post type.' );
 
 list( $meta_post_type, $meta_key, $meta_args ) = $GLOBALS['aslc_registered_post_meta']['options'];
 aslc_revision_test( 'custom-css-js' === $meta_post_type, 'Revisioned meta was registered for the wrong post type.' );

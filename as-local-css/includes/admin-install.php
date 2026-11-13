@@ -16,6 +16,10 @@ class CustomCSSandJS_Install {
     public static function install() {
         self::create_roles();
         self::register_post_type();
+        if ( function_exists( 'aslc_register_code_domain_taxonomy' ) ) {
+            aslc_register_code_domain_taxonomy();
+            aslc_seed_default_code_domains();
+        }
         aslc_regenerate_all_css_snippet_files();
         aslc_rebuild_css_bundles();
         flush_rewrite_rules();
@@ -77,7 +81,8 @@ class CustomCSSandJS_Install {
             'exclude_from_search'    => true,
             'menu_position'          => null,
             'can_export'             => false,
-            'supports'               => array( 'title','excerpt','revisions' )
+            'supports'               => array( 'title','excerpt','revisions' ),
+            'taxonomies'             => array( ASLC_CODE_DOMAIN_TAXONOMY ),
         );
 
         register_post_type( 'custom-css-js', $args );

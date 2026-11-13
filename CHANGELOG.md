@@ -2,6 +2,11 @@
 
 All notable changes to AS Local CSS are recorded here.
 
+## 0.9.0 - 2026-11-13
+
+- Added a native hierarchical Code Domains taxonomy to Local CSS records, including its editor panel, list column, quick-edit support, and compact submenu.
+- Seeded Theme, Block, Page, CPT, Plugin, Utility, Component, and Shortcode once, preserving later administrator changes.
+
 ## 0.8.2 - 2026-11-13
 
 - Removed the Related Content editor panel, relationship search and save behaviour, and related-content list column while retaining previously stored relationship metadata.

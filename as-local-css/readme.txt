@@ -3,7 +3,7 @@ Contributors:
 Tags: CSS, JS, javascript, custom CSS, custom JS, custom code, local css
 Requires at least: 7.0
 Tested up to: 7.0
-Stable tag: 0.8.2
+Stable tag: 0.9.0
 Requires PHP: 7.4
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -27,6 +27,10 @@ Original plugin: https://wordpress.org/plugins/custom-css-js/
 Thank you to the original author and maintainers for the plugin this AlphaSys-controlled release continues from.
 
 == Changelog ==
+
+= 0.9.0 =
+* Added a native hierarchical Code Domains taxonomy to Local CSS records, including its editor panel, list column, quick-edit support, and compact submenu.
+* Seeded Theme, Block, Page, CPT, Plugin, Utility, Component, and Shortcode once, preserving later administrator changes.
 
 = 0.8.2 =
 * Removed the Related Content editor panel, relationship search and save behaviour, and related-content list column while retaining previously stored relationship metadata.
