@@ -2,6 +2,10 @@
 
 All notable changes to AS Local CSS are recorded here.
 
+## 0.7.2 - 2026-11-13
+
+- Refined the CSS Errors table with content-sized utility columns, a separate ID column, wider two-line descriptions, and compact Edit actions.
+
 ## 0.7.1 - 2026-11-13
 
 - Added a non-blocking Information finding when a CSS record's Base section contains a media query, with its first matching line and a direct link to the Base accordion.

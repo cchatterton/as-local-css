@@ -41,6 +41,7 @@ class ASLC_CSS_Errors_List_Table extends WP_List_Table {
 	public function get_columns() {
 		return array(
 			'record'      => __( 'CSS record', 'custom-css-js' ),
+			'id'          => __( 'ID', 'custom-css-js' ),
 			'severity'    => __( 'Severity', 'custom-css-js' ),
 			'section'     => __( 'Section', 'custom-css-js' ),
 			'line'        => __( 'Line', 'custom-css-js' ),
@@ -60,7 +61,7 @@ class ASLC_CSS_Errors_List_Table extends WP_List_Table {
 		if ( '' === $title ) {
 			$title = __( '(no title)', 'custom-css-js' );
 		}
-		return sprintf( '<strong>%s</strong><br><code>ID %d</code>', esc_html( $title ), (int) $item['post_id'] );
+		return sprintf( '<strong>%s</strong>', esc_html( $title ) );
 	}
 
 	/**
@@ -71,6 +72,9 @@ class ASLC_CSS_Errors_List_Table extends WP_List_Table {
 	 * @return string
 	 */
 	public function column_default( $item, $column_name ) {
+		if ( 'id' === $column_name ) {
+			return '<code>' . (int) $item['post_id'] . '</code>';
+		}
 		if ( 'severity' === $column_name ) {
 			return esc_html( ucfirst( $item['severity'] ) );
 		}
@@ -81,7 +85,11 @@ class ASLC_CSS_Errors_List_Table extends WP_List_Table {
 			return $item['line'] ? (string) (int) $item['line'] : '&mdash;';
 		}
 		if ( 'description' === $column_name ) {
-			return esc_html( $item['message'] );
+			return sprintf(
+				'<span class="aslc-finding-description" title="%1$s">%2$s</span>',
+				esc_attr( $item['message'] ),
+				esc_html( $item['message'] )
+			);
 		}
 		if ( 'action' === $column_name ) {
 			$edit_link = get_edit_post_link( $item['post_id'], '' );
@@ -97,7 +105,7 @@ class ASLC_CSS_Errors_List_Table extends WP_List_Table {
 				$edit_link .= '#' . $hash;
 			}
 			return $edit_link
-				? sprintf( '<a class="button button-secondary" href="%s">%s</a>', esc_url( $edit_link ), esc_html__( 'Edit CSS', 'custom-css-js' ) )
+				? sprintf( '<a class="button button-secondary button-small aslc-edit-css" href="%s">%s</a>', esc_url( $edit_link ), esc_html__( 'Edit', 'custom-css-js' ) )
 				: '&mdash;';
 		}
 		return '';
@@ -163,7 +171,7 @@ function aslc_render_css_errors_page() {
 	$table    = new ASLC_CSS_Errors_List_Table();
 	$table->prepare_items();
 	?>
-	<div class="wrap">
+	<div class="wrap aslc-css-errors-page">
 		<h1 class="wp-heading-inline"><?php esc_html_e( 'CSS Errors', 'custom-css-js' ); ?></h1>
 		<form action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" method="post" style="display:inline-block;margin-left:8px;">
 			<input type="hidden" name="action" value="aslc_run_css_scan">
@@ -191,6 +199,58 @@ function aslc_render_css_errors_page() {
 		<?php endif; ?>
 
 		<?php $table->display(); ?>
+
+		<style>
+		.aslc-css-errors-page .wp-list-table {
+			border-radius: 8px;
+			box-shadow: 0 1px 2px rgba(0, 0, 0, 0.035);
+		}
+		.aslc-css-errors-page .wp-list-table th,
+		.aslc-css-errors-page .wp-list-table td {
+			vertical-align: middle;
+		}
+		.aslc-css-errors-page .wp-list-table td {
+			padding-top: 0.75rem;
+			padding-bottom: 0.75rem;
+		}
+		.aslc-css-errors-page .column-id,
+		.aslc-css-errors-page .column-line {
+			font-variant-numeric: tabular-nums;
+		}
+		.aslc-css-errors-page .column-id code,
+		.aslc-css-errors-page .column-section code {
+			white-space: nowrap;
+		}
+		.aslc-css-errors-page .aslc-finding-description {
+			display: -webkit-box;
+			overflow: hidden;
+			-webkit-box-orient: vertical;
+			-webkit-line-clamp: 2;
+			line-clamp: 2;
+			line-height: 1.45;
+		}
+		.aslc-css-errors-page .aslc-edit-css {
+			min-width: 3.5rem;
+			text-align: center;
+		}
+		@media screen and (min-width: 1200px) {
+			.aslc-css-errors-page .wp-list-table {
+				table-layout: fixed;
+			}
+			.aslc-css-errors-page .column-record { width: 18rem; }
+			.aslc-css-errors-page .column-id { width: 4.75rem; }
+			.aslc-css-errors-page .column-severity { width: 7rem; }
+			.aslc-css-errors-page .column-section { width: 6rem; }
+			.aslc-css-errors-page .column-line { width: 3.75rem; }
+			.aslc-css-errors-page .column-action { width: 5rem; }
+		}
+		@media screen and (max-width: 782px) {
+			.aslc-css-errors-page .aslc-finding-description {
+				display: block;
+				overflow: visible;
+			}
+		}
+		</style>
 	</div>
 	<?php
 }
