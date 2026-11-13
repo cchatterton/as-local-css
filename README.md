@@ -1,7 +1,7 @@
 # AS Local CSS
 
 Author: AlphaSys
-Version: 0.8.0
+Version: 0.8.1
 Status: Production
 
 ## Purpose
@@ -16,6 +16,7 @@ AS Local CSS is an AlphaSys-maintained, compatible replacement for the WordPress
 - CSS bundles are compiled from the same generated per-snippet files used by inline delivery, written atomically, follow the selected numeric priority direction, preserve snippet author IDs in start/end comments, and keep the last working bundle or inline fallback if rebuilding fails.
 - Activating or updating the plugin refreshes generated per-record CSS and all CSS bundles; obsolete bundle schemas also self-heal on the first request without a migration-version flag.
 - A CSS Delivery submenu lets administrators switch between original inline CSS output and the generated-file bundle without changing JavaScript or HTML delivery.
+- The CSS editor omits the redundant Linking type, Cascade position, and disabled Apply network wide controls. Existing cascade positions remain preserved internally so editing a record cannot silently reorder live CSS.
 - CSS Delivery also controls whether record priorities are emitted from 1 to 5 or from 5 to 1, with the numeric direction applied to legacy priorities 6 through 10.
 - A separate CSS Breakpoints submenu manages repeatable token-to-length mappings. Each CSS record has a backward-compatible Base editor and one independent accordion per min-width breakpoint; non-empty responsive sections are wrapped automatically, and both delivery modes resolve tokens such as `%MD%` without changing authored records.
 - Each CSS record can define an optional Target scope. The plugin wraps Base and every non-empty breakpoint section independently in that selector, adds the legacy parent declaration `visibility: visible`, and supports top-level `&` child selectors inside the scoped editors.

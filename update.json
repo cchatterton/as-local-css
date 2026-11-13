@@ -1,6 +1,6 @@
 {
-  "version": "0.8.0",
-  "body": "## 0.8.0 - 2026-11-13\n\n- Add an optional revisioned Target scope to each CSS record.\n- Wrap Base and each populated breakpoint section independently with the target selector and required visibility declaration.\n- Allow top-level ampersand children when the target supplies their parent, while preserving existing output when the target is blank.\n",
+  "version": "0.8.1",
+  "body": "## 0.8.1 - 2026-11-13\n\n- Remove the redundant Linking type, Cascade position, and disabled Apply network wide controls from CSS records.\n- Preserve each record's stored cascade position internally so editing it cannot silently reorder live CSS.\n",
   "requires": "7.0",
   "requires_php": "7.4"
 }

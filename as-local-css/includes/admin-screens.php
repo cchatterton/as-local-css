@@ -874,13 +874,17 @@ End of comment */ ',
 			<?php
 
 			$output = '';
+			if ( 'css' === $options['language'] ) {
+				$stored_type = isset( $options['type'] ) && in_array( $options['type'], array( 'header', 'footer' ), true )
+					? $options['type']
+					: 'header';
+				$output     .= '<input type="hidden" name="custom_code_type" value="' . esc_attr( $stored_type ) . '">' . PHP_EOL;
+			}
 
 			foreach ( $meta as $_key => $a ) {
 				$close_div = false;
-				if ( 'css' === $options['language'] && 'type' === $_key ) {
-					$a['title']                     = __( 'Cascade position', 'custom-css-js' );
-					$a['values']['header']['title'] = __( 'Earlier in the CSS bundle', 'custom-css-js' );
-					$a['values']['footer']['title'] = __( 'Later in the CSS bundle', 'custom-css-js' );
+				if ( 'css' === $options['language'] && in_array( $_key, array( 'linking', 'type', 'multisite' ), true ) ) {
+					continue;
 				}
 
 				// if ( ( $_key == 'preprocessor' && $options['language'] == 'css' ) ||

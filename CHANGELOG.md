@@ -2,6 +2,10 @@
 
 All notable changes to AS Local CSS are recorded here.
 
+## 0.8.1 - 2026-11-13
+
+- Removed the redundant Linking type, Cascade position, and disabled Apply network wide controls from CSS records while preserving stored cascade positions internally.
+
 ## 0.8.0 - 2026-11-13
 
 - Added an optional revisioned Target scope to every CSS record, wrapping Base and each populated breakpoint section independently with the required `visibility: visible` declaration.

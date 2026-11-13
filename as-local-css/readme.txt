@@ -3,7 +3,7 @@ Contributors:
 Tags: CSS, JS, javascript, custom CSS, custom JS, custom code, local css
 Requires at least: 7.0
 Tested up to: 7.0
-Stable tag: 0.8.0
+Stable tag: 0.8.1
 Requires PHP: 7.4
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -27,6 +27,9 @@ Original plugin: https://wordpress.org/plugins/custom-css-js/
 Thank you to the original author and maintainers for the plugin this AlphaSys-controlled release continues from.
 
 == Changelog ==
+
+= 0.8.1 =
+* Removed the redundant Linking type, Cascade position, and disabled Apply network wide controls from CSS records while preserving stored cascade positions internally.
 
 = 0.8.0 =
 * Added an optional revisioned Target scope to every CSS record, wrapping Base and each populated breakpoint section independently with the required visibility declaration.
