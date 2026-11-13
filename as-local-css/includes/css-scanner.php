@@ -101,15 +101,17 @@ function aslc_scan_css_records( $search_tree = null ) {
 
 		$post = get_post( $post_id );
 		if ( $post && function_exists( 'aslc_get_css_breakpoint_sections' ) ) {
-			$findings = array_merge( $findings, aslc_scan_css_record( $post_id, $post->post_content, __( 'Base', 'custom-css-js' ) ) );
-			$sections = aslc_get_css_breakpoint_sections( $post_id );
+			$target_scope = aslc_get_css_target_scope( $post_id );
+			$has_target   = '' !== $target_scope;
+			$findings     = array_merge( $findings, aslc_scan_css_record( $post_id, $post->post_content, __( 'Base', 'custom-css-js' ), $has_target ) );
+			$sections     = aslc_get_css_breakpoint_sections( $post_id );
 			foreach ( aslc_get_css_breakpoint_rows() as $row ) {
 				if ( empty( $sections[ $row['id'] ] ) ) {
 					continue;
 				}
 				$findings = array_merge(
 					$findings,
-					aslc_scan_css_record( $post_id, $sections[ $row['id'] ], $row['token'] )
+					aslc_scan_css_record( $post_id, $sections[ $row['id'] ], $row['token'], $has_target )
 				);
 			}
 		} else {
@@ -153,9 +155,10 @@ function aslc_get_bundle_blocking_css_findings( array $findings ) {
  * @param int    $post_id CSS record ID.
  * @param string $css     Authored CSS without its HTML style wrapper.
  * @param string $section Optional editor section label.
+ * @param bool   $allow_top_level_nesting Whether a generated target supplies the parent rule.
  * @return array
  */
-function aslc_scan_css_record( $post_id, $css, $section = '' ) {
+function aslc_scan_css_record( $post_id, $css, $section = '', $allow_top_level_nesting = false ) {
 	$findings     = array();
 	$brace_stack  = array();
 	$length       = strlen( $css );
@@ -211,7 +214,7 @@ function aslc_scan_css_record( $post_id, $css, $section = '' ) {
 
 		if ( ! $line_started && ! ctype_space( $character ) ) {
 			$line_started = true;
-			if ( '&' === $character && empty( $brace_stack ) ) {
+			if ( '&' === $character && empty( $brace_stack ) && ! $allow_top_level_nesting ) {
 				$findings[] = aslc_css_scan_finding(
 					$post_id,
 					$line,

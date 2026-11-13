@@ -52,6 +52,9 @@ function wp_mkdir_p( $path ) {
 }
 
 function get_post_meta( $post_id, $meta_key, $single ) {
+	if ( 'aslc_css_target_scope' === $meta_key ) {
+		return '#revision-scope';
+	}
 	return '';
 }
 
@@ -95,6 +98,12 @@ aslc_revision_test( ASLC_CSS_BREAKPOINT_SECTIONS_META === $section_meta_key, 'Br
 aslc_revision_test( true === $section_meta_args['revisions_enabled'], 'Breakpoint CSS was not enabled for revisions.' );
 aslc_revision_test( true === $section_meta_args['single'], 'Breakpoint CSS must remain a single meta value.' );
 
+list( $target_post_type, $target_meta_key, $target_meta_args ) = $GLOBALS['aslc_registered_post_meta'][ ASLC_CSS_TARGET_SCOPE_META ];
+aslc_revision_test( 'custom-css-js' === $target_post_type, 'The CSS target scope was registered for the wrong post type.' );
+aslc_revision_test( ASLC_CSS_TARGET_SCOPE_META === $target_meta_key, 'The CSS target scope meta was not registered.' );
+aslc_revision_test( true === $target_meta_args['revisions_enabled'], 'The CSS target scope was not enabled for revisions.' );
+aslc_revision_test( true === $target_meta_args['single'], 'The CSS target scope must remain a single meta value.' );
+
 $admin      = ( new ReflectionClass( 'CustomCSSandJS_Admin' ) )->newInstanceWithoutConstructor();
 $write_file = new ReflectionMethod( 'CustomCSSandJS_Admin', 'write_code_file' );
 if ( PHP_VERSION_ID < 80100 ) {
@@ -120,6 +129,10 @@ aslc_revision_test(
 aslc_revision_test(
 	false !== strpos( file_get_contents( $generated_file ), '@media (min-width: 68rem)' ),
 	'Configured breakpoint tokens were not resolved in the shared generated CSS file.'
+);
+aslc_revision_test(
+	false !== strpos( file_get_contents( $generated_file ), "#revision-scope {\n\tvisibility: visible;" ),
+	'The restored CSS target scope was not applied to the generated revision file.'
 );
 
 unlink( $generated_file );

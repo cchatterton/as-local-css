@@ -3,7 +3,7 @@ Contributors:
 Tags: CSS, JS, javascript, custom CSS, custom JS, custom code, local css
 Requires at least: 7.0
 Tested up to: 7.0
-Stable tag: 0.7.4
+Stable tag: 0.8.0
 Requires PHP: 7.4
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -27,6 +27,11 @@ Original plugin: https://wordpress.org/plugins/custom-css-js/
 Thank you to the original author and maintainers for the plugin this AlphaSys-controlled release continues from.
 
 == Changelog ==
+
+= 0.8.0 =
+* Added an optional revisioned Target scope to every CSS record, wrapping Base and each populated breakpoint section independently with the required visibility declaration.
+* Allowed top-level ampersand child selectors when a target supplies their generated parent while retaining the existing scanner warning for unscoped records.
+* Preserved existing generated CSS exactly when Target scope is empty and kept scoped inline and compiled output identical.
 
 = 0.7.4 =
 * Widened the CSS record column and kept desktop record titles on one line, with full-title hover text and normal mobile wrapping.

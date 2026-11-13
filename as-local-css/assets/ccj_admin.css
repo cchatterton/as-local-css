@@ -458,6 +458,25 @@ pre.CodeMirror-line {
 }
 
 /* Responsive CSS section editor. */
+.aslc-target-scope {
+	display: flex;
+	align-items: center;
+	gap: .75rem;
+	margin-top: 1rem;
+	padding: .75rem 1rem;
+	background: #fff;
+	border: 1px solid #c3c4c7;
+	border-radius: 8px;
+	box-shadow: 0 1px 2px rgba(0, 0, 0, .035);
+}
+.aslc-target-scope label {
+	flex: 0 0 auto;
+	font-weight: 600;
+}
+.aslc-target-scope input[type="text"] {
+	width: min(30rem, 100%);
+	font-family: Consolas, Monaco, monospace;
+}
 .aslc-css-sections {
 	margin-top: 1rem;
 	overflow: hidden;
@@ -543,6 +562,13 @@ pre.CodeMirror-line {
 	width: 100%;
 }
 @media screen and (max-width: 782px) {
+	.aslc-target-scope {
+		align-items: stretch;
+		flex-direction: column;
+	}
+	.aslc-target-scope input[type="text"] {
+		width: 100%;
+	}
 	.aslc-css-section__identity {
 		align-items: flex-start;
 		flex-direction: column;

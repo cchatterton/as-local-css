@@ -2,6 +2,12 @@
 
 All notable changes to AS Local CSS are recorded here.
 
+## 0.8.0 - 2026-11-13
+
+- Added an optional revisioned Target scope to every CSS record, wrapping Base and each populated breakpoint section independently with the required `visibility: visible` declaration.
+- Allowed top-level `&` child selectors when a target supplies their generated parent while retaining the existing scanner warning for unscoped records.
+- Preserved existing generated CSS exactly when Target scope is empty and kept scoped inline and compiled output identical.
+
 ## 0.7.4 - 2026-11-13
 
 - Widened the CSS record column and kept desktop record titles on one line, with full-title hover text and normal mobile wrapping.

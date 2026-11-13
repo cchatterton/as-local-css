@@ -768,9 +768,14 @@ End of comment */ ',
 		$is_css              = 'css' === $language;
 		$breakpoint_rows     = $is_css ? aslc_get_css_breakpoint_rows() : array();
 		$breakpoint_sections = $is_css && $post->ID ? aslc_get_css_breakpoint_sections( $post->ID ) : array();
+		$target_scope        = $is_css && $post->ID ? aslc_get_css_target_scope( $post->ID ) : '';
 
 		?>
 			<?php if ( $is_css ) : ?>
+			<div class="aslc-target-scope">
+				<label for="aslc_css_target_scope"><?php esc_html_e( 'Target scope', 'custom-css-js' ); ?></label>
+				<input type="text" id="aslc_css_target_scope" name="aslc_css_target_scope" value="<?php echo esc_attr( $target_scope ); ?>" maxlength="255" pattern="[^{};]+" placeholder=".columns or #contact-us" title="<?php esc_attr_e( 'Enter one CSS selector without braces or declarations.', 'custom-css-js' ); ?>">
+			</div>
 			<div class="aslc-css-sections">
 				<details class="aslc-css-section" id="aslc-css-section-base" open>
 					<summary>
@@ -1202,6 +1207,8 @@ End of comment */ ',
 		$this->options[ $post_id ] = $options;
 		if ( 'css' === $options['language'] ) {
 			$submitted_sections = isset( $_POST['aslc_breakpoint_css'] ) ? $_POST['aslc_breakpoint_css'] : array();
+			$submitted_target   = isset( $_POST['aslc_css_target_scope'] ) ? $_POST['aslc_css_target_scope'] : '';
+			aslc_save_css_target_scope( $post_id, $submitted_target );
 			aslc_save_css_breakpoint_sections( $post_id, $submitted_sections );
 		}
 

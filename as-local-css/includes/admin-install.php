@@ -103,6 +103,17 @@ class CustomCSSandJS_Install {
                 'revisions_enabled' => true,
             )
         );
+
+        register_post_meta(
+            'custom-css-js',
+            ASLC_CSS_TARGET_SCOPE_META,
+            array(
+                'type'              => 'string',
+                'single'            => true,
+                'show_in_rest'      => false,
+                'revisions_enabled' => true,
+            )
+        );
     }
 
  

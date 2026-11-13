@@ -8,6 +8,47 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 define( 'ASLC_CSS_BREAKPOINT_SECTIONS_META', 'aslc_css_breakpoint_sections' );
+define( 'ASLC_CSS_TARGET_SCOPE_META', 'aslc_css_target_scope' );
+
+/**
+ * Normalise a one-line CSS selector used as a record target scope.
+ *
+ * Delimiters that could escape the generated parent rule are rejected. The
+ * selector itself is otherwise preserved so class, ID, attribute, compound,
+ * and selector-list targets remain available.
+ *
+ * @param mixed $scope Submitted target scope.
+ * @return string Safe target selector, or an empty string.
+ */
+function aslc_sanitize_css_target_scope( $scope ) {
+	if ( ! is_string( $scope ) ) {
+		return '';
+	}
+
+	$scope = trim( preg_replace( '/\s+/', ' ', $scope ) );
+	if ( '' === $scope
+		|| strlen( $scope ) > 255
+		|| preg_match( '/[{};]/', $scope )
+		|| false !== strpos( $scope, '/*' )
+		|| false !== strpos( $scope, '*/' )
+		|| '@' === substr( $scope, 0, 1 ) ) {
+		return '';
+	}
+
+	return $scope;
+}
+
+/** Return a CSS record's optional target scope. */
+function aslc_get_css_target_scope( $post_id ) {
+	return aslc_sanitize_css_target_scope( get_post_meta( $post_id, ASLC_CSS_TARGET_SCOPE_META, true ) );
+}
+
+/** Save a CSS record's optional target scope. */
+function aslc_save_css_target_scope( $post_id, $scope ) {
+	$scope = aslc_sanitize_css_target_scope( is_string( $scope ) ? wp_unslash( $scope ) : '' );
+	update_post_meta( $post_id, ASLC_CSS_TARGET_SCOPE_META, $scope );
+	return $scope;
+}
 
 /**
  * Return all saved breakpoint sections, including sections retained for rows
@@ -66,16 +107,18 @@ function aslc_save_css_breakpoint_sections( $post_id, $submitted ) {
  * @param string     $base_css Base CSS (no media query).
  * @param array      $sections Section CSS keyed by stable breakpoint ID.
  * @param array|null $rows     Optional breakpoint rows for tests/callers.
+ * @param string     $target   Optional parent selector applied per section.
  * @return string Assembled CSS.
  */
-function aslc_assemble_css_sections( $base_css, $sections, $rows = null ) {
+function aslc_assemble_css_sections( $base_css, $sections, $rows = null, $target = '' ) {
 	$parts    = array();
 	$base_css = rtrim( (string) $base_css );
 	$sections = is_array( $sections ) ? $sections : array();
 	$rows     = is_array( $rows ) ? $rows : aslc_get_css_breakpoint_rows();
+	$target   = aslc_sanitize_css_target_scope( $target );
 
 	if ( '' !== trim( $base_css ) ) {
-		$parts[] = $base_css;
+		$parts[] = aslc_wrap_css_target_scope( $base_css, $target );
 	}
 
 	foreach ( $rows as $row ) {
@@ -88,10 +131,35 @@ function aslc_assemble_css_sections( $base_css, $sections, $rows = null ) {
 			continue;
 		}
 
-		$parts[] = '@media (min-width: ' . $row['value'] . ") {\n" . $css . "\n}";
+		$scoped = aslc_wrap_css_target_scope( $css, $target );
+		if ( '' !== $target ) {
+			$scoped = aslc_indent_css( $scoped );
+		}
+		$parts[] = '@media (min-width: ' . $row['value'] . ") {\n" . $scoped . "\n}";
 	}
 
 	return implode( "\n\n", $parts );
+}
+
+/**
+ * Wrap one non-empty section in its configured parent selector.
+ *
+ * @param string $css    Section CSS.
+ * @param string $target Sanitized target selector.
+ * @return string Scoped or unchanged CSS.
+ */
+function aslc_wrap_css_target_scope( $css, $target ) {
+	$css = rtrim( (string) $css );
+	if ( '' === $target ) {
+		return $css;
+	}
+
+	return $target . " {\n\tvisibility: visible;\n\n" . aslc_indent_css( $css ) . "\n}";
+}
+
+/** Indent non-empty CSS lines without adding whitespace to blank lines. */
+function aslc_indent_css( $css ) {
+	return preg_replace( '/^(?=.)/m', "\t", (string) $css );
 }
 
 /**
@@ -111,7 +179,12 @@ function aslc_write_css_snippet_file( $post_id, $base_css, $author_id, $options 
 		return false;
 	}
 
-	$content = aslc_assemble_css_sections( $base_css, aslc_get_css_breakpoint_sections( $post_id ) );
+	$content = aslc_assemble_css_sections(
+		$base_css,
+		aslc_get_css_breakpoint_sections( $post_id ),
+		null,
+		aslc_get_css_target_scope( $post_id )
+	);
 	$content = aslc_replace_css_breakpoint_tokens( $content );
 	$before  = '';
 	$after   = '';

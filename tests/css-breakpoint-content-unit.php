@@ -8,9 +8,12 @@ $GLOBALS['aslc_test_rows'] = array(
 	array( 'id' => 'sm', 'token' => '%SM%', 'value' => '48rem' ),
 	array( 'id' => 'md', 'token' => '%MD%', 'value' => '68rem' ),
 );
-$GLOBALS['aslc_test_sections'] = array(
-	'removed-row' => '.retained { color: blue; }',
-	'md'          => '.old { color: red; }',
+$GLOBALS['aslc_test_meta'] = array(
+	'aslc_css_breakpoint_sections' => array(
+		'removed-row' => '.retained { color: blue; }',
+		'md'          => '.old { color: red; }',
+	),
+	'aslc_css_target_scope'        => '',
 );
 
 function add_action() {}
@@ -20,12 +23,12 @@ function get_option( $name, $default = false ) {
 	return 'aslc_css_breakpoint_tokens' === $name ? $GLOBALS['aslc_test_rows'] : $default;
 }
 function get_post_meta( $post_id, $key, $single ) {
-	unset( $post_id, $key, $single );
-	return $GLOBALS['aslc_test_sections'];
+	unset( $post_id, $single );
+	return $GLOBALS['aslc_test_meta'][ $key ] ?? '';
 }
 function update_post_meta( $post_id, $key, $value ) {
-	unset( $post_id, $key );
-	$GLOBALS['aslc_test_sections'] = $value;
+	unset( $post_id );
+	$GLOBALS['aslc_test_meta'][ $key ] = $value;
 }
 function sanitize_key( $key ) { return preg_replace( '/[^a-z0-9_-]/', '', strtolower( $key ) ); }
 function wp_unslash( $value ) { return stripslashes( $value ); }
@@ -46,6 +49,24 @@ if ( ".base { display: block; }\n\n@media (min-width: 68rem) {\n.wide { display:
 }
 if ( false !== strpos( $css, '48rem' ) ) {
 	throw new RuntimeException( 'An empty breakpoint section emitted a media query.' );
+}
+
+$scoped_css = aslc_assemble_css_sections(
+	'& .base-child { display: block; }',
+	array(
+		'sm' => '',
+		'md' => '& .wide-child { display: grid; }',
+	),
+	$GLOBALS['aslc_test_rows'],
+	'.columns'
+);
+$expected_scoped_css = ".columns {\n\tvisibility: visible;\n\n\t& .base-child { display: block; }\n}\n\n"
+	. "@media (min-width: 68rem) {\n\t.columns {\n\t\tvisibility: visible;\n\n\t\t& .wide-child { display: grid; }\n\t}\n}";
+if ( $expected_scoped_css !== $scoped_css ) {
+	throw new RuntimeException( "Target scope CSS was not wrapped independently around Base and breakpoint sections.\n" . $scoped_css );
+}
+if ( '' !== aslc_sanitize_css_target_scope( '.columns { color: red; }' ) ) {
+	throw new RuntimeException( 'A target scope containing declarations was accepted.' );
 }
 
 $renamed = aslc_sanitize_css_breakpoint_rows(
@@ -69,6 +90,11 @@ if ( '.retained { color: blue; }' !== $saved['removed-row'] ) {
 }
 if ( '.new { color: green; }' !== $saved['md'] ) {
 	throw new RuntimeException( 'Active breakpoint CSS was not saved.' );
+}
+
+$saved_scope = aslc_save_css_target_scope( 99, '  #contact-us  ' );
+if ( '#contact-us' !== $saved_scope || '#contact-us' !== aslc_get_css_target_scope( 99 ) ) {
+	throw new RuntimeException( 'The CSS target scope was not normalized and saved.' );
 }
 
 echo "CSS breakpoint content test passed.\n";

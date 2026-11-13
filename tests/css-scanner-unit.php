@@ -45,6 +45,11 @@ if ( array() !== $blocking ) {
 	throw new RuntimeException( 'The Base media-query information finding incorrectly blocked generated CSS.' );
 }
 
+$scoped_nesting = aslc_scan_css_record( 14, '& .child { color: red; }', 'Base', true );
+if ( array() !== $scoped_nesting ) {
+	throw new RuntimeException( 'Top-level nesting was reported even though a target scope supplies its parent rule.' );
+}
+
 $unknown_token = aslc_scan_css_record( 11, '@media (min-width: %XXL%) { .valid { display: block; } }' );
 if ( 'unresolved_breakpoint_token' !== ( $unknown_token[0]['code'] ?? '' ) ) {
 	throw new RuntimeException( 'An unresolved breakpoint token was not reported.' );
