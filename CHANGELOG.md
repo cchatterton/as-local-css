@@ -2,6 +2,11 @@
 
 All notable changes to AS Local CSS are recorded here.
 
+## 0.6.12 - 2026-11-13
+
+- Reduced CSS Breakpoints to the page title and compact breakpoint card by removing introductory, header, and example copy.
+- Moved the shortened Add action into the card footer opposite the shortened Save action.
+
 ## 0.6.11 - 2026-11-13
 
 - Refined CSS Breakpoints into a deliberately compact premium interface with a narrower card, tighter controls, code-styled tokens, lightweight column labels, restrained hover states, icon-only remove actions, and clearer primary/secondary action hierarchy.

@@ -84,21 +84,11 @@ function aslc_render_css_breakpoints_page() {
 			<div class="notice notice-success is-dismissible"><p><?php esc_html_e( 'CSS breakpoints saved and generated CSS refreshed.', 'custom-css-js' ); ?></p></div>
 		<?php endif; ?>
 
-		<p class="aslc-breakpoints-intro"><?php esc_html_e( 'Define tokens that are replaced when the combined CSS file is generated. CSS records and legacy inline delivery remain unchanged.', 'custom-css-js' ); ?></p>
-
 		<form class="aslc-breakpoints-form" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" method="post">
 			<input type="hidden" name="action" value="aslc_save_css_breakpoints">
 			<?php wp_nonce_field( 'aslc_save_css_breakpoints' ); ?>
 
 			<div class="aslc-breakpoints-card">
-				<div class="aslc-breakpoints-card__header">
-					<div>
-						<h2><?php esc_html_e( 'Breakpoint tokens', 'custom-css-js' ); ?></h2>
-						<p><?php esc_html_e( 'Map each reusable token to a valid CSS length.', 'custom-css-js' ); ?></p>
-					</div>
-					<button type="button" class="button aslc-add-breakpoint" id="aslc-add-breakpoint"><span class="dashicons dashicons-plus-alt2" aria-hidden="true"></span><?php esc_html_e( 'Add breakpoint', 'custom-css-js' ); ?></button>
-				</div>
-
 				<table class="widefat aslc-breakpoints-table" id="aslc-breakpoint-repeater">
 					<thead>
 						<tr>
@@ -122,40 +112,23 @@ function aslc_render_css_breakpoints_page() {
 				</table>
 
 				<div class="aslc-breakpoints-card__footer">
-					<p class="description"><?php esc_html_e( 'Example: %MD% → 68rem. Tokens are normalised to uppercase and may be entered with or without percent signs.', 'custom-css-js' ); ?></p>
-					<?php submit_button( __( 'Save Breakpoints', 'custom-css-js' ), 'primary', 'submit', false ); ?>
+					<button type="button" class="button aslc-add-breakpoint" id="aslc-add-breakpoint"><span class="dashicons dashicons-plus-alt2" aria-hidden="true"></span><?php esc_html_e( 'Add', 'custom-css-js' ); ?></button>
+					<?php submit_button( __( 'Save', 'custom-css-js' ), 'primary', 'submit', false ); ?>
 				</div>
 			</div>
 		</form>
 
 		<style>
-		.aslc-breakpoints-intro,
 		.aslc-breakpoints-form {
 			max-width: 45rem;
 		}
 		.aslc-breakpoints-card {
-			margin-top: 1.5rem;
+			margin-top: 1rem;
 			overflow: hidden;
 			background: #fff;
 			border: 1px solid #dcdcde;
 			border-radius: 10px;
 			box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 8px 24px rgba(0, 0, 0, 0.035);
-		}
-		.aslc-breakpoints-card__header {
-			display: flex;
-			align-items: center;
-			justify-content: space-between;
-			gap: 1rem;
-			padding: 1rem 1.25rem;
-			border-bottom: 1px solid #dcdcde;
-		}
-		.aslc-breakpoints-card__header h2,
-		.aslc-breakpoints-card__header p {
-			margin: 0;
-		}
-		.aslc-breakpoints-card__header p {
-			margin-top: 0.2rem;
-			color: #646970;
 		}
 		.aslc-add-breakpoint {
 			display: inline-flex !important;
@@ -281,10 +254,8 @@ function aslc_render_css_breakpoints_page() {
 			}
 		}
 		@media screen and (max-width: 782px) {
-			.aslc-breakpoints-card__header,
 			.aslc-breakpoints-card__footer {
-				align-items: flex-start;
-				flex-direction: column;
+				align-items: center;
 			}
 			.aslc-breakpoints-table thead {
 				display: none;

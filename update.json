@@ -1,6 +1,6 @@
 {
-  "version": "0.6.11",
-  "body": "## 0.6.11 - 2026-11-13\n\n- Refine CSS Breakpoints into a narrower premium settings card.\n- Use tighter controls, code-styled token fields, lightweight labels, restrained hover states, and icon-only remove actions.\n- Keep Save as the sole primary action and Add breakpoint as a compact secondary action.\n",
+  "version": "0.6.12",
+  "body": "## 0.6.12 - 2026-11-13\n\n- Reduce CSS Breakpoints to the page title and compact breakpoint card.\n- Remove introductory, card-header, and example copy.\n- Place concise Add and Save actions together in the card footer.\n",
   "requires": "7.0",
   "requires_php": "7.4"
 }
