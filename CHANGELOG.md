@@ -2,6 +2,10 @@
 
 All notable changes to AS Local CSS are recorded here.
 
+## 0.6.9 - 2026-11-13
+
+- Restyled the CSS Breakpoints repeater as a native WordPress post list with standard headings, responsive primary-column behavior, hover row actions, empty state, and Add New control.
+
 ## 0.6.8 - 2026-11-13
 
 - Completed Update 2a by preloading the full AlphaSys breakpoint set: `%SM%` at `48rem`, `%MD%` at `68rem`, and `%LG%` at `75rem`.

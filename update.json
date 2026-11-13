@@ -1,6 +1,6 @@
 {
-  "version": "0.6.8",
-  "body": "## 0.6.8 - 2026-11-13\n\n- Complete Update 2a with the CSS Breakpoints submenu and repeatable token-to-length mappings.\n- Preload %SM% at 48rem, %MD% at 68rem, and %LG% at 75rem.\n- Resolve configured tokens in generated CSS while preserving authored records and inline output.\n",
+  "version": "0.6.9",
+  "body": "## 0.6.9 - 2026-11-13\n\n- Present the CSS Breakpoints repeater as a native WordPress post list.\n- Add standard responsive columns, hover row actions, empty state, and Add New control without changing breakpoint behavior.\n",
   "requires": "7.0",
   "requires_php": "7.4"
 }
