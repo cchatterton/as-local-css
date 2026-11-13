@@ -96,7 +96,7 @@ function aslc_render_css_breakpoints_page() {
 						<h2><?php esc_html_e( 'Breakpoint tokens', 'custom-css-js' ); ?></h2>
 						<p><?php esc_html_e( 'Map each reusable token to a valid CSS length.', 'custom-css-js' ); ?></p>
 					</div>
-					<button type="button" class="button" id="aslc-add-breakpoint"><?php esc_html_e( 'Add breakpoint', 'custom-css-js' ); ?></button>
+					<button type="button" class="button aslc-add-breakpoint" id="aslc-add-breakpoint"><span class="dashicons dashicons-plus-alt2" aria-hidden="true"></span><?php esc_html_e( 'Add breakpoint', 'custom-css-js' ); ?></button>
 				</div>
 
 				<table class="widefat aslc-breakpoints-table" id="aslc-breakpoint-repeater">
@@ -112,7 +112,7 @@ function aslc_render_css_breakpoints_page() {
 							<tr>
 								<td data-colname="<?php esc_attr_e( 'Token', 'custom-css-js' ); ?>"><input type="text" class="aslc-token-input" name="aslc_css_breakpoint_token[]" value="<?php echo esc_attr( $token ); ?>" placeholder="%MD%" pattern="%?[A-Za-z][A-Za-z0-9_-]*%?" aria-label="<?php esc_attr_e( 'Breakpoint token', 'custom-css-js' ); ?>"></td>
 								<td data-colname="<?php esc_attr_e( 'Breakpoint', 'custom-css-js' ); ?>"><input type="text" class="aslc-value-input" name="aslc_css_breakpoint_value[]" value="<?php echo esc_attr( $value ); ?>" placeholder="68rem" aria-label="<?php esc_attr_e( 'CSS breakpoint value', 'custom-css-js' ); ?>"></td>
-								<td class="aslc-breakpoint-actions"><button type="button" class="button-link-delete aslc-remove-breakpoint"><?php esc_html_e( 'Remove', 'custom-css-js' ); ?></button></td>
+								<td class="aslc-breakpoint-actions"><button type="button" class="button-link aslc-remove-breakpoint" aria-label="<?php esc_attr_e( 'Remove breakpoint', 'custom-css-js' ); ?>"><span class="dashicons dashicons-trash" aria-hidden="true"></span><span class="screen-reader-text"><?php esc_html_e( 'Remove breakpoint', 'custom-css-js' ); ?></span></button></td>
 							</tr>
 						<?php endforeach; ?>
 						<?php if ( empty( $breakpoints ) ) : ?>
@@ -131,22 +131,22 @@ function aslc_render_css_breakpoints_page() {
 		<style>
 		.aslc-breakpoints-intro,
 		.aslc-breakpoints-form {
-			max-width: 56rem;
+			max-width: 45rem;
 		}
 		.aslc-breakpoints-card {
 			margin-top: 1.5rem;
 			overflow: hidden;
 			background: #fff;
 			border: 1px solid #dcdcde;
-			border-radius: 6px;
-			box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+			border-radius: 10px;
+			box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 8px 24px rgba(0, 0, 0, 0.035);
 		}
 		.aslc-breakpoints-card__header {
 			display: flex;
 			align-items: center;
 			justify-content: space-between;
 			gap: 1rem;
-			padding: 1.25rem 1.5rem;
+			padding: 1rem 1.25rem;
 			border-bottom: 1px solid #dcdcde;
 		}
 		.aslc-breakpoints-card__header h2,
@@ -154,57 +154,131 @@ function aslc_render_css_breakpoints_page() {
 			margin: 0;
 		}
 		.aslc-breakpoints-card__header p {
-			margin-top: 0.25rem;
+			margin-top: 0.2rem;
 			color: #646970;
+		}
+		.aslc-add-breakpoint {
+			display: inline-flex !important;
+			align-items: center;
+			gap: 0.3rem;
+			min-height: 2rem !important;
+			padding: 0 0.65rem !important;
+			white-space: nowrap;
+		}
+		.aslc-add-breakpoint .dashicons {
+			width: 1rem;
+			height: 1rem;
+			font-size: 1rem;
+			line-height: 1;
 		}
 		.aslc-breakpoints-table {
 			border: 0;
 			box-shadow: none;
 		}
 		.aslc-breakpoints-table th {
-			padding: 0.65rem 1.5rem;
-			background: #f6f7f7;
+			padding: 0.55rem 1.25rem;
+			background: #fff;
 			border-bottom: 1px solid #dcdcde;
+			color: #646970;
+			font-size: 0.6875rem;
 			font-weight: 600;
+			letter-spacing: 0.055em;
+			text-transform: uppercase;
 		}
-		.aslc-breakpoints-table th:nth-child(1) { width: 36%; }
-		.aslc-breakpoints-table th:nth-child(2) { width: 36%; }
-		.aslc-breakpoints-table th:nth-child(3) { width: 28%; }
+		.aslc-breakpoints-table th:nth-child(1) { width: 42%; }
+		.aslc-breakpoints-table th:nth-child(2) { width: auto; }
+		.aslc-breakpoints-table th:nth-child(3) { width: 3rem; }
 		.aslc-breakpoints-table td {
-			padding: 0.75rem 1.5rem;
+			padding: 0.5rem 1.25rem;
 			vertical-align: middle;
 			border-bottom: 1px solid #f0f0f1;
+		}
+		.aslc-breakpoints-table tbody tr {
+			transition: background-color 120ms ease;
+		}
+		.aslc-breakpoints-table tbody tr:hover,
+		.aslc-breakpoints-table tbody tr:focus-within {
+			background: #f9f9fa;
 		}
 		.aslc-breakpoints-table tbody tr:last-child td {
 			border-bottom: 0;
 		}
 		.aslc-breakpoints-table input[type="text"] {
 			width: 100%;
-			max-width: 15rem;
-			min-height: 2.25rem;
+			max-width: 13.5rem;
+			min-height: 2.125rem;
+			padding: 0.25rem 0.65rem;
+			border-color: #c3c4c7;
+			border-radius: 6px;
+			box-shadow: 0 1px 1px rgba(0, 0, 0, 0.02);
 		}
 		.aslc-breakpoints-table .aslc-token-input {
+			background: #f6f7f7;
 			font-family: Consolas, Monaco, monospace;
 			font-weight: 600;
+			letter-spacing: 0.02em;
+		}
+		.aslc-breakpoints-table input[type="text"]:focus {
+			background: #fff;
+			border-color: var(--wp-admin-theme-color, #2271b1);
+			box-shadow: 0 0 0 1px var(--wp-admin-theme-color, #2271b1);
 		}
 		.aslc-breakpoint-actions {
+			width: 3rem;
 			text-align: right;
 		}
-		.aslc-breakpoint-actions .button-link-delete {
-			padding: 0.35rem 0;
-			text-decoration: none;
+		.aslc-remove-breakpoint {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			width: 2rem;
+			height: 2rem;
+			padding: 0;
+			border-radius: 50%;
+			color: #8c8f94;
+			opacity: 0.45;
+			transition: color 120ms ease, background-color 120ms ease, opacity 120ms ease;
+		}
+		.aslc-breakpoints-table tr:hover .aslc-remove-breakpoint,
+		.aslc-remove-breakpoint:focus {
+			opacity: 1;
+		}
+		.aslc-remove-breakpoint:hover,
+		.aslc-remove-breakpoint:focus {
+			background: #fcf0f1;
+			color: #b32d2e;
+			box-shadow: none;
+			outline: none;
+		}
+		.aslc-remove-breakpoint:focus-visible {
+			box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--wp-admin-theme-color, #2271b1);
+		}
+		.aslc-remove-breakpoint .dashicons {
+			width: 1rem;
+			height: 1rem;
+			font-size: 1rem;
+			line-height: 1;
 		}
 		.aslc-breakpoints-card__footer {
 			display: flex;
 			align-items: center;
 			justify-content: space-between;
 			gap: 1.5rem;
-			padding: 1rem 1.5rem;
-			background: #f6f7f7;
+			padding: 0.875rem 1.25rem;
+			background: #fbfbfc;
 			border-top: 1px solid #dcdcde;
 		}
 		.aslc-breakpoints-card__footer p {
 			margin: 0;
+		}
+		.aslc-breakpoints-card__footer .button-primary {
+			min-height: 2.25rem;
+			padding: 0 1rem;
+		}
+		@media (hover: none) {
+			.aslc-remove-breakpoint {
+				opacity: 1;
+			}
 		}
 		@media screen and (max-width: 782px) {
 			.aslc-breakpoints-card__header,
@@ -254,7 +328,7 @@ function aslc_render_css_breakpoints_page() {
 				var row = table.tBodies[0].insertRow();
 				row.innerHTML = '<td data-colname="<?php echo esc_js( __( 'Token', 'custom-css-js' ) ); ?>"><input type="text" class="aslc-token-input" name="aslc_css_breakpoint_token[]" placeholder="%MD%" pattern="%?[A-Za-z][A-Za-z0-9_-]*%?" aria-label="<?php echo esc_js( __( 'Breakpoint token', 'custom-css-js' ) ); ?>"></td>' +
 					'<td data-colname="<?php echo esc_js( __( 'Breakpoint', 'custom-css-js' ) ); ?>"><input type="text" class="aslc-value-input" name="aslc_css_breakpoint_value[]" placeholder="68rem" aria-label="<?php echo esc_js( __( 'CSS breakpoint value', 'custom-css-js' ) ); ?>"></td>' +
-					'<td class="aslc-breakpoint-actions"><button type="button" class="button-link-delete aslc-remove-breakpoint"><?php echo esc_js( __( 'Remove', 'custom-css-js' ) ); ?></button></td>';
+					'<td class="aslc-breakpoint-actions"><button type="button" class="button-link aslc-remove-breakpoint" aria-label="<?php echo esc_js( __( 'Remove breakpoint', 'custom-css-js' ) ); ?>"><span class="dashicons dashicons-trash" aria-hidden="true"></span><span class="screen-reader-text"><?php echo esc_js( __( 'Remove breakpoint', 'custom-css-js' ) ); ?></span></button></td>';
 				row.querySelector('input').focus();
 			});
 

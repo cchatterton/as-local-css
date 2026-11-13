@@ -1,6 +1,6 @@
 {
-  "version": "0.6.10",
-  "body": "## 0.6.10 - 2026-11-13\n\n- Replace the oversized breakpoint list with a compact WordPress-style settings card.\n- Tighten rows and inputs, use monospace tokens and quiet actions, and align Add and Save controls with the card.\n- Include the %XL% at 80rem default.\n",
+  "version": "0.6.11",
+  "body": "## 0.6.11 - 2026-11-13\n\n- Refine CSS Breakpoints into a narrower premium settings card.\n- Use tighter controls, code-styled token fields, lightweight labels, restrained hover states, and icon-only remove actions.\n- Keep Save as the sole primary action and Add breakpoint as a compact secondary action.\n",
   "requires": "7.0",
   "requires_php": "7.4"
 }

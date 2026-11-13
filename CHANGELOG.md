@@ -2,6 +2,10 @@
 
 All notable changes to AS Local CSS are recorded here.
 
+## 0.6.11 - 2026-11-13
+
+- Refined CSS Breakpoints into a deliberately compact premium interface with a narrower card, tighter controls, code-styled tokens, lightweight column labels, restrained hover states, icon-only remove actions, and clearer primary/secondary action hierarchy.
+
 ## 0.6.10 - 2026-11-13
 
 - Replaced the oversized breakpoint list with a compact settings card using tighter rows, constrained inputs, monospace tokens, quiet row actions, a card-level add control, and a right-aligned save action.
