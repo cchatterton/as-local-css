@@ -2,6 +2,10 @@
 
 All notable changes to AS Local CSS are recorded here.
 
+## 0.7.4 - 2026-11-13
+
+- Widened the CSS record column and kept desktop record titles on one line, with full-title hover text and normal mobile wrapping.
+
 ## 0.7.3 - 2026-11-13
 
 - Shortened repetitive CSS finding descriptions and moved detailed explanations, severity guidance, and suggested fixes into the native WordPress Help panel.

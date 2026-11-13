@@ -61,7 +61,7 @@ class ASLC_CSS_Errors_List_Table extends WP_List_Table {
 		if ( '' === $title ) {
 			$title = __( '(no title)', 'custom-css-js' );
 		}
-		return sprintf( '<strong>%s</strong>', esc_html( $title ) );
+		return sprintf( '<strong title="%1$s">%2$s</strong>', esc_attr( $title ), esc_html( $title ) );
 	}
 
 	/**
@@ -243,6 +243,12 @@ function aslc_render_css_errors_page() {
 		.aslc-css-errors-page .column-line {
 			font-variant-numeric: tabular-nums;
 		}
+		.aslc-css-errors-page .column-record strong {
+			display: block;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+		}
 		.aslc-css-errors-page .column-id code,
 		.aslc-css-errors-page .column-section code {
 			white-space: nowrap;
@@ -263,7 +269,7 @@ function aslc_render_css_errors_page() {
 			.aslc-css-errors-page .wp-list-table {
 				table-layout: fixed;
 			}
-			.aslc-css-errors-page .column-record { width: 18rem; }
+			.aslc-css-errors-page .column-record { width: 30rem; }
 			.aslc-css-errors-page .column-id { width: 4.75rem; }
 			.aslc-css-errors-page .column-severity { width: 7rem; }
 			.aslc-css-errors-page .column-section { width: 6rem; }
@@ -271,6 +277,10 @@ function aslc_render_css_errors_page() {
 			.aslc-css-errors-page .column-action { width: 5rem; }
 		}
 		@media screen and (max-width: 782px) {
+			.aslc-css-errors-page .column-record strong {
+				overflow: visible;
+				white-space: normal;
+			}
 			.aslc-css-errors-page .aslc-finding-description {
 				display: block;
 				overflow: visible;

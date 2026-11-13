@@ -1,6 +1,6 @@
 {
-  "version": "0.7.3",
-  "body": "## 0.7.3 - 2026-11-13\n\n- Shorten repetitive CSS finding descriptions so the table gets directly to the point.\n- Move detailed explanations, severity guidance, and suggested fixes into the native WordPress Help panel.\n",
+  "version": "0.7.4",
+  "body": "## 0.7.4 - 2026-11-13\n\n- Widen the CSS record column and keep desktop record titles on one line.\n- Preserve full-title hover text and normal wrapping on mobile screens.\n",
   "requires": "7.0",
   "requires_php": "7.4"
 }
