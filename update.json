@@ -1,6 +1,6 @@
 {
-  "version": "0.9.0",
-  "body": "## 0.9.0 - 2026-11-13\n\n- Add a native hierarchical Code Domains taxonomy to Local CSS records, including its editor panel, list column, quick-edit support, and compact submenu.\n- Seed Theme, Block, Page, CPT, Plugin, Utility, Component, and Shortcode once while preserving later administrator changes.\n",
+  "version": "0.9.1",
+  "body": "## 0.9.1 - 2026-11-13\n\n- Replace the Code Domains checkbox panel with a hierarchical radio list and a No domain option.\n- Enforce zero-or-one Code Domain for editor and programmatic assignments and remove misleading Quick Edit checkboxes.\n",
   "requires": "7.0",
   "requires_php": "7.4"
 }

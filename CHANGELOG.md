@@ -2,6 +2,11 @@
 
 All notable changes to AS Local CSS are recorded here.
 
+## 0.9.1 - 2026-11-13
+
+- Replaced the Code Domains checkbox panel with a hierarchical radio list and a No domain option.
+- Enforced zero-or-one Code Domain for editor and programmatic assignments and removed misleading Quick Edit checkboxes.
+
 ## 0.9.0 - 2026-11-13
 
 - Added a native hierarchical Code Domains taxonomy to Local CSS records, including its editor panel, list column, quick-edit support, and compact submenu.
