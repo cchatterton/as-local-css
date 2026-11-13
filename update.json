@@ -1,6 +1,6 @@
 {
-  "version": "0.6.5",
-  "body": "## 0.6.5 - 2026-11-13\n\n- Print generated CSS at the same hook and priority as legacy inline CSS.\n- Preserve the working theme and plugin cascade when switching delivery modes.\n",
+  "version": "0.6.6",
+  "body": "## 0.6.6 - 2026-11-13\n\n- Validate the exact generated files used by the CSS compiler.\n- Block unsafe bundles and fall back to inline delivery when an unclosed structure could capture later records.\n",
   "requires": "7.0",
   "requires_php": "7.4"
 }

@@ -104,6 +104,11 @@ add_action( 'upgrader_process_complete', 'aslc_refresh_css_bundles_after_plugin_
  * refreshed without keeping separate migration state.
  */
 function aslc_ensure_current_css_bundles() {
+	$bundle_error = get_option( 'aslc_css_bundle_error', array() );
+	if ( ! empty( $bundle_error['unsafe'] ) ) {
+		return;
+	}
+
 	$search_tree = get_option( 'custom-css-js-tree', array() );
 	if ( ! is_array( $search_tree ) ) {
 		return;
@@ -238,6 +243,10 @@ function aslc_get_css_bundle_entry( $side ) {
 	if ( ! in_array( $side, aslc_css_bundle_sides(), true ) || ! defined( 'CCJ_UPLOAD_DIR' ) ) {
 		return false;
 	}
+	$bundle_error = get_option( 'aslc_css_bundle_error', array() );
+	if ( ! empty( $bundle_error['unsafe'] ) ) {
+		return false;
+	}
 
 	$manifest = get_option( 'aslc_css_bundles', array() );
 	if ( ! is_array( $manifest ) || empty( $manifest[ $side ] ) || ! is_array( $manifest[ $side ] ) ) {
@@ -279,15 +288,35 @@ function aslc_get_css_bundle_entry( $side ) {
  * @return bool Whether every requested bundle was rebuilt successfully.
  */
 function aslc_rebuild_css_bundles( $search_tree = null ) {
-	if ( function_exists( 'aslc_scan_css_records' ) ) {
-		aslc_scan_css_records();
-	}
-
 	if ( null === $search_tree ) {
 		$search_tree = get_option( 'custom-css-js-tree', array() );
 	}
 	if ( ! is_array( $search_tree ) ) {
 		$search_tree = array();
+	}
+
+	if ( function_exists( 'aslc_scan_css_records' ) ) {
+		$findings          = aslc_scan_css_records( $search_tree );
+		$blocking_findings = aslc_get_bundle_blocking_css_findings( $findings );
+		if ( ! empty( $blocking_findings ) ) {
+			$first = $blocking_findings[0];
+			update_option(
+				'aslc_css_bundle_error',
+				array(
+					'message' => sprintf(
+						/* translators: 1: CSS record ID, 2: line number, 3: error description. */
+						__( 'CSS record %1$d, line %2$d: %3$s Generated-file delivery has been disabled until the record is fixed.', 'custom-css-js' ),
+						(int) $first['post_id'],
+						(int) $first['line'],
+						$first['message']
+					),
+					'time'    => time(),
+					'unsafe'  => true,
+				),
+				false
+			);
+			return false;
+		}
 	}
 
 	$manifest = get_option( 'aslc_css_bundles', array() );

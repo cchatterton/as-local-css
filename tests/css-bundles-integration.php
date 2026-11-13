@@ -218,6 +218,36 @@ try {
 	$after_update = aslc_get_css_bundle_entry( 'frontend' );
 	aslc_bundle_test( $before_update['file'] !== $after_update['file'], 'A plugin update did not refresh the generated CSS bundle.' );
 
+	$unsafe_post_id      = $post_ids[0];
+	$unsafe_file_path    = trailingslashit( CCJ_UPLOAD_DIR ) . $unsafe_post_id . '.css';
+	$unsafe_options      = get_post_meta( $unsafe_post_id, 'options', true );
+	$unsafe_search_tree  = get_option( 'custom-css-js-tree', array() );
+	$unsafe_js_options   = $unsafe_options;
+	$unsafe_js_options['language'] = 'js';
+	update_post_meta( $unsafe_post_id, 'options', $unsafe_js_options );
+	file_put_contents(
+		$unsafe_file_path,
+		'<style>.aslc-unclosed-rule {' . PHP_EOL . 'color: red;' . PHP_EOL . '</style>'
+	);
+	$unsafe_findings = aslc_scan_css_records( $unsafe_search_tree );
+	aslc_bundle_test(
+		in_array( 'unclosed_brace', array_column( $unsafe_findings, 'code' ), true ),
+		'An active search-tree CSS file was skipped when its post metadata did not identify it as CSS.'
+	);
+	aslc_bundle_test( false === aslc_rebuild_css_bundles( $unsafe_search_tree ), 'An unsafe CSS bundle was published.' );
+	$unsafe_error = get_option( 'aslc_css_bundle_error', array() );
+	aslc_bundle_test( ! empty( $unsafe_error['unsafe'] ), 'The unsafe CSS bundle error was not recorded.' );
+	aslc_bundle_test( false === aslc_get_css_bundle_entry( 'frontend' ), 'An unsafe last-known bundle remained active.' );
+
+	update_post_meta( $unsafe_post_id, 'options', $unsafe_options );
+	file_put_contents(
+		$unsafe_file_path,
+		'<style>.aslc-bundle-header-late { color: teal; }</style>'
+	);
+	aslc_bundle_test( true === aslc_rebuild_css_bundles( $unsafe_search_tree ), 'The bundle did not recover after unsafe CSS was fixed.' );
+	$after_update = aslc_get_css_bundle_entry( 'frontend' );
+	aslc_bundle_test( is_array( $after_update ), 'Generated-file delivery did not recover after unsafe CSS was fixed.' );
+
 	$tree_with_error = get_option( 'custom-css-js-tree', array() );
 	$tree_with_error['frontend-css-header-internal'][2][] = 'not-a-css-post.css';
 	aslc_bundle_test( false === aslc_rebuild_css_bundles( $tree_with_error ), 'An invalid bundle source did not fail safely.' );

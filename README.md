@@ -1,7 +1,7 @@
 # AS Local CSS
 
 Author: AlphaSys
-Version: 0.6.5
+Version: 0.6.6
 Status: Production
 
 ## Purpose

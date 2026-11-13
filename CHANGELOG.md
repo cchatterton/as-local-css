@@ -2,6 +2,12 @@
 
 All notable changes to AS Local CSS are recorded here.
 
+## 0.6.6 - 2026-11-13
+
+- Scanned the exact generated CSS files referenced by the active search tree as part of every compilation.
+- Blocked unsafe bundle publication and automatically restored inline delivery when an unclosed brace, comment, or string could capture later records.
+- Kept the unsafe bundle disabled until the offending record is fixed and a successful rebuild replaces it.
+
 ## 0.6.5 - 2026-11-13
 
 - Printed generated CSS links at the same hook and priority as legacy inline CSS instead of the earlier standard WordPress stylesheet pass.

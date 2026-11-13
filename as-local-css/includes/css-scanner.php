@@ -20,13 +20,18 @@ function aslc_get_css_scan_findings() {
 }
 
 /**
- * Scan every published CSS record and save its findings.
+ * Return generated CSS files that must be scanned.
  *
- * @return array
+ * Published CSS posts are included for the admin report. Files referenced by
+ * the active search tree are also included so compilation validates the exact
+ * sources it is about to concatenate, even if post metadata is stale.
+ *
+ * @param array|null $search_tree Active custom-code search tree.
+ * @return array<int,string> Post ID to generated filename.
  */
-function aslc_scan_css_records() {
-	$findings = array();
-	$posts    = get_posts(
+function aslc_get_css_scan_targets( $search_tree = null ) {
+	$targets = array();
+	$posts   = get_posts(
 		array(
 			'post_type'      => 'custom-css-js',
 			'post_status'    => 'publish',
@@ -38,14 +43,54 @@ function aslc_scan_css_records() {
 
 	foreach ( $posts as $post ) {
 		$options = get_post_meta( $post->ID, 'options', true );
-		if ( ! is_array( $options ) || 'css' !== ( $options['language'] ?? '' ) ) {
+		if ( is_array( $options ) && 'css' === ( $options['language'] ?? '' ) ) {
+			$targets[ (int) $post->ID ] = $post->ID . '.css';
+		}
+	}
+
+	if ( null === $search_tree ) {
+		$search_tree = get_option( 'custom-css-js-tree', array() );
+	}
+	if ( ! is_array( $search_tree ) ) {
+		return $targets;
+	}
+
+	foreach ( $search_tree as $branch => $priority_groups ) {
+		if ( false === strpos( (string) $branch, '-css-' ) || ! is_array( $priority_groups ) ) {
 			continue;
 		}
+		foreach ( $priority_groups as $filenames ) {
+			if ( ! is_array( $filenames ) ) {
+				continue;
+			}
+			foreach ( $filenames as $filename ) {
+				$safe_filename = basename( (string) strtok( (string) $filename, '?' ) );
+				if ( preg_match( '/^(\d+)\.css$/', $safe_filename, $matches ) ) {
+					$targets[ (int) $matches[1] ] = $safe_filename;
+				}
+			}
+		}
+	}
 
-		$css = aslc_get_generated_css_contents( $post->ID . '.css' );
+	ksort( $targets, SORT_NUMERIC );
+	return $targets;
+}
+
+/**
+ * Scan every published or actively referenced CSS record and save findings.
+ *
+ * @param array|null $search_tree Active custom-code search tree.
+ * @return array
+ */
+function aslc_scan_css_records( $search_tree = null ) {
+	$findings = array();
+	$targets  = aslc_get_css_scan_targets( $search_tree );
+
+	foreach ( $targets as $post_id => $filename ) {
+		$css = aslc_get_generated_css_contents( $filename );
 		if ( is_wp_error( $css ) ) {
 			$findings[] = aslc_css_scan_finding(
-				$post->ID,
+				$post_id,
 				0,
 				'critical',
 				'missing_generated_file',
@@ -54,7 +99,7 @@ function aslc_scan_css_records() {
 			continue;
 		}
 
-		$findings = array_merge( $findings, aslc_scan_css_record( $post->ID, $css ) );
+		$findings = array_merge( $findings, aslc_scan_css_record( $post_id, $css ) );
 	}
 
 	update_option(
@@ -67,6 +112,24 @@ function aslc_scan_css_records() {
 	);
 
 	return $findings;
+}
+
+/**
+ * Return findings that can make later records parse inside a broken record.
+ *
+ * @param array $findings CSS scan findings.
+ * @return array
+ */
+function aslc_get_bundle_blocking_css_findings( array $findings ) {
+	$blocking_codes = array( 'unclosed_brace', 'unclosed_comment', 'unclosed_string' );
+	return array_values(
+		array_filter(
+			$findings,
+			static function ( $finding ) use ( $blocking_codes ) {
+				return isset( $finding['code'] ) && in_array( $finding['code'], $blocking_codes, true );
+			}
+		)
+	);
 }
 
 /**
