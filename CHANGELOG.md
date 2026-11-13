@@ -2,6 +2,10 @@
 
 All notable changes to AS Local CSS are recorded here.
 
+## 0.7.1 - 2026-11-13
+
+- Added a non-blocking Information finding when a CSS record's Base section contains a media query, with its first matching line and a direct link to the Base accordion.
+
 ## 0.7.0 - 2026-11-13
 
 - Added a backward-compatible Base CSS accordion and independent responsive CSS accordions for every configured min-width breakpoint.

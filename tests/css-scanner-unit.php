@@ -23,6 +23,28 @@ if ( array() !== aslc_scan_css_record( 10, $css ) ) {
 	throw new RuntimeException( 'Valid CSS or an approved token produced a false positive.' );
 }
 
+$base_media = aslc_scan_css_record(
+	12,
+	"/* @media in a comment */\n.selector { display: block; }\n@media (min-width: 40rem) { .selector { display: grid; } }",
+	'Base'
+);
+if ( 1 !== count( $base_media )
+	|| 'media_query_in_base' !== ( $base_media[0]['code'] ?? '' )
+	|| 'information' !== ( $base_media[0]['severity'] ?? '' )
+	|| 3 !== ( $base_media[0]['line'] ?? 0 )
+	|| 'Base' !== ( $base_media[0]['section'] ?? '' ) ) {
+	throw new RuntimeException( 'A Base media query was not reported as section-aware information.' );
+}
+
+if ( array() !== aslc_scan_css_record( 13, '@media (min-width: 40rem) { .selector { display: grid; } }', '%SM%' ) ) {
+	throw new RuntimeException( 'A media query outside the Base section produced a Base information finding.' );
+}
+
+$blocking = aslc_get_bundle_blocking_css_findings( $base_media );
+if ( array() !== $blocking ) {
+	throw new RuntimeException( 'The Base media-query information finding incorrectly blocked generated CSS.' );
+}
+
 $unknown_token = aslc_scan_css_record( 11, '@media (min-width: %XXL%) { .valid { display: block; } }' );
 if ( 'unresolved_breakpoint_token' !== ( $unknown_token[0]['code'] ?? '' ) ) {
 	throw new RuntimeException( 'An unresolved breakpoint token was not reported.' );

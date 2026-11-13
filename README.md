@@ -1,7 +1,7 @@
 # AS Local CSS
 
 Author: AlphaSys
-Version: 0.7.0
+Version: 0.7.1
 Status: Production
 
 ## Purpose
@@ -18,7 +18,7 @@ AS Local CSS is an AlphaSys-maintained, compatible replacement for the WordPress
 - A CSS Delivery submenu lets administrators switch between original inline CSS output and the generated-file bundle without changing JavaScript or HTML delivery.
 - CSS Delivery also controls whether record priorities are emitted from 1 to 5 or from 5 to 1, with the numeric direction applied to legacy priorities 6 through 10.
 - A separate CSS Breakpoints submenu manages repeatable token-to-length mappings. Each CSS record has a backward-compatible Base editor and one independent accordion per min-width breakpoint; non-empty responsive sections are wrapped automatically, and both delivery modes resolve tokens such as `%MD%` without changing authored records.
-- Published CSS records are scanned by section on saves and bundle refreshes; a CSS Errors submenu shows a native WordPress findings table, an update-style counter, section labels, descriptions, line numbers, and direct accordion links.
+- Published CSS records are scanned by section on saves and bundle refreshes; a CSS Errors submenu shows a native WordPress findings table, an update-style counter, section labels, descriptions, line numbers, and direct accordion links. Base sections containing media queries receive a non-blocking Information finding.
 - Active front-end CSS snippets load in the block editor content iframe as well as on the site front end.
 - Stylesheets registered through WordPress's front-end enqueue hook load in the editor iframe before Local CSS, preserving design-token dependencies.
 - Local CSS is promoted after Gutenberg's native block styles in the editor canvas so authored rules retain front-end cascade authority.

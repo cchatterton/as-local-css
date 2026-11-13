@@ -3,7 +3,7 @@ Contributors:
 Tags: CSS, JS, javascript, custom CSS, custom JS, custom code, local css
 Requires at least: 7.0
 Tested up to: 7.0
-Stable tag: 0.7.0
+Stable tag: 0.7.1
 Requires PHP: 7.4
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -27,6 +27,9 @@ Original plugin: https://wordpress.org/plugins/custom-css-js/
 Thank you to the original author and maintainers for the plugin this AlphaSys-controlled release continues from.
 
 == Changelog ==
+
+= 0.7.1 =
+* Added a non-blocking Information finding when a CSS record's Base section contains a media query, with its first matching line and a direct link to the Base accordion.
 
 = 0.7.0 =
 * Added a backward-compatible Base CSS accordion and independent responsive CSS accordions for every configured min-width breakpoint.

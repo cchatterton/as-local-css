@@ -278,6 +278,17 @@ function aslc_scan_css_record( $post_id, $css, $section = '' ) {
 		$without_comments = $css;
 	}
 
+	if ( 0 === strcasecmp( $section, __( 'Base', 'custom-css-js' ) )
+		&& preg_match( '/@media\b/i', $without_comments, $media_match, PREG_OFFSET_CAPTURE ) ) {
+		$findings[] = aslc_css_scan_finding(
+			$post_id,
+			1 + substr_count( substr( $without_comments, 0, $media_match[0][1] ), "\n" ),
+			'information',
+			'media_query_in_base',
+			__( 'The Base section contains a media query. Consider moving its CSS into the matching breakpoint accordion.', 'custom-css-js' )
+		);
+	}
+
 	$configured_tokens = function_exists( 'aslc_get_css_breakpoint_tokens' )
 		? aslc_get_css_breakpoint_tokens()
 		: array(

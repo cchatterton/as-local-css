@@ -1,6 +1,6 @@
 {
-  "version": "0.7.0",
-  "body": "## 0.7.0 - 2026-11-13\n\n- Add a backward-compatible Base CSS accordion and independent responsive CSS accordions for every configured min-width breakpoint.\n- Add live character counts and automatically wrap non-empty responsive sections in their media queries.\n- Keep inline and generated-file delivery identical, including token replacement, through one shared assembler with revision support and section-aware CSS error reporting.\n",
+  "version": "0.7.1",
+  "body": "## 0.7.1 - 2026-11-13\n\n- Add a non-blocking Information finding when a CSS record's Base section contains a media query.\n- Report the first matching line and link directly to the Base accordion without disabling compiled CSS delivery.\n",
   "requires": "7.0",
   "requires_php": "7.4"
 }
