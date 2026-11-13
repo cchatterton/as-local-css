@@ -112,7 +112,7 @@ function aslc_render_css_breakpoints_page() {
 				</table>
 
 				<div class="aslc-breakpoints-card__footer">
-					<button type="button" class="button aslc-add-breakpoint" id="aslc-add-breakpoint"><span class="dashicons dashicons-plus-alt2" aria-hidden="true"></span><?php esc_html_e( 'Add', 'custom-css-js' ); ?></button>
+					<button type="button" class="button aslc-add-breakpoint" id="aslc-add-breakpoint"><?php esc_html_e( 'Add', 'custom-css-js' ); ?></button>
 					<?php submit_button( __( 'Save', 'custom-css-js' ), 'primary', 'submit', false ); ?>
 				</div>
 			</div>
@@ -133,16 +133,10 @@ function aslc_render_css_breakpoints_page() {
 		.aslc-add-breakpoint {
 			display: inline-flex !important;
 			align-items: center;
-			gap: 0.3rem;
-			min-height: 2rem !important;
-			padding: 0 0.65rem !important;
+			justify-content: center;
+			min-height: 2.25rem !important;
+			padding: 0 1rem !important;
 			white-space: nowrap;
-		}
-		.aslc-add-breakpoint .dashicons {
-			width: 1rem;
-			height: 1rem;
-			font-size: 1rem;
-			line-height: 1;
 		}
 		.aslc-breakpoints-table {
 			border: 0;
@@ -235,8 +229,8 @@ function aslc_render_css_breakpoints_page() {
 		.aslc-breakpoints-card__footer {
 			display: flex;
 			align-items: center;
-			justify-content: space-between;
-			gap: 1.5rem;
+			justify-content: flex-end;
+			gap: 0.5rem;
 			padding: 0.875rem 1.25rem;
 			background: #fbfbfc;
 			border-top: 1px solid #dcdcde;
@@ -247,6 +241,9 @@ function aslc_render_css_breakpoints_page() {
 		.aslc-breakpoints-card__footer .button-primary {
 			min-height: 2.25rem;
 			padding: 0 1rem;
+		}
+		.aslc-breakpoints-card__footer .button {
+			margin: 0;
 		}
 		@media (hover: none) {
 			.aslc-remove-breakpoint {

@@ -2,6 +2,11 @@
 
 All notable changes to AS Local CSS are recorded here.
 
+## 0.6.13 - 2026-11-13
+
+- Grouped Add and Save together on the lower right of the breakpoint card.
+- Removed the misaligned Add icon and matched both controls' height, padding, and spacing while retaining secondary and primary emphasis.
+
 ## 0.6.12 - 2026-11-13
 
 - Reduced CSS Breakpoints to the page title and compact breakpoint card by removing introductory, header, and example copy.

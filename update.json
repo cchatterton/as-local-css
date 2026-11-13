@@ -1,6 +1,6 @@
 {
-  "version": "0.6.12",
-  "body": "## 0.6.12 - 2026-11-13\n\n- Reduce CSS Breakpoints to the page title and compact breakpoint card.\n- Remove introductory, card-header, and example copy.\n- Place concise Add and Save actions together in the card footer.\n",
+  "version": "0.6.13",
+  "body": "## 0.6.13 - 2026-11-13\n\n- Group Add and Save together on the lower right of the breakpoint card.\n- Remove the misaligned Add icon and match both controls' height, padding, and spacing.\n",
   "requires": "7.0",
   "requires_php": "7.4"
 }
