@@ -85,6 +85,7 @@ class CustomCSSandJS_Admin {
 		add_filter( 'wp_statuses_get_supported_post_types', array( $this, 'wp_statuses_get_supported_post_types' ), 20 );
 		add_action( 'wp_restore_post_revision', array( $this, 'restore_post_revision' ), 20, 2 );
 		add_action( 'admin_init', array( $this, 'migrate_inline_only_snippets' ) );
+		add_action( 'admin_init', array( $this, 'migrate_css_bundle_delivery' ) );
 
 		add_action( 'current_screen', array( $this, 'current_screen_2' ), 100 );
 
@@ -835,6 +836,11 @@ End of comment */ ',
 
 			foreach ( $meta as $_key => $a ) {
 				$close_div = false;
+				if ( 'css' === $options['language'] && 'type' === $_key ) {
+					$a['title']                     = __( 'Cascade position', 'custom-css-js' );
+					$a['values']['header']['title'] = __( 'Earlier in the CSS bundle', 'custom-css-js' );
+					$a['values']['footer']['title'] = __( 'Later in the CSS bundle', 'custom-css-js' );
+				}
 
 				// if ( ( $_key == 'preprocessor' && $options['language'] == 'css' ) ||
 				// 	( $_key == 'linking' && $options['language'] == 'html' ) ||
@@ -1298,6 +1304,19 @@ End of comment */ ',
 	}
 
 	/**
+	 * Build the first generated CSS bundles after upgrading from inline output.
+	 */
+	function migrate_css_bundle_delivery() {
+		if ( get_option( 'aslc_css_bundle_migration_0_6_0', false ) ) {
+			return;
+		}
+
+		if ( $this->build_search_tree() ) {
+			update_option( 'aslc_css_bundle_migration_0_6_0', true, false );
+		}
+	}
+
+	/**
 	 * Create the custom-css-js dir in uploads directory
 	 *
 	 * Show a message if the directory is not writable
@@ -1352,7 +1371,7 @@ endif;
 	/**
 	 * Build a tree where you can quickly find the needed custom-css-js posts
 	 *
-	 * @return void
+	 * @return bool Whether the generated CSS bundles were rebuilt successfully.
 	 */
 	private function build_search_tree() {
 
@@ -1395,6 +1414,7 @@ endif;
 
 		// Save the tree in the database
 		update_option( 'custom-css-js-tree', $tree );
+		return aslc_rebuild_css_bundles( $tree );
 	}
 
 	/**

@@ -1,7 +1,7 @@
 # AS Local CSS
 
 Author: AlphaSys
-Version: 0.5.0
+Version: 0.6.0
 Status: Production
 
 ## Purpose
@@ -12,7 +12,8 @@ AS Local CSS is an AlphaSys-maintained, compatible replacement for the WordPress
 
 - Custom code post type remains `custom-css-js`.
 - Existing options, post meta, capabilities, upload folder, AJAX actions, and editor screens are preserved.
-- Custom CSS and JavaScript snippets are rendered inline; existing external-file snippets are migrated automatically without changing their authored code.
+- Active CSS snippets are compiled into one content-addressed stylesheet per frontend, admin, or login context; JavaScript remains inline.
+- CSS bundles are written atomically, retain legacy snippet ordering, and keep the last working bundle or inline fallback if rebuilding fails.
 - Active front-end CSS snippets load in the block editor content iframe as well as on the site front end.
 - Stylesheets registered through WordPress's front-end enqueue hook load in the editor iframe before Local CSS, preserving design-token dependencies.
 - Local CSS is promoted after Gutenberg's native block styles in the editor canvas so authored rules retain front-end cascade authority.
@@ -33,7 +34,9 @@ AS Local CSS is an AlphaSys-maintained, compatible replacement for the WordPress
 ## Important Notes
 
 - The plugin intentionally preserves the original `custom-css-js` text domain, post type, data keys, and upload directory for compatibility.
-- CSS and JavaScript use inline output only; the legacy external-file selector and permalink editor are intentionally disabled.
+- The legacy per-snippet external-file selector and permalink editor remain disabled; CSS delivery is managed centrally through generated bundles.
+- Frontend CSS is enqueued in the document head. Legacy footer CSS remains after header CSS inside the combined bundle to preserve its relative cascade order.
+- Relative URLs in authored CSS resolve from the generated bundle in `wp-content/uploads/custom-css-js`; use root-relative or absolute asset URLs when location matters.
 - Only active snippets assigned to the front end are mirrored into the block editor content canvas.
 - Gutenberg's native editor classes remain intact when front-end body classes are added.
 - JavaScript and HTML snippets are not loaded in the editor iframe.

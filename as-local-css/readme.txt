@@ -3,7 +3,7 @@ Contributors:
 Tags: CSS, JS, javascript, custom CSS, custom JS, custom code, local css
 Requires at least: 7.0
 Tested up to: 7.0
-Stable tag: 0.5.0
+Stable tag: 0.6.0
 Requires PHP: 7.4
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -27,6 +27,12 @@ Original plugin: https://wordpress.org/plugins/custom-css-js/
 Thank you to the original author and maintainers for the plugin this AlphaSys-controlled release continues from.
 
 == Changelog ==
+
+= 0.6.0 =
+* Combine active CSS snippets into one content-addressed stylesheet per frontend, admin, or login context.
+* Enqueue the same frontend CSS bundle in the site and block editor instead of printing inline style blocks.
+* Rebuild bundles atomically after snippet changes and retain the last working bundle or inline fallback if generation fails.
+* Preserve legacy header-before-footer and snippet-priority ordering inside each generated bundle.
 
 = 0.5.0 =
 * Require contextual edit capability checks before either legacy AJAX action can change a custom code item.

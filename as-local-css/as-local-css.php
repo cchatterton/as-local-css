@@ -2,7 +2,7 @@
 /**
  * Plugin Name: AS Local CSS
  * Description: Compatible AlphaSys-maintained release of Simple Custom CSS and JS for adding local CSS, JavaScript, and HTML snippets.
- * Version: 0.5.0
+ * Version: 0.6.0
  * Requires at least: 7.0
  * Requires PHP: 7.4
  * Update URI: https://github.com/cchatterton/as-local-css
@@ -23,7 +23,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-define( 'ASLC_VERSION', '0.5.0' );
+define( 'ASLC_VERSION', '0.6.0' );
 define( 'ASLC_PLUGIN_FILE', __FILE__ );
 define( 'ASLC_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'ASLC_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
@@ -31,6 +31,7 @@ define( 'ASLC_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 require_once ASLC_PLUGIN_DIR . 'includes/controller-client.php';
 asuc_client_register( __FILE__, 'as-local-css' );
 require_once ASLC_PLUGIN_DIR . 'includes/html-snippets.php';
+require_once ASLC_PLUGIN_DIR . 'includes/css-bundles.php';
 require_once ASLC_PLUGIN_DIR . 'includes/editor-assets.php';
 if ( is_admin() ) {
 	require_once ASLC_PLUGIN_DIR . 'includes/related-content.php';
@@ -123,6 +124,19 @@ if ( ! class_exists( 'CustomCSSandJS' ) ) :
 		 */
 		public function print_code_actions() {
 			foreach ( $this->search_tree as $_key => $_value ) {
+				if ( false !== strpos( $_key, '-css-' ) ) {
+					$side = 'frontend';
+					if ( 0 === strpos( $_key, 'admin-' ) ) {
+						$side = 'admin';
+					} elseif ( 0 === strpos( $_key, 'login-' ) ) {
+						$side = 'login';
+					}
+
+					if ( aslc_css_bundle_is_available( $side ) ) {
+						continue;
+					}
+				}
+
 				$action = 'wp_';
 				if ( strpos( $_key, 'admin' ) !== false ) {
 					$action = 'admin_';
@@ -170,6 +184,18 @@ if ( ! class_exists( 'CustomCSSandJS' ) ) :
 			$type  = strpos( $function, 'js' ) !== false ? 'js' : $type;
 			$type  = strpos( $function, 'html' ) !== false ? 'html' : $type;
 			$tag   = array( 'css' => 'style', 'js' => 'script' );
+			if ( 'css' === $type ) {
+				$side = 'frontend';
+				if ( 0 === strpos( $function, 'admin-' ) ) {
+					$side = 'admin';
+				} elseif ( 0 === strpos( $function, 'login-' ) ) {
+					$side = 'login';
+				}
+
+				if ( aslc_css_bundle_is_available( $side ) ) {
+					return true;
+				}
+			}
 
 			$type_attr = ( 'js' === $type && ! current_theme_supports( 'html5', 'script' ) ) ? ' type="text/javascript"' : '';
 			$type_attr = ( 'css' === $type && ! current_theme_supports( 'html5', 'style' ) ) ? ' type="text/css"' : $type_attr;

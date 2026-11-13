@@ -56,6 +56,15 @@ function aslc_enqueue_frontend_css_in_block_editor() {
 		return;
 	}
 
+	// The front-end asset collector may already have queued the same bundle.
+	if ( wp_style_is( 'aslc-css-frontend', 'enqueued' ) ) {
+		return;
+	}
+
+	if ( aslc_enqueue_css_bundle( 'frontend', 'aslc-editor-css-bundle' ) ) {
+		return;
+	}
+
 	$search_tree = get_option( 'custom-css-js-tree', array() );
 	if ( ! is_array( $search_tree ) || empty( $search_tree ) ) {
 		return;

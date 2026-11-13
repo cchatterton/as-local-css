@@ -2,6 +2,17 @@
 
 All notable changes to AS Local CSS are recorded here.
 
+## 0.6.0 - 2026-11-13
+
+- Combined active CSS snippets into one generated stylesheet for each frontend, WordPress admin, or login context.
+- Replaced inline frontend CSS output with a content-addressed, cache-safe stylesheet enqueued through WordPress.
+- Loaded the same frontend bundle in the block editor iframe and retained its final cascade authority without duplicate stylesheet nodes.
+- Preserved legacy header-before-footer grouping and numeric snippet-priority ordering inside each bundle.
+- Added atomic file publication, cleanup of superseded bundles, and a last-known-good bundle or inline fallback when rebuilding fails.
+- Rebuilt bundles after snippet saves, activation changes, trash/restore actions, and revision restores, with a one-time upgrade build for existing sites.
+- Relabelled the CSS header/footer control as an earlier/later cascade position because the combined stylesheet is enqueued in the document head.
+- Added disposable WordPress integration coverage and live frontend/block-editor verification for generated-file delivery and cache invalidation.
+
 ## 0.5.0 - 2026-11-05
 
 - Added contextual `edit_post` capability checks to both legacy AJAX handlers before they can change a custom code item.

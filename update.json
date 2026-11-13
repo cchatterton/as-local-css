@@ -1,6 +1,6 @@
 {
-  "version": "0.5.0",
-  "body": "## 0.5.0 - 2026-11-05\n\n- Add contextual capability checks to both legacy AJAX handlers.\n- Upgrade CodeMirror to 5.65.20.\n- Make CSS and JavaScript inline-only and migrate existing external-file snippets.\n- Remove the content-side Related Custom Code panel and Create CSS/Create JS actions.\n",
+  "version": "0.6.0",
+  "body": "## 0.6.0 - 2026-11-13\n\n- Combine active CSS into one content-addressed stylesheet per frontend, admin, or login context.\n- Enqueue the same frontend bundle on the site and in the block editor instead of printing inline CSS.\n- Publish bundles atomically with cache-safe filenames and preserve the last working bundle or inline fallback after a failed rebuild.\n- Preserve legacy snippet ordering while moving frontend CSS delivery to the document head.\n",
   "requires": "7.0",
   "requires_php": "7.4"
 }

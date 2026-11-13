@@ -23,7 +23,7 @@
 		}
 
 		const localStyles = Array.from( editorDocument.head.querySelectorAll(
-			'link[id^="aslc-editor-css-"], style[id^="aslc-editor-css-"]'
+			'link#aslc-css-frontend-css, link[id^="aslc-editor-css-"], style[id^="aslc-editor-css-"]'
 		) );
 		if ( localStyles.length === 0 ) {
 			return;
