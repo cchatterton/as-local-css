@@ -768,7 +768,10 @@ End of comment */ ',
 		?>
 			<?php if ( $is_css ) : ?>
 			<div class="aslc-target-scope">
-				<label for="aslc_css_target_scope"><?php esc_html_e( 'Target scope', 'custom-css-js' ); ?></label>
+				<div class="aslc-target-scope__label">
+					<label for="aslc_css_target_scope"><?php esc_html_e( 'Target scope', 'custom-css-js' ); ?></label>
+					<span><?php esc_html_e( 'Optional', 'custom-css-js' ); ?></span>
+				</div>
 				<input type="text" id="aslc_css_target_scope" name="aslc_css_target_scope" value="<?php echo esc_attr( $target_scope ); ?>" maxlength="255" pattern="[^{};]+" placeholder=".columns or #contact-us" title="<?php esc_attr_e( 'Enter one CSS selector without braces or declarations.', 'custom-css-js' ); ?>">
 			</div>
 			<div class="aslc-css-sections">

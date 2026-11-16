@@ -2,6 +2,12 @@
 
 All notable changes to AS Local CSS are recorded here.
 
+## 0.9.2 - 2026-11-16
+
+- Added Error findings for nested selector entries without `&`, nested rules without direct declarations, and parent declarations placed only after child rules.
+- Excluded nested at-rules and keyframes from selector checks and retained Error findings as non-blocking for compiled delivery.
+- Added an Optional note beneath the Target scope label.
+
 ## 0.9.1 - 2026-11-13
 
 - Replaced the Code Domains checkbox panel with a hierarchical radio list and a No domain option.

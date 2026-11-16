@@ -1,6 +1,6 @@
 {
-  "version": "0.9.1",
-  "body": "## 0.9.1 - 2026-11-13\n\n- Replace the Code Domains checkbox panel with a hierarchical radio list and a No domain option.\n- Enforce zero-or-one Code Domain for editor and programmatic assignments and remove misleading Quick Edit checkboxes.\n",
+  "version": "0.9.2",
+  "body": "## 0.9.2 - 2026-11-16\n\n- Add Error findings for nested selector entries without `&`, nested rules without direct declarations, and parent declarations placed only after child rules.\n- Exclude nested at-rules and keyframes from selector checks and keep these compatibility findings non-blocking for compiled delivery.\n- Add an Optional note beneath the Target scope label.\n",
   "requires": "7.0",
   "requires_php": "7.4"
 }

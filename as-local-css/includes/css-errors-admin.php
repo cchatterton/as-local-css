@@ -157,12 +157,13 @@ function aslc_add_css_errors_help() {
 			'id'      => 'aslc-css-errors-help',
 			'title'   => __( 'CSS findings', 'custom-css-js' ),
 			'content' =>
-				'<p>' . esc_html__( 'Information findings are suggestions and never block compiled CSS. Errors identify CSS that is likely ineffective. Critical findings can change how later records are parsed, so generated-file delivery stays disabled until they are fixed.', 'custom-css-js' ) . '</p>' .
+				'<p>' . esc_html__( 'Information findings are suggestions and never block compiled CSS. Errors identify CSS that may be incompatible or ineffective. Critical findings can change how later records are parsed, so generated-file delivery stays disabled until they are fixed.', 'custom-css-js' ) . '</p>' .
 				'<h3>' . esc_html__( 'Common findings', 'custom-css-js' ) . '</h3>' .
 				'<ul>' .
 				'<li><strong>' . esc_html__( 'Media query in Base', 'custom-css-js' ) . '</strong> — ' . esc_html__( 'Move the responsive rules into the matching breakpoint accordion when practical.', 'custom-css-js' ) . '</li>' .
 				'<li><strong>' . esc_html__( 'Unclosed opening brace, comment, or quoted value', 'custom-css-js' ) . '</strong> — ' . esc_html__( 'Close the structure in the reported section before rebuilding compiled CSS.', 'custom-css-js' ) . '</li>' .
 				'<li><strong>' . esc_html__( 'No configured breakpoint', 'custom-css-js' ) . '</strong> — ' . esc_html__( 'Add the token under CSS Breakpoints or replace it with a valid configured token.', 'custom-css-js' ) . '</li>' .
+				'<li><strong>' . esc_html__( 'Nesting compatibility', 'custom-css-js' ) . '</strong> — ' . esc_html__( 'Give every nested rule a direct declaration before its child rules, and include & in every nested selector.', 'custom-css-js' ) . '</li>' .
 				'<li><strong>' . esc_html__( 'Selector or value errors', 'custom-css-js' ) . '</strong> — ' . esc_html__( 'Use the reported line to correct the selector, decimal, shorthand, or missing selector.', 'custom-css-js' ) . '</li>' .
 				'</ul>' .
 				'<p>' . esc_html__( 'Edit opens the affected record and, when available, the exact accordion containing the finding. The scanner never changes CSS automatically.', 'custom-css-js' ) . '</p>',

@@ -3,7 +3,7 @@ Contributors:
 Tags: CSS, JS, javascript, custom CSS, custom JS, custom code, local css
 Requires at least: 7.0
 Tested up to: 7.0
-Stable tag: 0.9.1
+Stable tag: 0.9.2
 Requires PHP: 7.4
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -27,6 +27,11 @@ Original plugin: https://wordpress.org/plugins/custom-css-js/
 Thank you to the original author and maintainers for the plugin this AlphaSys-controlled release continues from.
 
 == Changelog ==
+
+= 0.9.2 =
+* Added Error findings for nested selector entries without `&`, nested rules without direct declarations, and parent declarations placed only after child rules.
+* Excluded nested at-rules and keyframes from selector checks and retained Error findings as non-blocking for compiled delivery.
+* Added an Optional note beneath the Target scope label.
 
 = 0.9.1 =
 * Replaced the Code Domains checkbox panel with a hierarchical radio list and a No domain option.
