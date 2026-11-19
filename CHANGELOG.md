@@ -2,6 +2,10 @@
 
 All notable changes to AS Local CSS are recorded here.
 
+## 0.9.3 - 2026-11-20
+
+- Show generated CSS build errors only on the CSS Delivery screen.
+
 ## 0.9.2 - 2026-11-16
 
 - Added Error findings for nested selector entries without `&`, nested rules without direct declarations, and parent declarations placed only after child rules.

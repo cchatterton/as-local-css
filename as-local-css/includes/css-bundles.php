@@ -789,4 +789,3 @@ function aslc_css_bundle_admin_notice() {
 	</div>
 	<?php
 }
-add_action( 'admin_notices', 'aslc_css_bundle_admin_notice' );

@@ -84,6 +84,7 @@ function aslc_render_css_delivery_page() {
 	?>
 	<div class="wrap">
 		<h1><?php esc_html_e( 'CSS Delivery', 'custom-css-js' ); ?></h1>
+		<?php aslc_css_bundle_admin_notice(); ?>
 
 		<?php if ( isset( $_GET['updated'] ) && '1' === sanitize_key( wp_unslash( $_GET['updated'] ) ) ) : ?>
 			<div class="notice notice-success is-dismissible"><p><?php esc_html_e( 'CSS delivery mode saved.', 'custom-css-js' ); ?></p></div>
