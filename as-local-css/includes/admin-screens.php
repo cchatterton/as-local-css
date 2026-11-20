@@ -34,6 +34,20 @@ class CustomCSSandJS_Admin {
 	public function __construct() {
 
 		$this->add_functions();
+		add_action( 'aslc_snippets_imported', array( $this, 'refresh_imported_snippets' ) );
+	}
+
+	public function refresh_imported_snippets( $ids ) {
+		foreach ( $ids as $id ) {
+			unset( $this->options[ $id ] );
+			$post = get_post( $id );
+			$options = $this->get_options( $id );
+			if ( 'html' !== $options['language'] ) {
+				$this->write_code_file( $id, $post->post_content, $post->post_author, $options );
+			}
+		}
+		$this->build_search_tree();
+		wp_reset_query();
 	}
 
 	/**

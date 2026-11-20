@@ -2,6 +2,10 @@
 
 All notable changes to AS Local CSS are recorded here.
 
+## 0.10.0 - 2026-11-20
+
+- Add JSON snippet transfer with per-language exports, replace, append and overwrite modes, and automatic Code Domain import by slug.
+
 ## 0.9.3 - 2026-11-20
 
 - Show generated CSS build errors only on the CSS Delivery screen.

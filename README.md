@@ -1,7 +1,7 @@
 # AS Local CSS
 
 Author: AlphaSys
-Version: 0.9.3
+Version: 0.10.0
 Status: Production
 
 ## Purpose
@@ -9,6 +9,8 @@ Status: Production
 AS Local CSS is an AlphaSys-maintained, compatible replacement for the WordPress plugin "Simple Custom CSS and JS".
 
 ## Key Features
+
+- Import and export snippets by code type under **Local CSS > Import / Export**. Append matches use language, Code Domain slug and exact title. Replace moves existing snippets in the exported languages to Trash. Every transfer includes Code Domains and creates missing slugs automatically.
 
 - Custom code post type remains `custom-css-js`.
 - Existing options, post meta, capabilities, upload folder, AJAX actions, and editor screens are preserved.

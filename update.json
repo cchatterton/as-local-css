@@ -1,6 +1,6 @@
 {
-  "version": "0.9.3",
-  "body": "## 0.9.3 - 2026-11-20\n\n- Show generated CSS build errors only on the CSS Delivery screen.\n",
+  "version": "0.10.0",
+  "body": "## 0.10.0 - 2026-11-20\n\n- Add snippet import/export by code type and automatic Code Domain transfer by slug.\n",
   "requires": "7.0",
   "requires_php": "7.4"
 }

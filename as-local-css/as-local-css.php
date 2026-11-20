@@ -2,7 +2,7 @@
 /**
  * Plugin Name: AS Local CSS
  * Description: Compatible AlphaSys-maintained release of Simple Custom CSS and JS for adding local CSS, JavaScript, and HTML snippets.
- * Version: 0.9.3
+ * Version: 0.10.0
  * Requires at least: 7.0
  * Requires PHP: 7.4
  * Update URI: https://github.com/cchatterton/as-local-css
@@ -23,7 +23,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-define( 'ASLC_VERSION', '0.9.3' );
+define( 'ASLC_VERSION', '0.10.0' );
 define( 'ASLC_PLUGIN_FILE', __FILE__ );
 define( 'ASLC_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'ASLC_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
@@ -40,6 +40,7 @@ if ( is_admin() ) {
 	require_once ASLC_PLUGIN_DIR . 'includes/delivery-settings.php';
 	require_once ASLC_PLUGIN_DIR . 'includes/breakpoint-settings.php';
 	require_once ASLC_PLUGIN_DIR . 'includes/css-errors-admin.php';
+	require_once ASLC_PLUGIN_DIR . 'includes/snippet-transfer.php';
 }
 
 if ( ! class_exists( 'CustomCSSandJS' ) ) :
