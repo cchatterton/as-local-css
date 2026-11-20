@@ -2,6 +2,10 @@
 
 All notable changes to AS Local CSS are recorded here.
 
+## 0.10.3 - 2026-11-20
+
+- Use Local Code labels and move Import / Export to the bottom of the submenu.
+
 ## 0.10.2 - 2026-11-20
 
 - Exclude untitled snippets from exports and restyle the Import / Export screen.

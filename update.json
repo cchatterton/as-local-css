@@ -1,6 +1,6 @@
 {
-  "version": "0.10.2",
-  "body": "## 0.10.2 - 2026-11-20\n\n- Exclude untitled snippets from exports and restyle the Import / Export screen.\n",
+  "version": "0.10.3",
+  "body": "## 0.10.3 - 2026-11-20\n\n- Use Local Code labels and move Import / Export to the bottom of the submenu.\n",
   "requires": "7.0",
   "requires_php": "7.4"
 }

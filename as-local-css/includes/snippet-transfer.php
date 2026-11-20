@@ -7,7 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-add_action( 'admin_menu', 'aslc_transfer_menu' );
+add_action( 'admin_menu', 'aslc_transfer_menu', PHP_INT_MAX );
 add_action( 'admin_post_aslc_transfer', 'aslc_transfer_request' );
 
 function aslc_transfer_menu() {
@@ -27,17 +27,17 @@ function aslc_transfer_authorised() {
 
 function aslc_transfer_page() {
 	if ( ! aslc_transfer_authorised() ) {
-		wp_die( 'You do not have permission to transfer executable snippets.' );
+		wp_die( 'You do not have permission to transfer executable local code.' );
 	}
 	?>
 	<div class="wrap aslc-transfer">
 		<h1>Import / Export</h1>
 		<?php if ( isset( $_GET['aslc_imported'] ) ) : ?>
-			<div class="notice notice-success"><p><?php echo esc_html( sprintf( 'Import completed. %d snippets written.', absint( $_GET['aslc_imported'] ) ) ); ?></p></div>
+			<div class="notice notice-success"><p><?php echo esc_html( sprintf( 'Import completed. %d local code records saved.', absint( $_GET['aslc_imported'] ) ) ); ?></p></div>
 		<?php endif; ?>
 		<div class="aslc-transfer-grid">
 		<section class="aslc-transfer-panel" aria-labelledby="aslc-export-heading">
-		<h2 id="aslc-export-heading"><span class="dashicons dashicons-download" aria-hidden="true"></span> Export snippets</h2>
+		<h2 id="aslc-export-heading"><span class="dashicons dashicons-download" aria-hidden="true"></span> Export Local Code</h2>
 		<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
 			<?php wp_nonce_field( 'aslc_transfer_export' ); ?>
 			<input type="hidden" name="action" value="aslc_transfer">
@@ -49,11 +49,11 @@ function aslc_transfer_page() {
 				<option value="js">JavaScript</option>
 				<option value="html">HTML</option>
 			</select>
-			<?php submit_button( 'Download export', 'secondary' ); ?>
+			<?php submit_button( 'Export Local Code', 'secondary' ); ?>
 		</form>
 		</section>
 		<section class="aslc-transfer-panel" aria-labelledby="aslc-import-heading">
-		<h2 id="aslc-import-heading"><span class="dashicons dashicons-upload" aria-hidden="true"></span> Import snippets</h2>
+		<h2 id="aslc-import-heading"><span class="dashicons dashicons-upload" aria-hidden="true"></span> Import Local Code</h2>
 		<form method="post" enctype="multipart/form-data" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
 			<?php wp_nonce_field( 'aslc_transfer_import' ); ?>
 			<input type="hidden" name="action" value="aslc_transfer">
@@ -64,10 +64,10 @@ function aslc_transfer_page() {
 			<select id="aslc-import-mode" name="mode">
 				<option value="skip">Append and skip existing</option>
 				<option value="overwrite">Append and overwrite existing</option>
-				<option value="replace">Replace existing snippets in the exported code types</option>
+				<option value="replace">Replace existing local code in the exported code types</option>
 			</select></p>
 			<p class="aslc-transfer-confirm"><label><input type="checkbox" name="confirm_replace" value="1"> Confirm replacement if Replace is selected</label></p>
-			<?php submit_button( 'Import snippets' ); ?>
+			<?php submit_button( 'Import Local Code' ); ?>
 		</form>
 		</section>
 		</div>
@@ -192,7 +192,7 @@ function aslc_import_snippets( $payload, $mode ) {
 			|| ! is_string( $options['side'] ?? null ) || array_diff( explode( ',', $options['side'] ), array( 'frontend', 'admin', 'login' ) )
 			|| ! in_array( (string) ( $options['priority'] ?? '' ), array_map( 'strval', range( 0, 10 ) ), true ) ) {
 			$title = is_string( $record['title'] ?? null ) && '' !== trim( $record['title'] ) ? $record['title'] : '(untitled)';
-			throw new RuntimeException( sprintf( 'Snippet %d (%s) contains invalid data or a delivery setting.', $index + 1, $title ) );
+			throw new RuntimeException( sprintf( 'Local code record %d (%s) contains invalid data or a delivery setting.', $index + 1, $title ) );
 		}
 		foreach ( $record['sections'] as $section => $css ) {
 			if ( (string) $section !== sanitize_key( (string) $section ) || ! is_string( $css ) ) {
@@ -201,14 +201,14 @@ function aslc_import_snippets( $payload, $mode ) {
 		}
 		$key = aslc_transfer_key( $record );
 		if ( 'replace' !== $mode && isset( $records[ $key ] ) ) {
-			throw new RuntimeException( 'The export contains snippets with the same language, domain and title. Use Replace or give them unique titles.' );
+			throw new RuntimeException( 'The export contains local code records with the same language, domain and title. Use Replace or give them unique titles.' );
 		}
 		$records[ 'replace' === $mode ? count( $records ) : $key ] = $record;
 	}
 
 	$type = get_post_type_object( 'custom-css-js' );
 	if ( ! $type || ! current_user_can( $type->cap->create_posts ) || ! current_user_can( $type->cap->publish_posts ) ) {
-		throw new RuntimeException( 'You do not have permission to create or publish snippets.' );
+		throw new RuntimeException( 'You do not have permission to create or publish local code.' );
 	}
 	if ( 'replace' === $mode && ! EMPTY_TRASH_DAYS ) {
 		throw new RuntimeException( 'Enable WordPress Trash before using Replace.' );
@@ -219,13 +219,13 @@ function aslc_import_snippets( $payload, $mode ) {
 		$local = aslc_transfer_record( $post );
 		if ( 'replace' === $mode && in_array( $local['options']['language'], $payload['languages'], true ) ) {
 			if ( ! current_user_can( 'delete_post', $post->ID ) ) {
-				throw new RuntimeException( 'You do not have permission to replace all snippets in this export scope.' );
+				throw new RuntimeException( 'You do not have permission to replace all local code in this export scope.' );
 			}
 			$retire[] = $post->ID;
 		} elseif ( 'replace' !== $mode && isset( $records[ aslc_transfer_key( $local ) ] ) ) {
 			$key = aslc_transfer_key( $local );
 			if ( 'overwrite' === $mode && ( isset( $matches[ $key ] ) || ! current_user_can( 'edit_post', $post->ID ) ) ) {
-				throw new RuntimeException( 'An existing snippet match is ambiguous or cannot be edited.' );
+				throw new RuntimeException( 'An existing local code match is ambiguous or cannot be edited.' );
 			}
 			$matches[ $key ] = $post->ID;
 		}
@@ -267,17 +267,17 @@ function aslc_import_snippets( $payload, $mode ) {
 				),
 			) ), true );
 			if ( is_wp_error( $id ) || ! $id ) {
-				throw new RuntimeException( 'A snippet could not be saved. Check the list for records already imported.' );
+				throw new RuntimeException( 'A local code record could not be saved. Check the list for records already imported.' );
 			}
 			$written[] = $id;
 			$terms = isset( $domains[ $record['domain'] ] ) ? array( (int) $domains[ $record['domain'] ]['id'] ) : array();
 			if ( is_wp_error( wp_set_object_terms( $id, $terms, ASLC_CODE_DOMAIN_TAXONOMY ) ) ) {
-				throw new RuntimeException( 'A snippet was saved but its Code Domain could not be assigned.' );
+				throw new RuntimeException( 'A local code record was saved but its Code Domain could not be assigned.' );
 			}
 		}
 		foreach ( $retire as $id ) {
 			if ( ! wp_trash_post( $id ) ) {
-				throw new RuntimeException( 'Replacement stopped because an existing snippet could not be moved to Trash.' );
+				throw new RuntimeException( 'Replacement stopped because an existing local code record could not be moved to Trash.' );
 			}
 		}
 	} finally {
@@ -288,7 +288,7 @@ function aslc_import_snippets( $payload, $mode ) {
 
 function aslc_transfer_request() {
 	if ( 'POST' !== $_SERVER['REQUEST_METHOD'] || ! aslc_transfer_authorised() ) {
-		wp_die( 'You do not have permission to transfer executable snippets.', '', array( 'response' => 403 ) );
+		wp_die( 'You do not have permission to transfer executable local code.', '', array( 'response' => 403 ) );
 	}
 	$operation = $_POST['operation'] ?? '';
 	$languages = array( 'css', 'js', 'html' );
