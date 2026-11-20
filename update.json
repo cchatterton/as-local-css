@@ -1,6 +1,6 @@
 {
-  "version": "0.10.1",
-  "body": "## 0.10.1 - 2026-11-20\n\n- Accept HTML body-open placement and distinguish untitled snippets by code content during import.\n",
+  "version": "0.10.2",
+  "body": "## 0.10.2 - 2026-11-20\n\n- Exclude untitled snippets from exports and restyle the Import / Export screen.\n",
   "requires": "7.0",
   "requires_php": "7.4"
 }

@@ -11,7 +11,14 @@ add_action( 'admin_menu', 'aslc_transfer_menu' );
 add_action( 'admin_post_aslc_transfer', 'aslc_transfer_request' );
 
 function aslc_transfer_menu() {
-	add_submenu_page( 'edit.php?post_type=custom-css-js', 'Import / Export', 'Import / Export', 'manage_options', 'aslc-transfer', 'aslc_transfer_page' );
+	$hook = add_submenu_page( 'edit.php?post_type=custom-css-js', 'Import / Export', 'Import / Export', 'manage_options', 'aslc-transfer', 'aslc_transfer_page' );
+	if ( $hook ) {
+		add_action( 'load-' . $hook, 'aslc_transfer_assets' );
+	}
+}
+
+function aslc_transfer_assets() {
+	wp_enqueue_style( 'aslc-transfer', plugins_url( 'assets/aslc-transfer.css', ASLC_PLUGIN_FILE ), array(), ASLC_VERSION );
 }
 
 function aslc_transfer_authorised() {
@@ -23,12 +30,14 @@ function aslc_transfer_page() {
 		wp_die( 'You do not have permission to transfer executable snippets.' );
 	}
 	?>
-	<div class="wrap">
+	<div class="wrap aslc-transfer">
 		<h1>Import / Export</h1>
 		<?php if ( isset( $_GET['aslc_imported'] ) ) : ?>
 			<div class="notice notice-success"><p><?php echo esc_html( sprintf( 'Import completed. %d snippets written.', absint( $_GET['aslc_imported'] ) ) ); ?></p></div>
 		<?php endif; ?>
-		<h2>Export</h2>
+		<div class="aslc-transfer-grid">
+		<section class="aslc-transfer-panel" aria-labelledby="aslc-export-heading">
+		<h2 id="aslc-export-heading"><span class="dashicons dashicons-download" aria-hidden="true"></span> Export snippets</h2>
 		<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
 			<?php wp_nonce_field( 'aslc_transfer_export' ); ?>
 			<input type="hidden" name="action" value="aslc_transfer">
@@ -42,7 +51,9 @@ function aslc_transfer_page() {
 			</select>
 			<?php submit_button( 'Download export', 'secondary' ); ?>
 		</form>
-		<h2>Import</h2>
+		</section>
+		<section class="aslc-transfer-panel" aria-labelledby="aslc-import-heading">
+		<h2 id="aslc-import-heading"><span class="dashicons dashicons-upload" aria-hidden="true"></span> Import snippets</h2>
 		<form method="post" enctype="multipart/form-data" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
 			<?php wp_nonce_field( 'aslc_transfer_import' ); ?>
 			<input type="hidden" name="action" value="aslc_transfer">
@@ -55,9 +66,11 @@ function aslc_transfer_page() {
 				<option value="overwrite">Append and overwrite existing</option>
 				<option value="replace">Replace existing snippets in the exported code types</option>
 			</select></p>
-			<p><label><input type="checkbox" name="confirm_replace" value="1"> Confirm replacement if Replace is selected</label></p>
+			<p class="aslc-transfer-confirm"><label><input type="checkbox" name="confirm_replace" value="1"> Confirm replacement if Replace is selected</label></p>
 			<?php submit_button( 'Import snippets' ); ?>
 		</form>
+		</section>
+		</div>
 	</div>
 	<?php
 }
@@ -290,7 +303,7 @@ function aslc_transfer_request() {
 			$records = array();
 			foreach ( aslc_transfer_posts() as $post ) {
 				$record = aslc_transfer_record( $post );
-				if ( in_array( $record['options']['language'], $scope, true ) ) {
+				if ( '' !== trim( $record['title'] ) && in_array( $record['options']['language'], $scope, true ) ) {
 					$records[] = $record;
 				}
 			}

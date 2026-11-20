@@ -2,6 +2,10 @@
 
 All notable changes to AS Local CSS are recorded here.
 
+## 0.10.2 - 2026-11-20
+
+- Exclude untitled snippets from exports and restyle the Import / Export screen.
+
 ## 0.10.1 - 2026-11-20
 
 - Accept HTML body-open placement and distinguish untitled snippets by code content during import.

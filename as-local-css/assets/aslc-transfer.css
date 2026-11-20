@@ -1,0 +1,56 @@
+.aslc-transfer {
+	max-width: 72rem;
+}
+
+.aslc-transfer-grid {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 1rem;
+	margin-top: 1.25rem;
+}
+
+.aslc-transfer-panel {
+	min-width: 0;
+	padding: 1.5rem;
+	border: 1px solid #c3c4c7;
+	border-top: 3px solid var(--wp-admin-theme-color, #2271b1);
+	border-radius: 6px;
+	background: #fff;
+}
+
+.aslc-transfer-panel h2 {
+	display: flex;
+	align-items: center;
+	gap: .5rem;
+	margin: 0 0 1.25rem;
+	font-size: 1.125rem;
+}
+
+.aslc-transfer-panel label:not(.aslc-transfer-confirm label) {
+	display: block;
+	margin-bottom: .375rem;
+	font-weight: 600;
+}
+
+.aslc-transfer-panel select,
+.aslc-transfer-panel input[type="file"] {
+	width: 100%;
+	max-width: 100%;
+}
+
+.aslc-transfer-panel .submit {
+	margin-bottom: 0;
+	padding-bottom: 0;
+}
+
+.aslc-transfer-confirm {
+	padding: .75rem;
+	border-left: 3px solid #996800;
+	background: #fcf9e8;
+}
+
+@media (max-width: 782px) {
+	.aslc-transfer-grid {
+		grid-template-columns: minmax(0, 1fr);
+	}
+}
