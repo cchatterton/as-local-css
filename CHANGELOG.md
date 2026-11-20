@@ -2,6 +2,10 @@
 
 All notable changes to AS Local CSS are recorded here.
 
+## 0.10.4 - 2026-11-20
+
+- Add CSS Errors page-size settings and severity filters, with errors shown first.
+
 ## 0.10.3 - 2026-11-20
 
 - Use Local Code labels and move Import / Export to the bottom of the submenu.

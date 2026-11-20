@@ -1,6 +1,6 @@
 {
-  "version": "0.10.3",
-  "body": "## 0.10.3 - 2026-11-20\n\n- Use Local Code labels and move Import / Export to the bottom of the submenu.\n",
+  "version": "0.10.4",
+  "body": "## 0.10.4 - 2026-11-20\n\n- Add CSS Errors page-size settings and severity filters, with errors shown first.\n",
   "requires": "7.0",
   "requires_php": "7.4"
 }

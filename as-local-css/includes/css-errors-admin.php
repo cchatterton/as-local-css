@@ -15,22 +15,55 @@ if ( ! class_exists( 'WP_List_Table' ) ) {
  * Native WordPress list table for CSS errors.
  */
 class ASLC_CSS_Errors_List_Table extends WP_List_Table {
+	public const SEVERITY_GROUPS = array(
+		'critical'    => 'error',
+		'error'       => 'error',
+		'warning'     => 'warning',
+		'information' => 'information',
+	);
+
+	public static function selected_severities() {
+		$allowed = array( 'error', 'warning', 'information' );
+		if ( ! isset( $_GET['aslc_filter'] ) ) {
+			return $allowed;
+		}
+
+		$selected = isset( $_GET['aslc_severity'] ) ? wp_unslash( (array) $_GET['aslc_severity'] ) : array();
+		return array_values( array_filter( $allowed, static function ( $severity ) use ( $selected ) {
+			return in_array( $severity, $selected, true );
+		} ) );
+	}
+
 	/**
 	 * Configure columns and rows.
 	 */
 	public function prepare_items() {
-		$findings = aslc_get_css_scan_findings();
-		$per_page = 20;
-		$page     = $this->get_pagenum();
+		$selected = self::selected_severities();
+		$groups   = array_fill_keys( array_keys( self::SEVERITY_GROUPS ), array() );
+		foreach ( aslc_get_css_scan_findings() as $finding ) {
+			$severity = $finding['severity'] ?? 'information';
+			if ( ! isset( $groups[ $severity ] ) ) {
+				$severity = 'information';
+			}
+			if ( in_array( self::SEVERITY_GROUPS[ $severity ], $selected, true ) ) {
+				$groups[ $severity ][] = $finding;
+			}
+		}
+		$findings = array_merge( ...array_values( $groups ) );
+		$per_page = $this->get_items_per_page( 'aslc_css_errors_per_page', 20 );
 
 		$this->_column_headers = array( $this->get_columns(), array(), array() );
-		$this->items           = array_slice( $findings, ( $page - 1 ) * $per_page, $per_page );
 		$this->set_pagination_args(
 			array(
 				'total_items' => count( $findings ),
 				'per_page'    => $per_page,
 			)
 		);
+		$this->items = array_slice( $findings, ( $this->get_pagenum() - 1 ) * $per_page, $per_page );
+	}
+
+	public function no_items() {
+		esc_html_e( 'No CSS findings match the selected severities.', 'custom-css-js' );
 	}
 
 	/**
@@ -135,8 +168,22 @@ function aslc_register_css_errors_page() {
 	);
 	add_action( 'load-' . $hook, 'aslc_scan_css_errors_on_page_load' );
 	add_action( 'load-' . $hook, 'aslc_add_css_errors_help' );
+	add_action( 'load-' . $hook, 'aslc_add_css_errors_screen_options' );
 }
 add_action( 'admin_menu', 'aslc_register_css_errors_page', 21 );
+
+function aslc_add_css_errors_screen_options() {
+	add_screen_option( 'per_page', array(
+		'label'   => __( 'Findings per page', 'custom-css-js' ),
+		'default' => 20,
+		'option'  => 'aslc_css_errors_per_page',
+	) );
+}
+
+function aslc_save_css_errors_per_page( $status, $option, $value ) {
+	return max( 1, min( 999, (int) $value ) );
+}
+add_filter( 'set_screen_option_aslc_css_errors_per_page', 'aslc_save_css_errors_per_page', 10, 3 );
 
 /** Refresh CSS findings whenever the CSS Errors screen is opened. */
 function aslc_scan_css_errors_on_page_load() {
@@ -205,6 +252,7 @@ function aslc_render_css_errors_page() {
 	$findings = aslc_get_css_scan_findings();
 	$table    = new ASLC_CSS_Errors_List_Table();
 	$table->prepare_items();
+	$selected = ASLC_CSS_Errors_List_Table::selected_severities();
 	?>
 	<div class="wrap aslc-css-errors-page">
 		<div class="aslc-css-errors-header">
@@ -239,9 +287,28 @@ function aslc_render_css_errors_page() {
 			<div class="notice notice-success inline"><p><?php esc_html_e( 'No CSS errors were found.', 'custom-css-js' ); ?></p></div>
 		<?php endif; ?>
 
+		<form method="get" action="<?php echo esc_url( admin_url( 'edit.php' ) ); ?>">
+			<input type="hidden" name="post_type" value="custom-css-js">
+			<input type="hidden" name="page" value="aslc-css-errors">
+			<input type="hidden" name="aslc_filter" value="1">
+			<fieldset class="aslc-severity-filters">
+				<legend class="screen-reader-text"><?php esc_html_e( 'Include findings by severity', 'custom-css-js' ); ?></legend>
+				<?php foreach ( array( 'error' => __( 'Errors', 'custom-css-js' ), 'warning' => __( 'Warnings', 'custom-css-js' ), 'information' => __( 'Information', 'custom-css-js' ) ) as $severity => $label ) : ?>
+					<label><input type="checkbox" name="aslc_severity[]" value="<?php echo esc_attr( $severity ); ?>" <?php checked( in_array( $severity, $selected, true ) ); ?>> <?php echo esc_html( $label ); ?></label>
+				<?php endforeach; ?>
+				<?php submit_button( __( 'Filter', 'custom-css-js' ), 'secondary', 'submit', false ); ?>
+			</fieldset>
+		</form>
 		<?php $table->display(); ?>
 
 		<style>
+		.aslc-severity-filters {
+			display: flex;
+			flex-wrap: wrap;
+			align-items: center;
+			gap: .75rem;
+			margin: 1rem 0;
+		}
 		.aslc-css-errors-header {
 			display: flex;
 			align-items: center;
