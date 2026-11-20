@@ -1,6 +1,6 @@
 {
-  "version": "0.10.4",
-  "body": "## 0.10.4 - 2026-11-20\n\n- Add CSS Errors page-size settings and severity filters, with errors shown first.\n",
+  "version": "0.10.5",
+  "body": "## 0.10.5 - 2026-11-20\n\n- Remove redundant guidance from the CSS Errors screen.\n",
   "requires": "7.0",
   "requires_php": "7.4"
 }

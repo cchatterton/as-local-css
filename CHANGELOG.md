@@ -2,6 +2,10 @@
 
 All notable changes to AS Local CSS are recorded here.
 
+## 0.10.5 - 2026-11-20
+
+- Remove redundant guidance from the CSS Errors screen.
+
 ## 0.10.4 - 2026-11-20
 
 - Add CSS Errors page-size settings and severity filters, with errors shown first.

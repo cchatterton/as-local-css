@@ -278,9 +278,6 @@ function aslc_render_css_errors_page() {
 				</span>
 			<?php endif; ?>
 
-			<?php if ( ! empty( $findings ) ) : ?>
-				<span><?php esc_html_e( 'Open a finding to review it. See Help for details.', 'custom-css-js' ); ?></span>
-			<?php endif; ?>
 		</div>
 
 		<?php if ( empty( $findings ) ) : ?>
