@@ -118,7 +118,11 @@ function aslc_transfer_record( $post ) {
 }
 
 function aslc_transfer_key( $record ) {
-	return wp_json_encode( array( $record['options']['language'], $record['domain'], $record['title'] ) );
+	$key = array( $record['options']['language'], $record['domain'], $record['title'] );
+	if ( '' === trim( $record['title'] ) ) {
+		$key[] = hash( 'sha256', $record['code'] );
+	}
+	return wp_json_encode( $key );
 }
 
 function aslc_import_snippets( $payload, $mode ) {
@@ -161,8 +165,9 @@ function aslc_import_snippets( $payload, $mode ) {
 	}
 
 	$records = array();
-	foreach ( $payload['snippets'] as $record ) {
+	foreach ( array_values( $payload['snippets'] ) as $index => $record ) {
 		$options = $record['options'] ?? null;
+		$placements = 'html' === ( $options['language'] ?? '' ) ? array( 'header', 'footer', 'body_open' ) : array( 'header', 'footer' );
 		if ( ! is_array( $record ) || ! is_array( $options ) || ! in_array( $options['language'] ?? '', $payload['languages'], true )
 			|| ! is_string( $record['title'] ?? null ) || ! is_string( $record['code'] ?? null )
 			|| ! in_array( $record['status'] ?? '', array( 'publish', 'draft', 'pending', 'private', 'future' ), true )
@@ -170,10 +175,11 @@ function aslc_import_snippets( $payload, $mode ) {
 			|| ! is_bool( $record['active'] ?? null ) || ! is_string( $record['domain'] ?? null )
 			|| ( '' !== $record['domain'] && ! isset( $incoming[ $record['domain'] ] ) )
 			|| ! is_array( $record['sections'] ?? null ) || ! is_string( $record['target'] ?? null )
-			|| ! in_array( $options['type'] ?? '', array( 'header', 'footer' ), true )
+			|| ! in_array( $options['type'] ?? '', $placements, true )
 			|| ! is_string( $options['side'] ?? null ) || array_diff( explode( ',', $options['side'] ), array( 'frontend', 'admin', 'login' ) )
 			|| ! in_array( (string) ( $options['priority'] ?? '' ), array_map( 'strval', range( 0, 10 ) ), true ) ) {
-			throw new RuntimeException( 'The export contains an invalid snippet or delivery setting.' );
+			$title = is_string( $record['title'] ?? null ) && '' !== trim( $record['title'] ) ? $record['title'] : '(untitled)';
+			throw new RuntimeException( sprintf( 'Snippet %d (%s) contains invalid data or a delivery setting.', $index + 1, $title ) );
 		}
 		foreach ( $record['sections'] as $section => $css ) {
 			if ( (string) $section !== sanitize_key( (string) $section ) || ! is_string( $css ) ) {

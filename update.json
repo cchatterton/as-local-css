@@ -1,6 +1,6 @@
 {
-  "version": "0.10.0",
-  "body": "## 0.10.0 - 2026-11-20\n\n- Add snippet import/export by code type and automatic Code Domain transfer by slug.\n",
+  "version": "0.10.1",
+  "body": "## 0.10.1 - 2026-11-20\n\n- Accept HTML body-open placement and distinguish untitled snippets by code content during import.\n",
   "requires": "7.0",
   "requires_php": "7.4"
 }
